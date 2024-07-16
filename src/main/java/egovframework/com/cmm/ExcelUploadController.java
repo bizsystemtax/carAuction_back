@@ -63,4 +63,9 @@ public class ExcelUploadController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @RequestMapping(method = RequestMethod.OPTIONS, value = "/upload")
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity.ok().build();
+    }
 }
