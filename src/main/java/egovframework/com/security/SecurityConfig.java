@@ -14,53 +14,37 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.Arrays;
 
-/**
- * fileName       : SecurityConfig
- * author         : crlee
- * date           : 2023/06/10
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2023/06/10        crlee       최초 생성
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Http Method : Get 인증예외 List
     private String[] AUTH_GET_WHITELIST = {
-        "/mainPage", // 메인 화면 리스트 조회
-        "/board", // 게시판 목록조회
-        "/board/{bbsId}/{nttId}", // 게시물 상세조회
-        "/boardFileAtch/{bbsId}", // 게시판 파일 첨부 가능 여부 조회
-        "/schedule/daily", // 일별 일정 조회
-        "/schedule/week", // 주간 일정 조회
-        "/schedule/{schdulId}", // 일정 상세조회
-        "/image" // 갤러리 이미지 보기
+        "/mainPage",
+        "/board",
+        "/board/{bbsId}/{nttId}",
+        "/boardFileAtch/{bbsId}",
+        "/schedule/daily",
+        "/schedule/week",
+        "/schedule/{schdulId}",
+        "/image"
     };
 
-    // 인증 예외 List
     private String[] AUTH_WHITELIST = {
         "/",
         "/login/**",
-        "/auth/login-jwt", // JWT 로그인
-        "/auth/login", // 일반 로그인
-        "/file", // 파일 다운로드
-        "/excel/upload", // 파일 업로드 엔드포인트 추가
-        "/excel/download", // 파일 다운로드 엔드포인트 추가
-        /* swagger */
+        "/auth/login-jwt",
+        "/auth/login",
+        "/file",
+        "/excel/upload",
+        "/excel/download",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
         "/swagger-ui.html",
         "/swagger-ui/**"
-    };
-
-    private static final String[] ORIGINS_WHITELIST = {
-        "http://localhost:3000"
     };
 
     @Bean
@@ -71,12 +55,10 @@ public class SecurityConfig {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH"));
-        configuration.setAllowedOrigins(Arrays.asList(ORIGINS_WHITELIST));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 특정 도메인만 허용
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH")); // 허용할 HTTP 메서드
+        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
+        configuration.setAllowCredentials(true); // 자격 증명 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -85,9 +67,9 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         return http
             .csrf(AbstractHttpConfigurer::disable)
+            .cors().configurationSource(corsConfigurationSource()).and()
             .authorizeHttpRequests(authorize -> authorize
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.GET, AUTH_GET_WHITELIST).permitAll()
@@ -96,7 +78,6 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> 
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .cors().and()
             .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exceptionHandlingConfigurer -> 
                 exceptionHandlingConfigurer
@@ -104,5 +85,4 @@ public class SecurityConfig {
             )
             .build();
     }
-
 }
