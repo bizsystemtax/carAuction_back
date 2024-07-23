@@ -40,6 +40,7 @@ public class SecurityConfig {
         "/file",
         "/excel/upload",
         "/excel/download",
+        "/excel/search",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
