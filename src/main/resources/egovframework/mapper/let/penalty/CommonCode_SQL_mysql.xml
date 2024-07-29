@@ -3,20 +3,16 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CommonCodeDAO">
 
-	<resultMap id="CommonCodeList" type="egovframework.penalty.CommonCodeVO">
+	<resultMap id="selectList" type="egovframework.penalty.CommonCodeVO">
 		<result property="cmmCd" column="CMM_CD"/>
 		<result property="cmmCdNm" column="CMM_CD_NM"/>
 	</resultMap>
 	
-		<resultMap id="selectCommonCode" type="egovframework.penalty.CommonCodeVO">
-		<result property="cmmCd" column="CMM_CD"/>
-	</resultMap>
-
-	<select id="selectCommonCode" parameterType="egovframework.penalty.CommonCodeVO" resultMap="selectCommonCode">
+	<select id="getSelectCode" parameterType="egovframework.penalty.CommonCodeVO" resultMap="selectList">
 		SELECT CMM_CD
 		     , CMM_CD_NM
 		  FROM TB_CMM_CD_LDGR
 		 WHERE USE_YN = 'Y'
+		   AND CMM_CD_GUBUN = '01'
 	</select>
-	
 </mapper>
