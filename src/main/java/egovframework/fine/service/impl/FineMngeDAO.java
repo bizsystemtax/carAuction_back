@@ -9,17 +9,16 @@ import egovframework.fine.FineMngeVO;
 @Repository("FineMngeDAO")
 public class FineMngeDAO extends EgovAbstractMapper {
 
-	 /**
-     * 목록을 조회 한다.
-     *
-     * @param FineMngeVO
-     * @return
-     * @throws Exception
-     */
+	/**
+	 * @author 범칙금관리 조회 DAO
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
-	public List<FineMngeVO> getRetrieveFineMnge(FineMngeVO finemngeVO) throws Exception {
-		
-		return (List<FineMngeVO>) list("FineMngeDAO.getRetrieveFineMnge", finemngeVO);
+	public List<FineMngeVO> getRetrieveFineMnge(FineMngeVO fineMngeVO) throws Exception {
+		//범칙금관리 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.getRetrieveFineMnge", fineMngeVO);
 	}
 
 }

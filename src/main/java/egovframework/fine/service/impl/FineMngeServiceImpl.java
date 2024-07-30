@@ -18,10 +18,15 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	@Resource(name = "FineMngeDAO")
 	private FineMngeDAO FineMngeDAO;
 	
+	/**
+	 * @author 범칙금관리 조회 서비스
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
 	@Override
-	public Map<String, Object> getRetrieveFineMnge(FineMngeVO finemngeVO) throws Exception {
-		
-		List<FineMngeVO> list = FineMngeDAO.getRetrieveFineMnge(finemngeVO);
+	public Map<String, Object> getRetrieveFineMnge(FineMngeVO fineMngeVO) throws Exception {
+		List<FineMngeVO> list = FineMngeDAO.getRetrieveFineMnge(fineMngeVO);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 

@@ -36,23 +36,31 @@ public class FineMngeController {
 	 */
 	@Operation(
 			summary = "범칙금관리 조회",
-			description = "범칙금관리 목록을 조회",
+			description = "범칙금관리 목록 조회",
 			tags = {"FineMngeController"}
 	)
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "조회 성공"),
-			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
-	})
 	@PostMapping(value = "/fineMnge")
 	public ResultVO selectFineMnge(@RequestParam Map<String, Object> parmMap) throws Exception{
 	
 		ResultVO resultVO = new ResultVO();
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		
-		String vltDt = (String) parmMap.get("vlt_dt");
+		String inVltDtStrt = (String) parmMap.get("in_vlt_dt_strt");//위반일자시작
+		String inVltDtEnd = (String) parmMap.get("in_vlt_dt_end");	//위반일자종료
+		String inVltKindCd = (String) parmMap.get("in_vlt_kind_cd");//위반종류코드
+		String inSendPlcCd = (String) parmMap.get("in_send_plc_cd");//발송처코드
+		String inGdCd = (String) parmMap.get("in_gd_cd");			//상품코드
+		String inCsNm = (String) parmMap.get("in_cs_nm");			//고객명
+		String inVhclNo = (String) parmMap.get("in_vhcl_no");		//차량번호
 
 		//조회조건 VO 세팅
-		fineMngeVO.setVltDt(vltDt);
+		fineMngeVO.setInVltDtStrt(inVltDtStrt);
+		fineMngeVO.setInVltDtEnd(inVltDtEnd);
+		fineMngeVO.setInVltKindCd(inVltKindCd);
+		fineMngeVO.setInSendPlcCd(inSendPlcCd);
+		fineMngeVO.setInGdCd(inGdCd);
+		fineMngeVO.setInCsNm(inCsNm);
+		fineMngeVO.setInVhclNo(inVhclNo);
 			
 		//범칙금관리 조회 서비스 호출
 		Map<String, Object> resultMap = fineMngeService.getRetrieveFineMnge(fineMngeVO);
