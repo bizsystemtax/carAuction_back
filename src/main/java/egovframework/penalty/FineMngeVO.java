@@ -1,4 +1,4 @@
-package egovframework.fine;
+package egovframework.penalty;
 
 import java.io.Serializable;
 
