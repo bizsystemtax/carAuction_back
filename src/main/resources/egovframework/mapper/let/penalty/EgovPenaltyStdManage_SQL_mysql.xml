@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PenaltyStdManageDAO">
+	<resultMap id="ComnCdVO" type="egovframework.penalty.ComnCdVO">
+		<result property="comnCdEngNm" column="COMN_CD_ENG_NM"/>
+		<result property="cdNm" column="CD_NM"/>
+		<result property="cdVal" column="CD_VAL"/>
+	</resultMap>
+
+	<resultMap id="PenaltyStdManageVO" type="egovframework.penalty.PenaltyStdManageVO">
+		<result property="sendPldCd" column="SEND_PLD_CD"/>
+		<result property="sendPlcSeq" column="SEND_PLD_SEQ"/>
+		<result property="sendPldCdSeq" column="SEND_PLD_CD_SEQ"/>
+		<result property="docTypCd" column="DOC_TYP_CD"/>
+		<result property="sendPlcKindCd" column="SEND_PLC_KIND_CD"/>
+		<result property="sendPlcKindNm" column="SEND_PLC_KIND_NM"/>
+		<result property="rcptTypCd" column="RCPT_TYP_CD"/>
+		<result property="hdlgTypCd" column="HDLG_TYP_CD"/>
+		<result property="ntcdocSendPlcNm" column="NTCDOC_SEND_PLC_NM"/>
+		<result property="ntcdocSendPlcDeptNm" column="NTCDOC_SEND_PLC_DEPT_NM"/>
+		<result property="comnSendPlcNm" column="COMN_SEND_PLC_NM"/>
+		<result property="st1SendPlcOficNm" column="ST1_SEND_PLC_OFIC_NM"/>
+		<result property="scndSendPlcOficNm" column="SCND_SEND_PLC_OFIC_NM"/>
+		<result property="st1SendPlcTelno" column="ST1_SEND_PLC_TELNO"/>
+		<result property="scndSendPlcTelno" column="SCND_SEND_PLC_TELNO"/>
+		<result property="thrdSendPlcTelno" column="THRD_SEND_PLC_TELNO"/>
+		<result property="faxno" column="FAXNO"/>
+		<result property="oficEmailAddr" column="OFIC_EMAIL_ADDR"/>
+		<result property="hpageAddr" column="HPAGE_ADDR"/>
+		<result property="zipCd" column="ZIP_CD"/>
+		<result property="sendPlcAddr" column="SEND_PLC_ADDR"/>
+		<result property="sendPlcSpcfcAddr" column="SEND_PLC_SPCFC_ADDR"/>
+		<result property="plclMtr" column="PLCL_MTR"/>
+		<result property="sendPlcRem" column="SEND_PLC_REM"/>
+		<result property="st1DeptKeyWordCts" column="ST1_DEPT_KEY_WORD_CTS"/>
+		<result property="scndDeptKeyWordCts" column="SCND_DEPT_KEY_WORD_CTS"/>
+		<result property="thrdDeptKeyWordCts" column="THRD_DEPT_KEY_WORD_CTS"/>
+	</resultMap>
+	
+	<select id="selectComboBoxList" resultMap="ComnCdVO">
+		select COMN_CD_ENG_NM, CD_NM, CD_VAL from biz_comn_cd_dtl where COMN_CD_ENG_NM in ('DOC_TYP_CD', 'HDLG_TYP_CD', 'RCPT_TYP_CD', 'SEND_PLC_KIND_CD')
+	</select>
+	
+	<select id="selectPenaltyStdManageList" parameterType="egovframework.penalty.PenaltyStdManageVO" resultMap="PenaltyStdManageVO">
+		select
+			(select CD_NM from biz_comn_cd_dtl where COMN_CD_ENG_NM = 'SEND_PLC_KIND_CD' AND CD_VAL = std.SEND_PLC_KIND_CD) as SEND_PLC_KIND_NM,
+			CONCAT(std.SEND_PLD_CD, '-', std.SEND_PLC_SEQ) as SEND_PLD_CD_SEQ,
+			std.*
+		from biz_fine_send_plc_std_mnge as std
+		<where>
+			<if test="sendPldCd != null and sendPldCd != ''">
+				and SEND_PLD_CD = #{sendPldCd}
+			</if>
+			<if test="docTypCd != null and docTypCd != ''">
+				and DOC_TYP_CD = #{docTypCd}
+			</if>
+			<if test="sendPlcKindCd != null and sendPlcKindCd != ''">
+				and SEND_PLC_KIND_CD = #{sendPlcKindCd}
+			</if>
+			<if test="rcptTypCd != null and rcptTypCd != ''">
+				and RCPT_TYP_CD = #{rcptTypCd}
+			</if>
+			<if test="hdlgTypCd != null and hdlgTypCd != ''">
+				and HDLG_TYP_CD = #{hdlgTypCd}
+			</if>
+		</where>
+	</select>
+</mapper>

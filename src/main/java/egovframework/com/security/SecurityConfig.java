@@ -42,6 +42,8 @@ public class SecurityConfig {
         "/excel/download",
         "/code/commonCode",
         "/excel/search",
+        "/penaltyStd/comboBoxList",
+        "/penaltyStd/list",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
