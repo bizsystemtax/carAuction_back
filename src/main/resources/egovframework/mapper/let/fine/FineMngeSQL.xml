@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FineMngeDAO">
+	<resultMap id="retrieveFineMnge" type="egovframework.fine.FineMngeVO">
+		<result property="no" column="NO"/>
+		<result property="gdNm" column="GD_NM"/>
+		<result property="csNm" column="CS_NM"/>
+		<result property="vhclNo" column="VHCL_NO"/>
+		<result property="vltDt" column="VLT_DT"/>
+		<result property="vltAtime" column="VLT_ATIME"/>
+		<result property="sendPlcNm" column="SEND_PLC_NM"/>
+		<result property="sendPlcDeptNm" column="SEND_PLC_DEPT_NM"/>
+		<result property="vltKindNm" column="VLT_KIND_NM"/>
+		<result property="vltCts" column="VLT_CTS"/>
+		<result property="vltPnt" column="VLT_PNT"/>
+		<result property="fineAmt" column="FINE_AMT"/>
+		<result property="pymtDdayDt" column="PYMT_DDAY_DT"/>
+		<result property="rcptDt" column="RCPT_DT"/>
+		<result property="pymtDt" column="PYMT_DT"/>
+		<result property="drvrChgeYn" column="DRVR_CHGE_YN"/>
+		<result property="drvrChgeDt" column="DRVR_CHGE_DT"/>
+		<result property="loanStatNm" column="LOAN_STAT_NM"/>
+	</resultMap>
+	
+	<select id="getRetrieveFineMnge" parameterType="egovframework.fine.FineMngeVO" resultMap="retrieveFineMnge">
+		<![CDATA[
+		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC) AS NO /*순번*/
+				, CASE WHEN B.GD_CD LIKE 'RC%' THEN '렌터카' ELSE '리스' END AS GD_NM /*상품명*/
+				, B.CS_NM /*고객명*/
+				, A.VHCL_NO /*차량번호*/
+				, A.VLT_DT /*위반일자*/
+				, A.VLT_ATIME /*위반시각*/
+				, C.NTCDOC_SEND_PLC_NM AS SEND_PLC_NM /*발송처명*/
+				, C.NTCDOC_SEND_PLC_DEPT_NM AS SEND_PLC_DEPT_NM /*발송처부서명*/
+				, (SELECT X.CD_NM FROM BIZ_COMN_CD_DTL X WHERE X.COMN_CD_ENG_NM = 'VLT_KIND_CD' AND X.CD_VAL = A.VLT_KIND_CD) AS VLT_KIND_NM /*위반종류명*/
+				, A.VLT_CTS  /*위반내용*/
+				, A.VLT_PNT  /*위반장소*/
+				, A.FINE_AMT /*범칙금금액*/
+				, A.PYMT_DDAY_DT /*납부기한일자*/
+				, A.RCPT_DT /*접수일자*/
+				, A.PYMT_DT /*납입일자*/
+				, CASE WHEN A.DRVR_CHGE_DT != '' THEN 'Y' ELSE 'N' END AS DRVR_CHGE_YN /*운전자변경여부*/
+				, A.DRVR_CHGE_DT /*운전자변경일*/
+				, (SELECT X.CD_NM FROM BIZ_COMN_CD_DTL X WHERE X.COMN_CD_ENG_NM = 'LOAN_STAT_CD' AND X.CD_VAL = B.LOAN_STAT_CD) AS LOAN_STAT_NM /*대출상태명*/
+		FROM 	BIZ_FINE_MAS A 
+				, BIZ_LOAN_MAS B 
+				, BIZ_FINE_SEND_PLC_STD_MNGE C 
+		WHERE 	A.VHCL_NO = B.VHCL_NO 
+		AND 	A.VLT_DT >= B.LOAN_DT
+		AND 	(A.VLT_DT < B.TMNT_DT OR B.TMNT_DT = '')
+		AND 	A.SEND_PLC_CD = C.SEND_PLD_CD 
+		AND 	A.SEND_PLC_SEQ = C.SEND_PLC_SEQ
+		/*(20240730) 내일와서 if문으로 검색조건 넣기*/
+		ORDER BY NO
+		]]>
+	</select>
+</mapper>
