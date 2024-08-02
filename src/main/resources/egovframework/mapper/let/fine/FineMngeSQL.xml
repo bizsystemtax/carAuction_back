@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="FineMngeDAO">
-	<resultMap id="retrieveFineMnge" type="egovframework.fine.FineMngeVO">
+	<resultMap id="retrieveFineMnge" type="egovframework.penalty.FineMngeVO">
 		<result property="no" column="NO"/>
 		<result property="gdNm" column="GD_NM"/>
 		<result property="csNm" column="CS_NM"/>
@@ -23,7 +23,7 @@
 		<result property="loanStatNm" column="LOAN_STAT_NM"/>
 	</resultMap>
 	
-	<select id="getRetrieveFineMnge" parameterType="egovframework.fine.FineMngeVO" resultMap="retrieveFineMnge">
+	<select id="getRetrieveFineMnge" parameterType="egovframework.penalty.FineMngeVO" resultMap="retrieveFineMnge">
 		<![CDATA[
 		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC) AS NO /*순번*/
 				, CASE WHEN B.GD_CD LIKE 'RC%' THEN '렌터카' ELSE '리스' END AS GD_NM /*상품명*/
