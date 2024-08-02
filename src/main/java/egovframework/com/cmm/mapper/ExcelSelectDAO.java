@@ -1,7 +1,7 @@
 package egovframework.com.cmm.mapper;
 
 import egovframework.com.cmm.vo.ExcelDataVO;
-import egovframework.rte.psl.dataaccess.EgovAbstractMapper;
+import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 
 import java.util.List;
 
