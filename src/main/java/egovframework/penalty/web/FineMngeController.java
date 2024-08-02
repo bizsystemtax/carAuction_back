@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.cmm.ResponseCode;
@@ -15,7 +14,6 @@ import egovframework.com.cmm.service.ResultVO;
 import egovframework.penalty.ComnCdVO;
 import egovframework.penalty.FineMngeVO;
 import egovframework.penalty.service.FineMngeService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -62,16 +60,16 @@ public class FineMngeController {
 	})
 	@PostMapping(value = "/list")
 	public ResultVO selectFineMnge(@RequestBody Map<String, String> requestParams) throws Exception{
-		ResultVO resultVO = new ResultVO();
 		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
 		
-		String inVltDtStrt = requestParams.get("in_vlt_dt_strt");//위반일자시작
-		String inVltDtEnd = requestParams.get("in_vlt_dt_end");	//위반일자종료
-		String inVltKindCd = requestParams.get("in_vlt_kind_cd");//위반종류코드
-		String inSendPlcCd = requestParams.get("in_send_plc_cd");//발송처코드
-		String inGdCd = requestParams.get("in_gd_cd");			//상품코드
-		String inCsNm = requestParams.get("in_cs_nm");			//고객명
-		String inVhclNo = requestParams.get("in_vhcl_no");		//차량번호
+		String inVltDtStrt = requestParams.get("in_vlt_dt_strt").replaceAll("-", "");//위반일자시작
+		String inVltDtEnd = requestParams.get("in_vlt_dt_end").replaceAll("-", "");	//위반일자종료
+		String inVltKindCd = requestParams.get("in_vlt_kind_cd");					//위반종류코드
+		String inSendPlcCd = requestParams.get("in_send_plc_cd");					//발송처코드
+		String inGdCd = requestParams.get("in_gd_cd").replaceAll("[^0-9]","");		//상품코드
+		String inCsNm = requestParams.get("in_cs_nm");								//고객명
+		String inVhclNo = requestParams.get("in_vhcl_no");							//차량번호
 
 		//조회조건 VO 세팅
 		fineMngeVO.setInVltDtStrt(inVltDtStrt);
@@ -84,8 +82,6 @@ public class FineMngeController {
 			
 		//범칙금관리 조회 서비스 호출
 		Map<String, Object> resultMap = fineMngeService.retrieveFineMnge(fineMngeVO);
-		
-		resultMap.put("fineMngeVO", fineMngeVO);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

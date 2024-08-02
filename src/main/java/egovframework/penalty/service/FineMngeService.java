@@ -11,5 +11,5 @@ public interface FineMngeService {
 	public Map<String, Object> retrieveComboBoxList(ComnCdVO comnCdVO) throws Exception;
 
 	//범칙금관리 목록 조회
-	public Map<String, Object> retrieveFineMnge(FineMngeVO finemngeVO) throws Exception;
+	public Map<String, Object> retrieveFineMnge(FineMngeVO fineMngeVO) throws Exception;
 }

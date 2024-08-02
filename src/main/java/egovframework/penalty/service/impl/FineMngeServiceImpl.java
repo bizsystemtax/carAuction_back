@@ -1,7 +1,6 @@
 package egovframework.penalty.service.impl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -30,10 +29,8 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	//범칙금관리 목록 조회
 	@Override
 	public Map<String, Object> retrieveFineMnge(FineMngeVO fineMngeVO) throws Exception {
-		List<FineMngeVO> list = FineMngeDAO.retrieveFineMnge(fineMngeVO);
-		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("list", list);
+		map.put("resultList", FineMngeDAO.retrieveFineMnge(fineMngeVO));
 		
 		return map;
 	}

@@ -16,7 +16,7 @@ public class FineMngeDAO extends EgovAbstractMapper {
 	}
 	
 	//범칙금관리 목록 조회
-	public List<FineMngeVO> retrieveFineMnge(FineMngeVO fineMngeVO) throws Exception {
+	public List<FineMngeVO> retrieveFineMnge(FineMngeVO fineMngeVO) {
 		//범칙금관리 조회 XML 호출
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveFineMnge", fineMngeVO);
 	}

@@ -8,7 +8,14 @@
 		<result property="cdVal" column="CD_VAL"/>
 	</resultMap>
 	
-	<resultMap id="retrieveFineMnge" type="egovframework.penalty.FineMngeVO">
+	<resultMap id="FineMngeVO" type="egovframework.penalty.FineMngeVO">
+		<result property="inVltDtStrt" column="IN_VLT_DT_STRT"/>
+		<result property="inVltDtEnd" column="IN_VLT_DT_END"/>
+		<result property="inVltKindCd" column="IN_VLT_KIND_CD"/>
+		<result property="inSendPlcCd" column="IN_SEND_PLC_CD"/>
+		<result property="inGdCd" column="IN_GD_CD"/>
+		<result property="inCsNm" column="IN_CS_NM"/>
+		<result property="inVhclNo" column="IN_VHCL_NO"/>
 		<result property="no" column="NO"/>
 		<result property="gdNm" column="GD_NM"/>
 		<result property="csNm" column="CS_NM"/>
@@ -41,7 +48,7 @@
 	</select>
 	
 	<!-- Retrieve : 범칙금관리 목록 조회 -->
-	<select id="retrieveFineMnge" parameterType="egovframework.penalty.FineMngeVO" resultMap="retrieveFineMnge">
+	<select id="retrieveFineMnge" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
 		<![CDATA[
 		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC) AS NO /*순번*/
 				, CASE WHEN B.GD_CD LIKE 'RC%' THEN '렌터카' ELSE '리스' END AS GD_NM /*상품명*/
@@ -69,8 +76,32 @@
 		AND 	(A.VLT_DT < B.TMNT_DT OR B.TMNT_DT = '')
 		AND 	A.SEND_PLC_CD = C.SEND_PLD_CD 
 		AND 	A.SEND_PLC_SEQ = C.SEND_PLC_SEQ
-		/*(20240730) 내일와서 if문으로 검색조건 넣기*/
-		ORDER BY NO
+		AND		A.VLT_DT BETWEEN #{inVltDtStrt} AND #{inVltDtEnd} /*검색조건-위반일자*/
 		]]>
+		<!-- 위반종류코드 -->
+		<if test="inVltKindCd != null and inVltKindCd != ''">
+		AND		A.VLT_KIND_CD = #{inVltKindCd}
+		</if>
+		<!-- 발송처코드 -->
+		<if test="inSendPlcCd != null and inSendPlcCd != ''">
+		AND		A.SEND_PLC_CD = #{inSendPlcCd}
+		</if>
+		<!-- 상품코드(리스) -->
+		<if test="inGdCd == 1">
+		AND		B.GD_CD NOT LIKE 'RC%'
+		</if>
+		<!-- 상품코드(렌터카) -->
+		<if test="inGdCd == 2">
+		AND		B.GD_CD LIKE 'RC%'
+		</if>
+		<!-- 고객명 -->
+		<if test="inCsNm != null and inCsNm != ''">
+		AND		B.CS_NM = #{inCsNm}
+		</if>
+		<!-- 차량번호 -->
+		<if test="inVhclNo != null and inVhclNo != ''">
+		AND		A.VHCL_NO = #{inVhclNo}
+		</if>
+		ORDER BY NO
 	</select>
 </mapper>
