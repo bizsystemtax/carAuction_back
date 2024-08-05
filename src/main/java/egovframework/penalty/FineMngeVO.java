@@ -55,9 +55,12 @@ public class FineMngeVO implements Serializable {
 	private String pnltStatNm = "";		// 과태료상태명
 
 	//범칙금관리 조회 추가 데이터
-	private String no = "";				// 순번
+	private String id = "";				// 순번
 	private String gdNm = "";			// 상품명
 	private String csNm = "";			// 고객명
+	private String fineUploadNm = "";	// 범칙금업로드명
+	private String cfmtStatNm = "";		// 확정여부명
+	private String cfmtDt = "";			// 확정일자
 	private String sendPlcNm = "";		// 발송처명
 	private String sendPlcDeptNm = "";	// 발송처부서명
 	private String vltKindNm = "";		// 위반종류명
