@@ -66,7 +66,7 @@ public class PenaltyStdManageController {
 	})
 	@PostMapping(value = "/list")
 	public ResultVO selectPenaltyStdManageList(@RequestBody Map<String, String> requestParams) throws Exception {
-		String sendPldCd = requestParams.get("send_pld_cd");
+		String sendPlcCd = requestParams.get("send_plc_cd");
 		String docTypCd = requestParams.get("doc_typ_cd");
 		String sendPlcKindCd = requestParams.get("send_plc_kind_cd");
 		String rcptTypCd = requestParams.get("rcpt_typ_cd");
@@ -75,7 +75,7 @@ public class PenaltyStdManageController {
 		PenaltyStdManageVO paramVO = new PenaltyStdManageVO();
 		ResultVO resultVO = new ResultVO();
 		
-		paramVO.setSendPldCd(sendPldCd);
+		paramVO.setSendPlcCd(sendPlcCd);
 		paramVO.setDocTypCd(docTypCd);
 		paramVO.setSendPlcKindCd(sendPlcKindCd);
 		paramVO.setRcptTypCd(rcptTypCd);

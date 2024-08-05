@@ -9,9 +9,9 @@
 	</resultMap>
 
 	<resultMap id="PenaltyStdManageVO" type="egovframework.penalty.PenaltyStdManageVO">
-		<result property="sendPldCd" column="SEND_PLD_CD"/>
+		<result property="sendPlcCd" column="SEND_PLC_CD"/>
 		<result property="sendPlcSeq" column="SEND_PLD_SEQ"/>
-		<result property="sendPldCdSeq" column="SEND_PLD_CD_SEQ"/>
+		<result property="sendPlcCdSeq" column="SEND_PLC_CD_SEQ"/>
 		<result property="docTypCd" column="DOC_TYP_CD"/>
 		<result property="sendPlcKindCd" column="SEND_PLC_KIND_CD"/>
 		<result property="sendPlcKindNm" column="SEND_PLC_KIND_NM"/>
@@ -45,12 +45,12 @@
 	<select id="selectPenaltyStdManageList" parameterType="egovframework.penalty.PenaltyStdManageVO" resultMap="PenaltyStdManageVO">
 		select
 			(select CD_NM from biz_comn_cd_dtl where COMN_CD_ENG_NM = 'SEND_PLC_KIND_CD' AND CD_VAL = std.SEND_PLC_KIND_CD) as SEND_PLC_KIND_NM,
-			CONCAT(std.SEND_PLD_CD, '-', std.SEND_PLC_SEQ) as SEND_PLD_CD_SEQ,
+			CONCAT(std.SEND_PLC_CD, '-', std.SEND_PLC_SEQ) as SEND_PLC_CD_SEQ,
 			std.*
 		from biz_fine_send_plc_std_mnge as std
 		<where>
-			<if test="sendPldCd != null and sendPldCd != ''">
-				and SEND_PLD_CD = #{sendPldCd}
+			<if test="sendPlcCd != null and sendPlcCd != ''">
+				and SEND_PLC_CD = #{sendPlcCd}
 			</if>
 			<if test="docTypCd != null and docTypCd != ''">
 				and DOC_TYP_CD = #{docTypCd}

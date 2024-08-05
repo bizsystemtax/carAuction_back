@@ -10,9 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PenaltyStdManageVO implements Serializable {
-	private String sendPldCd = "";				// 발송처 코드
+	private String sendPlcCd = "";				// 발송처 코드
 	private String sendPlcSeq = "";				// 발송처 일련번호
-	private String sendPldCdSeq = "";			// 발송처 코드 + 일련번호
+	private String sendPlcCdSeq = "";			// 발송처 코드 + 일련번호
 	private String docTypCd = "";				// 문서유형
 	private String sendPlcKindCd = "";			// 발송처 종류 코드
 	private String sendPlcKindNm = "";			// 발송처 종류 코드명
