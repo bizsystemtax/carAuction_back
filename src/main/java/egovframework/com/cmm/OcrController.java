@@ -55,7 +55,6 @@ public class OcrController {
         if (carNumberMatcher.find()) {
             data.put("차량번호", carNumberMatcher.group());
         } else {
-//            data.put("차량번호", "차량번호를 찾을 수 없습니다.");
             data.put("차량번호", " ");
         }
 
@@ -77,7 +76,6 @@ public class OcrController {
                 String day = violationDateMatcher.group(3);
                 data.put("위반일자", String.format("%s년 %s월 %s일", year, month, day));
             } else {
-                // data.put("위반일자", "위반일자를 찾을 수 없습니다.");
                 data.put("위반일자", " ");
             }
         }
@@ -94,7 +92,6 @@ public class OcrController {
             if (violationTimeMatcher.find()) {
                 data.put("위반시각", violationTimeMatcher.group());
             } else {
-//                data.put("위반시각", "위반시각을 찾을 수 없습니다.");
                 data.put("위반시각", " ");
             }
         }
@@ -105,7 +102,6 @@ public class OcrController {
         if (accountNumberMatcher.find()) {
             data.put("가상계좌번호", accountNumberMatcher.group());
         } else {
-//            data.put("가상계좌번호", "가상계좌번호를 찾을 수 없습니다.");
             data.put("가상계좌번호", " ");
         }
 
@@ -113,7 +109,6 @@ public class OcrController {
         Pattern bankPattern = Pattern.compile("\\b(국민은행|우리은행|SC제일은행|한국씨티은행|신한은행|하나은행|수협은행|NH농협은행|국민|우리|제일|씨티|신한|하나|수협|농협)\\b");
         Matcher bankMatcher = bankPattern.matcher(ocrText);
 
-//        String fullName = "가상계좌은행명을 찾을 수 없습니다.";
         String fullName = " ";
 
         if (bankMatcher.find()) {
@@ -165,10 +160,9 @@ public class OcrController {
         Matcher addressMatcher = addressPattern.matcher(ocrText);
 
         if (addressMatcher.find()) {
-            data.put("주소", addressMatcher.group());
+            data.put("발송처주소", addressMatcher.group());
         } else {
-//            data.put("주소", "주소를 찾을 수 없습니다.");
-            data.put("주소", " ");
+            data.put("발송처주소", " ");
         }
 
         // 지로번호(고지서)  <와 + 사이의 숫자 패턴
@@ -177,7 +171,6 @@ public class OcrController {
         if (numberMatcher.find()) {
             data.put("고지서번호", numberMatcher.group(1));
         } else {
-//            data.put("고지서번호", "고지서번호를 찾을 수 없습니다.");
             data.put("고지서번호", " ");
         }
         
@@ -187,7 +180,6 @@ public class OcrController {
         if (districtOfficeMatcher.find()) {
             data.put("발급관청", districtOfficeMatcher.group());
         } else {
-//            data.put("발급관청", "발급관청을 찾을 수 없습니다.");
             data.put("발급관청", " ");
         }
 
@@ -210,6 +202,39 @@ public class OcrController {
         if (!found) {
             data.put("위반내용", "위반내용을 찾을 수 없습니다.");
         }
+        
+        
+        // 접수 일자 패턴
+        Pattern dateOfReceiptPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
+        Pattern dateOfReceiptPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+
+        Matcher dateOfReceiptMatcher = dateOfReceiptPatternFull.matcher(ocrText);
+        if (dateOfReceiptMatcher.find()) {
+            String year = dateOfReceiptMatcher.group(1);
+            String month = dateOfReceiptMatcher.group(2);
+            String day = dateOfReceiptMatcher.group(3);
+            data.put("위반일자", String.format("%s년 %s월 %s일", year, month, day));
+        } else {
+        	dateOfReceiptMatcher = dateOfReceiptPatternShort.matcher(ocrText);
+            if (dateOfReceiptMatcher.find()) {
+                String year = "20" + dateOfReceiptMatcher.group(1);
+                String month = dateOfReceiptMatcher.group(2);
+                String day = dateOfReceiptMatcher.group(3);
+                data.put("접수일자", String.format("%s년 %s월 %s일", year, month, day));
+            } else {
+                data.put("접수일자", " ");
+            }
+        }
+        
+        data.put("위반장소", " ");
+        data.put("납부기한일자", " ");
+        data.put("납부계좌", " ");
+        data.put("범칙금발생금액", " ");
+        data.put("우편번호", " ");
+        data.put("발송처상세주소", " ");
+        data.put("픽업일자", " ");
+        data.put("이미지주소", " ");
+        data.put("문서유형", " ");
 
         return data;
     }
