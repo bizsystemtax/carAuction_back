@@ -22,6 +22,7 @@
 		<result property="vhclNo" column="VHCL_NO"/>
 		<result property="vltDt" column="VLT_DT"/>
 		<result property="vltAtime" column="VLT_ATIME"/>
+		<result property="fineSeq" column="FINE_SEQ"/>
 		<result property="fineUploadNm" column="FINE_UPLOAD_NM"/>
 		<result property="cfmtStatNm" column="CFMT_STAT_NM"/>
 		<result property="cfmtDt" column="CFMT_DT"/>
@@ -37,6 +38,8 @@
 		<result property="drvrChgeYn" column="DRVR_CHGE_YN"/>
 		<result property="drvrChgeDt" column="DRVR_CHGE_DT"/>
 		<result property="loanStatNm" column="LOAN_STAT_NM"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userIp" column="USER_IP"/>
 	</resultMap>
 	
 	<!-- Retrieve : 범칙금관리 검색조건 콤보박스 조회 -->
@@ -67,6 +70,7 @@
 				, A.VHCL_NO /*차량번호*/
 				, A.VLT_DT /*위반일자*/
 				, A.VLT_ATIME /*위반시각*/
+				, A.FINE_SEQ /*범칙금일련번호*/
 				, (SELECT X.CD_NM FROM BIZ_COMN_CD_DTL X WHERE X.COMN_CD_ENG_NM = 'FINE_UPLOAD_CD' AND X.CD_VAL = A.FINE_UPLOAD_CD) AS FINE_UPLOAD_NM /*범칙금업로드명*/
 				, CASE WHEN A.CFMT_DT != '' THEN '확정' ELSE '미확정' END AS CFMT_STAT_NM /*확정상태명*/
 				, A.CFMT_DT /*확정일자*/
@@ -116,6 +120,33 @@
 		<if test="inVhclNo != null and inVhclNo != ''">
 		AND		A.VHCL_NO = #{inVhclNo}
 		</if>
+		<!-- 위반시각(유효성) -->
+		<if test="vltAtime != null and vltAtime != ''">
+		AND		A.VLT_ATIME = #{vltAtime}
+		</if>
+		<!-- 차량번호(유효성) -->
+		<if test="vhclNo != null and vhclNo != ''">
+		AND		A.VHCL_NO = #{vhclNo}
+		</if>
+		<!-- 범칙금일련번호(유효성) -->
+		<if test="fineSeq != null and fineSeq != ''">
+		AND		A.FINE_SEQ = #{fineSeq}
+		</if>
 		ORDER BY ID
+	</select>
+	
+	<!-- Update : 범칙금관리 확정 상태 업데이트 -->
+	<select id="updateCfmtStat" parameterType="egovframework.penalty.FineMngeVO">
+		<![CDATA[
+		UPDATE	BIZ_FINE_MAS /*BIZ_범칙금기본*/
+		SET		CFMT_DT = #{cfmtDt} /*확정일자*/
+				, LAST_CHNGMN_ID = #{userId} /*최종변경자ID*/
+				, LAST_CHGE_IP_ADDR = #{userIp} /*최종변경IP주소*/
+		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
+		WHERE	VLT_DT = #{vltDt}
+		AND		VLT_ATIME = #{vltAtime}
+		AND		VHCL_NO = #{vhclNo}
+		AND		FINE_SEQ = #{fineSeq}
+		]]>
 	</select>
 </mapper>

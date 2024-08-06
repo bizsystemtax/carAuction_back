@@ -21,4 +21,9 @@ public class FineMngeDAO extends EgovAbstractMapper {
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveFineMnge", fineMngeVO);
 	}
 
+	//범칙금관리 확정 상태 업데이트
+	public List<FineMngeVO> updateCfmtStat(FineMngeVO fineMngeVO) {
+		//범칙금관리 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.updateCfmtStat", fineMngeVO);
+	}
 }

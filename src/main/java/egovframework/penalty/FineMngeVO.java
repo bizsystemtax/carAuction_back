@@ -32,6 +32,7 @@ public class FineMngeVO implements Serializable {
 	private String rcptDt = "";			// 접수일자
 	private String pymtDdayDt = "";		// 납부기한일자
 	private String pymtDt = "";			// 납입일자
+	private String cfmtDt = "";			// 확정일자
 	private String sendDt = "";			// 발송일자
 	private String sendEmpNo = "";		// 발송사원번호
 	private String fineAmt = "";		// 범칙금금액
@@ -60,20 +61,19 @@ public class FineMngeVO implements Serializable {
 	private String csNm = "";			// 고객명
 	private String fineUploadNm = "";	// 범칙금업로드명
 	private String cfmtStatNm = "";		// 확정여부명
-	private String cfmtDt = "";			// 확정일자
 	private String sendPlcNm = "";		// 발송처명
 	private String sendPlcDeptNm = "";	// 발송처부서명
 	private String vltKindNm = "";		// 위반종류명
 	private String drvrChgeYn = "";		// 운전자변경여부
 	private String loanStatNm = "";		// 대출상태명
+	
+	//서비스 처리 후 재조회용 반환 값
+	private String svcNm = "";			// 서비스명
+	private String submitYn = "";		// 결과여부
 
 	//필수
-	private String firstRegrId = "";	// 최초등록자ID
-	private String firstRegTstmp = "";	// 최초등록타임스탬프
-	private String firstRegIpAddr = "";	// 최초등록IP주소
-	private String lastChngmnId = "";	// 최종변경자ID
-	private String lastChgeTstmp = "";	// 최종변경타임스탬프
-	private String lastChgeIpAddr = "";	// 최종변경IP주소
+	private String userId = "";	// 사용자ID
+	private String userIp = "";	// 사용자IP주소
 
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
