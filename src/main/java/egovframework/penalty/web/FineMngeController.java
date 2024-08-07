@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
+import egovframework.com.cmm.exception.BizException;
+import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.ResultVO;
-import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.penalty.ComnCdVO;
 import egovframework.penalty.FineMngeVO;
 import egovframework.penalty.service.FineMngeService;
@@ -106,80 +110,86 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/cfmt")
-	public ResultVO updateCfmtStat(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResponseEntity<ResultVO> updateCfmtStat(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		try {
-			//사용자 정보 세팅
-			LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-			fineMngeVO.setUserId(loginVO.getId());
-			fineMngeVO.setUserIp(loginVO.getIp());
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultMap.put("errMsg", "사용자 정보를 불러오는 중 오류가 발생했습니다.");
-			resultVO.setResult(resultMap);
-			return resultVO;
-		}
+			LoginVO loginVO = null;
 
-		for(int i=0; i<requestParams.size(); i++) {
-			Map<String, String> list = requestParams.get(i);
-			
-			String vltDt = list.get("vlt_dt");		//위반일자
-			String vltAtime = list.get("vlt_atime");//위반시각
-			String vhclNo = list.get("vhcl_no");	//차량번호
-			String fineSeq = list.get("fine_seq");	//범칙금일련번호
-			String cfmtDt = LocalDate.now().toString().replaceAll("-", ""); //확정일자(당일로 세팅)
-			
-			//확정일자 업데이트용 VO 세팅
-			fineMngeVO.setVltDt(vltDt);
-			fineMngeVO.setVltAtime(vltAtime);
-			fineMngeVO.setVhclNo(vhclNo);
-			fineMngeVO.setFineSeq(fineSeq);
-			fineMngeVO.setCfmtDt(cfmtDt);
-			
-			//유효한 데이터인지 확인용 VO 세팅
-			fineMngeVO.setInVltDtStrt(vltDt);
-			fineMngeVO.setInVltDtEnd(vltDt);
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
 
-			String errKey = "(위반일자: " + vltDt + " / 위반시각: " + vltAtime + " / 차량번호: " + vhclNo + ")";
-			
-			try {
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				
+				String vltDt = list.get("vlt_dt");		//위반일자
+				String vltAtime = list.get("vlt_atime");//위반시각
+				String vhclNo = list.get("vhcl_no");	//차량번호
+				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String cfmtDt = LocalDate.now().toString().replaceAll("-", ""); //확정일자(당일로 세팅)
+				
+				//확정일자 업데이트용 VO 세팅
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineSeq(fineSeq);
+				fineMngeVO.setCfmtDt(cfmtDt);
+				
+				//유효한 데이터인지 확인용 VO 세팅
+				fineMngeVO.setInVltDtStrt(vltDt);
+				fineMngeVO.setInVltDtEnd(vltDt);
+	
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
 				//범칙금관리 조회 서비스 호출
 				Map<String, Object> fineData = fineMngeService.retrieveFineMnge(fineMngeVO);
 
 				//조회되지 않을 경우 오류
 				if(fineData.isEmpty() || fineData == null) {
-					throw new Exception("범칙금 유효성 확인 중 오류가 발생했습니다.\n" + errKey);
+					throw new BizException(ErrorCode.ERR001, errKey);
 				}
+				//왜 안돼!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 				//이미 확정된 경우 오류
-				else if(fineData.get("cfmt_dt") != "") {
-					throw new Exception("이미 확정된 범칙금 내역입니다.\n" + errKey);
+				else if(!"".equals(Objects.toString(fineData.get("cfmtDt"), ""))) {
+					throw new BizException(ErrorCode.ERR002, errKey);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				resultMap.put("errMsg", e.getMessage());
-				resultVO.setResult(resultMap);
-				return resultVO;
-			}
-			
-			try {
+				
 				//범칙금관리 확정 상태 업데이트 서비스 호출
-				fineMngeService.updateCfmtStat(fineMngeVO);
-			} catch (Exception e) {
-				e.printStackTrace();
-				resultMap.put("errMsg", "범칙금 확정 처리 중 오류가 발생했습니다.\n" + errKey);
-				resultVO.setResult(resultMap);
-				return resultVO;
+				int cnt = fineMngeService.updateCfmtStat(fineMngeVO);
+				
+				//업데이트를 실패한 경우 오류
+				if(cnt <= 0) {
+					throw new BizException(ErrorCode.ERR003, errKey);
+				}
 			}
+			resultMap.put("svcNm", "cfmt");
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
 		}
-		resultMap.put("svcNm", "cfmt");
-		
-		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
-		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-		resultVO.setResult(resultMap);
-		
-		return resultVO;
 	}
 }

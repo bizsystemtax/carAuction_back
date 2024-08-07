@@ -37,10 +37,9 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 
 	//범칙금관리 확정 상태 업데이트
 	@Override
-	public Map<String, Object> updateCfmtStat(FineMngeVO fineMngeVO) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", FineMngeDAO.updateCfmtStat(fineMngeVO));
+	public int updateCfmtStat(FineMngeVO fineMngeVO) throws Exception {
+		int cnt = FineMngeDAO.updateCfmtStat(fineMngeVO);
 		
-		return map;
+		return cnt;
 	}
 }

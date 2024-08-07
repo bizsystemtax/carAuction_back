@@ -136,17 +136,16 @@
 	</select>
 	
 	<!-- Update : 범칙금관리 확정 상태 업데이트 -->
-	<select id="updateCfmtStat" parameterType="egovframework.penalty.FineMngeVO">
+	<update id="updateCfmtStat" parameterType="egovframework.penalty.FineMngeVO">
 		<![CDATA[
 		UPDATE	BIZ_FINE_MAS /*BIZ_범칙금기본*/
 		SET		CFMT_DT = #{cfmtDt} /*확정일자*/
 				, LAST_CHNGMN_ID = #{userId} /*최종변경자ID*/
 				, LAST_CHGE_IP_ADDR = #{userIp} /*최종변경IP주소*/
-		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
 		WHERE	VLT_DT = #{vltDt}
 		AND		VLT_ATIME = #{vltAtime}
 		AND		VHCL_NO = #{vhclNo}
 		AND		FINE_SEQ = #{fineSeq}
 		]]>
-	</select>
+	</update>
 </mapper>

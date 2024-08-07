@@ -14,5 +14,5 @@ public interface FineMngeService {
 	public Map<String, Object> retrieveFineMnge(FineMngeVO fineMngeVO) throws Exception;
 
 	//범칙금관리 확정 상태 업데이트
-	public Map<String, Object> updateCfmtStat(FineMngeVO fineMngeVO) throws Exception;
+	public int updateCfmtStat(FineMngeVO fineMngeVO) throws Exception;
 }
