@@ -66,4 +66,14 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="selectNtcdocSendPlcNmList" parameterType="java.util.Map" resultMap="PenaltyStdManageVO">
+		select SEND_PLC_CD, NTCDOC_SEND_PLC_NM from biz_fine_send_plc_std_mnge
+		<where>
+			<if test="ntcdocSendPlcNm != null and ntcdocSendPlcNm != ''">
+				NTCDOC_SEND_PLC_NM like CONCAT('%', #{ntcdocSendPlcNm}, '%')
+			</if>
+		</where>
+		group by SEND_PLC_CD
+	</select>
 </mapper>

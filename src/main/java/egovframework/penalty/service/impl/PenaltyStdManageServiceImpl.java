@@ -36,4 +36,14 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 		
 		return map;
 	}
+	
+	// 고지서 발송처명 조회
+	@Override
+	public Map<String, Object> selectNtcdocSendPlcList(Map<String, Object> paramMap) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("resultList", penaltyStdManageDAO.selectNtcdocSendPlcList(paramMap));
+		
+		return map;
+	}
 }

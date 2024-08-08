@@ -1,6 +1,8 @@
 package egovframework.penalty.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
@@ -18,5 +20,10 @@ public class PenaltyStdManageDAO extends EgovAbstractMapper {
 	public List<PenaltyStdManageVO> selectPenaltyStdManageList(PenaltyStdManageVO penaltyStdManageVO) {
 		// TODO Auto-generated method stub
 		return (List<PenaltyStdManageVO>) list("PenaltyStdManageDAO.selectPenaltyStdManageList", penaltyStdManageVO);
+	}
+	
+	public List<PenaltyStdManageVO> selectNtcdocSendPlcList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return (List<PenaltyStdManageVO>) list("PenaltyStdManageDAO.selectNtcdocSendPlcNmList", paramMap);
 	}
 }
