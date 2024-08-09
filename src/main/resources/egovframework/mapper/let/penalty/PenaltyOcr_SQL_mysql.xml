@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PenaltyOcrDAO">
+
+	<select id="countSimilarRecords" parameterType="egovframework.penalty.PenaltyOcrVO" resultType="int">
+        SELECT COUNT(*) 
+        FROM biz_fine_mas 
+        WHERE VLT_DT = #{vltDt} 
+          AND VLT_ATIME = #{vltAtime} 
+          AND VHCL_NO = #{vhclNo}
+    </select>
+
+
+    <insert id="insertOcr" parameterType="egovframework.penalty.PenaltyOcrVO">
+        INSERT INTO biz_fine_mas (
+            VLT_DT,
+            VLT_ATIME,
+            VHCL_NO,
+            FINE_SEQ,
+            VLT_KIND_CD,
+            SEND_PLC_CD,
+            SEND_PLC_SEQ,
+            VLT_CTS,
+            VLT_PNT,
+            RCPT_DT,
+            PYMT_DDAY_DT,
+            PYMT_DT,
+            CFMT_DT,
+            SEND_DT,
+            SEND_EMP_NO,
+            FINE_AMT,
+            NTCDOC_KIND_CD,
+            NTCDOC_DOC_NO,
+            NTCDOC_IMG_URL,
+            ACT_BANK_NM1,
+            ACT_NO1,
+            ACT_BANK_NM2,
+            ACT_NO2,
+            ACT_BANK_NM3,
+            ACT_NO3,
+            ACT_BANK_NM4,
+            ACT_NO4,
+            DRVR_CHGE_DT,
+            FINE_UPLOAD_CD,
+            DOC_FINE_NO1,
+            DOC_FINE_NO2,
+            DOC_FINE_NO3,
+            DOC_FINE_NO4,
+            PNLT_STAT_NM,
+            FIRST_REGR_ID,
+            FIRST_REG_TSTMP,
+            FIRST_REG_IP_ADDR,
+            LAST_CHNGMN_ID,
+            LAST_CHGE_TSTMP,
+            LAST_CHGE_IP_ADDR
+        ) VALUES (
+            #{vltDt},
+            #{vltAtime},
+            #{vhclNo},
+            #{fineSeq},
+            #{vltKindCd},
+            #{sendPlcCd},
+            #{sendPlcSeq},
+            #{vltCts},
+            #{vltPnt},
+            #{rcptDt},
+            #{pymtDdayDt},
+            #{pymtDt},
+            #{cfmtDt},
+            #{sendDt},
+            #{sendEmpNo},
+            #{fineAmt},
+            #{ntcdocKindCd},
+            #{ntcdocDocNo},
+            #{ntcdocImgUrl},
+            #{actBankNm1},
+            #{actNo1},
+            #{actBankNm2},
+            #{actNo2},
+            #{actBankNm3},
+            #{actNo3},
+            #{actBankNm4},
+            #{actNo4},
+            #{drvrChgeDt},
+            #{fineUploadCd},
+            #{docFineNo1},
+            #{docFineNo2},
+            #{docFineNo3},
+            #{docFineNo4},
+            #{pnltStatNm},
+            #{firstRegrId},
+            #{firstRegTstmp},
+            #{firstRegIpAddr},
+            #{lastChngmnId},
+            #{lastChgeTstmp},
+            #{lastChgeIpAddr}
+        )
+    </insert>
+</mapper>

@@ -153,15 +153,18 @@ public class FineMngeController {
 				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
 				
 				//범칙금관리 조회 서비스 호출
-				Map<String, Object> fineData = fineMngeService.retrieveFineMnge(fineMngeVO);
+				Map<String, Object> fineDataList = fineMngeService.retrieveFineMnge(fineMngeVO);
+				List<FineMngeVO> fineData = (List<FineMngeVO>)fineDataList.get("resultList");
 
 				//조회되지 않을 경우 오류
 				if(fineData.isEmpty() || fineData == null) {
-					throw new BizException(ErrorCode.ERR001, errKey);
+					throw new BizException(ErrorCode.ERR004, errKey);
 				}
-				//왜 안돼!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+				
+				String oldCfmtDt = Objects.toString(fineData.get(0).getCfmtDt(), ""); //확정일자
+				
 				//이미 확정된 경우 오류
-				else if(!"".equals(Objects.toString(fineData.get("cfmtDt"), ""))) {
+				if(!"".equals(oldCfmtDt)) {
 					throw new BizException(ErrorCode.ERR002, errKey);
 				}
 				
@@ -178,7 +181,6 @@ public class FineMngeController {
 			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 			resultVO.setResult(resultMap);
-			
 			return ResponseEntity.ok(resultVO);
 		} catch (BizException e) {
 			e.printStackTrace();
