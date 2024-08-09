@@ -10,7 +10,7 @@
 
 	<resultMap id="PenaltyStdManageVO" type="egovframework.penalty.PenaltyStdManageVO">
 		<result property="sendPlcCd" column="SEND_PLC_CD"/>
-		<result property="sendPlcSeq" column="SEND_PLD_SEQ"/>
+		<result property="sendPlcSeq" column="SEND_PLC_SEQ"/>
 		<result property="sendPlcCdSeq" column="SEND_PLC_CD_SEQ"/>
 		<result property="docTypCd" column="DOC_TYP_CD"/>
 		<result property="sendPlcKindCd" column="SEND_PLC_KIND_CD"/>
@@ -76,4 +76,225 @@
 		</where>
 		group by SEND_PLC_CD
 	</select>
+	
+	<select id="selectMaxSendPlcCd" resultType="java.util.Map">
+		select CAST(NVL(MAX(SEND_PLC_CD), 0) + 1 AS INT) as SEND_PLC_CD from biz_fine_send_plc_std_mnge
+	</select>
+	
+	<select id="selectMaxSendPlcSeq" parameterType="java.util.Map" resultType="java.util.Map">
+		select CAST(NVL(MAX(SEND_PLC_SEQ), 0) + 1 AS INT) as SEND_PLC_SEQ from biz_fine_send_plc_std_mnge where SEND_PLC_CD = #{sendPlcCd}
+	</select>
+	
+	<insert id="insertSendPlcData" parameterType="java.util.Map">
+		insert into biz_fine_send_plc_std_mnge (
+			SEND_PLC_CD,
+			SEND_PLC_SEQ,
+			SEND_PLC_KIND_CD,
+			NTCDOC_SEND_PLC_NM,
+			NTCDOC_SEND_PLC_DEPT_NM,
+			COMN_SEND_PLC_NM,
+			DOC_TYP_CD,
+			RCPT_TYP_CD,
+			HDLG_TYP_CD,
+			FIRST_REGR_ID,
+			FIRST_REG_TSTMP,
+			FIRST_REG_IP_ADDR,
+			LAST_CHNGMN_ID,
+			LAST_CHGE_TSTMP,
+			LAST_CHGE_IP_ADDR
+			<if test="st1SendPlcOficNm != null">
+				, ST1_SEND_PLC_OFIC_NM
+			</if>
+			<if test="scndSendPlcOficNm != null">
+				, SCND_SEND_PLC_OFIC_NM
+			</if>
+			<if test="st1SendPlcTelno != null">
+				, ST1_SEND_PLC_TELNO
+			</if>
+			<if test="scndSendPlcTelno != null">
+				, SCND_SEND_PLC_TELNO
+			</if>
+			<if test="thrdSendPlcTelno != null">
+				, THRD_SEND_PLC_TELNO
+			</if>
+			<if test="faxno != null">
+				, FAXNO
+			</if>
+			<if test="oficEmailAddr != null">
+				, OFIC_EMAIL_ADDR
+			</if>
+			<if test="hpageAddr != null">
+				, HPAGE_ADDR
+			</if>
+			<if test="zipCd != null">
+				, ZIP_CD
+			</if>
+			<if test="sendPlcAddr != null">
+				, SEND_PLC_ADDR
+			</if>
+			<if test="sendPlcSpcfcAddr != null">
+				, SEND_PLC_SPCFC_ADDR
+			</if>
+			<if test="plclMtr != null">
+				, PLCL_MTR
+			</if>
+			<if test="sendPlcRem != null">
+				, SEND_PLC_REM
+			</if>
+			<if test="st1DeptKeyWordCts != null">
+				, ST1_DEPT_KEY_WORD_CTS
+			</if>
+			<if test="scndDeptKeyWordCts != null">
+				, SCND_DEPT_KEY_WORD_CTS
+			</if>
+			<if test="thrdDeptKeyWordCts != null">
+				, THRD_DEPT_KEY_WORD_CTS
+			</if>
+		) values (
+			#{sendPlcCd},
+			#{sendPlcSeq},
+			#{sendPlcKindCd},
+			#{ntcdocSendPlcNm},
+			#{ntcdocSendPlcDeptNm},
+			#{comnSendPlcNm},
+			#{docTypCd},
+			#{rcptTypCd},
+			#{hdlgTypCd},
+			#{firstRegrId},
+			current_timestamp(),
+			#{firstRegIpAddr},
+			#{lastChngmnId},
+			current_timestamp(),
+			#{lastChgeIpAddr}
+			<if test="st1SendPlcOficNm != null">
+				, #{st1SendPlcOficNm}
+			</if>
+			<if test="scndSendPlcOficNm != null">
+				, #{scndSendPlcOficNm}
+			</if>
+			<if test="st1SendPlcTelno != null">
+				, #{st1SendPlcTelno}
+			</if>
+			<if test="scndSendPlcTelno != null">
+				, #{scndSendPlcTelno}
+			</if>
+			<if test="thrdSendPlcTelno != null">
+				, #{thrdSendPlcTelno}
+			</if>
+			<if test="faxno != null">
+				, #{faxno}
+			</if>
+			<if test="oficEmailAddr != null">
+				, #{oficEmailAddr}
+			</if>
+			<if test="hpageAddr != null">
+				, #{hpageAddr}
+			</if>
+			<if test="zipCd != null">
+				, #{zipCd}
+			</if>
+			<if test="sendPlcAddr != null">
+				, #{sendPlcAddr}
+			</if>
+			<if test="sendPlcSpcfcAddr != null">
+				, #{sendPlcSpcfcAddr}
+			</if>
+			<if test="plclMtr != null">
+				, #{plclMtr}
+			</if>
+			<if test="sendPlcRem != null">
+				, #{sendPlcRem}
+			</if>
+			<if test="st1DeptKeyWordCts != null">
+				, #{st1DeptKeyWordCts}
+			</if>
+			<if test="scndDeptKeyWordCts != null">
+				, #{scndDeptKeyWordCts}
+			</if>
+			<if test="thrdDeptKeyWordCts != null">
+				, #{thrdDeptKeyWordCts}
+			</if>
+		)
+	</insert>
+	
+	<update id="updateSendPlcData" parameterType="java.util.Map">
+		update biz_fine_send_plc_std_mnge set
+			LAST_CHNGMN_ID = #{lastChngmnId},
+			LAST_CHGE_TSTMP = current_timestamp(),
+			LAST_CHGE_IP_ADDR = #{lastChgeIpAddr}
+			<if test="sendPlcKindCd != null">
+				, SEND_PLC_KIND_CD = #{sendPlcKindCd}
+			</if>
+			<if test="ntcdocSendPlcNm != null">
+				, NTCDOC_SEND_PLC_NM = #{ntcdocSendPlcNm}
+			</if>
+			<if test="ntcdocSendPlcDeptNm != null">
+				, NTCDOC_SEND_PLC_DEPT_NM = #{ntcdocSendPlcDeptNm}
+			</if>
+			<if test="comnSendPlcNm != null">
+				, COMN_SEND_PLC_NM = #{comnSendPlcNm}
+			</if>
+			<if test="st1SendPlcOficNm != null">
+				, ST1_SEND_PLC_OFIC_NM = #{st1SendPlcOficNm}
+			</if>
+			<if test="scndSendPlcOficNm != null">
+				, SCND_SEND_PLC_OFIC_NM = #{scndSendPlcOficNm}
+			</if>
+			<if test="st1SendPlcTelno != null">
+				, ST1_SEND_PLC_TELNO = #{st1SendPlcTelno}
+			</if>
+			<if test="scndSendPlcTelno != null">
+				, SCND_SEND_PLC_TELNO = #{scndSendPlcTelno}
+			</if>
+			<if test="thrdSendPlcTelno != null">
+				, THRD_SEND_PLC_TELNO = #{thrdSendPlcTelno}
+			</if>
+			<if test="faxno != null">
+				, FAXNO = #{faxno}
+			</if>
+			<if test="oficEmailAddr != null">
+				, OFIC_EMAIL_ADDR = #{oficEmailAddr}
+			</if>
+			<if test="hpageAddr != null">
+				, HPAGE_ADDR = #{hpageAddr}
+			</if>
+			<if test="docTypCd != null">
+				, DOC_TYP_CD = #{docTypCd}
+			</if>
+			<if test="rcptTypCd != null">
+				, RCPT_TYP_CD = #{rcptTypCd}
+			</if>
+			<if test="hdlgTypCd != null">
+				, HDLG_TYP_CD = #{hdlgTypCd}
+			</if>
+			<if test="zipCd != null">
+				, ZIP_CD = #{zipCd}
+			</if>
+			<if test="sendPlcAddr != null">
+				, SEND_PLC_ADDR = #{sendPlcAddr}
+			</if>
+			<if test="sendPlcSpcfcAddr != null">
+				, SEND_PLC_SPCFC_ADDR = #{sendPlcSpcfcAddr}
+			</if>
+			<if test="plclMtr != null">
+				, PLCL_MTR = #{plclMtr}
+			</if>
+			<if test="sendPlcRem != null">
+				, SEND_PLC_REM = #{sendPlcRem}
+			</if>
+			<if test="st1DeptKeyWordCts != null">
+				, ST1_DEPT_KEY_WORD_CTS = #{st1DeptKeyWordCts}
+			</if>
+			<if test="scndDeptKeyWordCts != null">
+				, SCND_DEPT_KEY_WORD_CTS = #{scndDeptKeyWordCts}
+			</if>
+			<if test="thrdDeptKeyWordCts != null">
+				, THRD_DEPT_KEY_WORD_CTS = #{thrdDeptKeyWordCts}
+			</if>
+		where SEND_PLC_CD = #{sendPlcCd} and SEND_PLC_SEQ = #{sendPlcSeq}
+	</update>
+	
+	<delete id="deleteSendPlcData" parameterType="java.util.Map">
+		delete from biz_fine_send_plc_std_mnge where SEND_PLC_CD = #{sendPlcCd} and SEND_PLC_SEQ = #{sendPlcSeq}
+	</delete>
 </mapper>

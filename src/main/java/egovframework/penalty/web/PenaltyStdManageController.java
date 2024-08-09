@@ -8,12 +8,10 @@ import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
-import egovframework.penalty.ComnCdVO;
 import egovframework.penalty.PenaltyStdManageVO;
 import egovframework.penalty.service.PenaltyStdManageService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,8 +27,7 @@ public class PenaltyStdManageController {
 	 * 범칙금 발송처 기준관리 콤보박스 값을 조회한다.
 	 * 
 	 *
-	 * @param request
-	 * @param paramVO
+	 * @param 
 	 * @return resultVO
 	 * @throws Exception
 	 */
@@ -41,9 +38,8 @@ public class PenaltyStdManageController {
 	@PostMapping(value = "/comboBoxList")
 	public ResultVO selectComboBoxList() throws Exception {
 		ResultVO resultVO = new ResultVO();
-		ComnCdVO paramVO = new ComnCdVO();
 		
-		Map<String, Object> resultMap = penaltyStdManageService.selectComboBoxList(paramVO);
+		Map<String, Object> resultMap = penaltyStdManageService.selectComboBoxList();
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -56,8 +52,7 @@ public class PenaltyStdManageController {
 	 * 범칙금 발송처 기준관리 리스트를 조회한다.
 	 * 
 	 *
-	 * @param request
-	 * @param paramVO
+	 * @param requestParams
 	 * @return resultVO
 	 * @throws Exception
 	 */
@@ -89,8 +84,7 @@ public class PenaltyStdManageController {
 	 * 범칙금 발송처 기준관리 리스트를 조회한다.
 	 * 
 	 *
-	 * @param request
-	 * @param paramVO
+	 * @param requestParams
 	 * @return resultVO
 	 * @throws Exception
 	 */
@@ -106,6 +100,61 @@ public class PenaltyStdManageController {
 		paramMap.put("ntcdocSendPlcNm", requestParams.get("ntcdoc_send_plc_nm"));
 		
 		Map<String, Object> resultMap = penaltyStdManageService.selectNtcdocSendPlcList(paramMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 범칙금 발송처를 저장한다.
+	 * 
+	 *
+	 * @param requestParams
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/saveSendPlcData")
+	public ResultVO insertSendPlcData(@RequestBody Map<String, Object> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		String type = (String) requestParams.get("type");
+		
+		if (type.equals("insert")) {
+			resultMap = penaltyStdManageService.insertSendPlcData((Map<String, Object>) requestParams.get("data"));
+		} else if (type.equals("update")) {
+			resultMap = penaltyStdManageService.updateSendPlcData((Map<String, Object>) requestParams.get("data"));
+		}
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 범칙금 발송처를 삭제한다.
+	 * 
+	 *
+	 * @param requestParams
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/deleteSendPlcData")
+	public ResultVO deleteSendPlcData(@RequestBody Map<String, Object> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = penaltyStdManageService.deleteSendPlcData((Map<String, Object>) requestParams);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
