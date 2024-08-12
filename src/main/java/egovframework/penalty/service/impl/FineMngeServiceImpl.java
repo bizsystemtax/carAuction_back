@@ -51,4 +51,12 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		
 		return map;
 	}
+
+	//범칙금관리 수정
+	@Override
+	public int updateFine(FineMngeVO fineMngeVO) throws Exception {
+		int cnt = FineMngeDAO.updateFine(fineMngeVO);
+		
+		return cnt;
+	}
 }

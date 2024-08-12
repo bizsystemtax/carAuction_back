@@ -17,19 +17,25 @@ public class FineMngeDAO extends EgovAbstractMapper {
 	
 	//범칙금관리 목록 조회
 	public List<FineMngeVO> retrieveFineMnge(FineMngeVO fineMngeVO) {
-		//범칙금관리 조회 XML 호출
+		//범칙금관리 목록 조회 XML 호출
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveFineMnge", fineMngeVO);
 	}
 
 	//범칙금관리 확정 상태 업데이트
 	public int updateCfmtStat(FineMngeVO fineMngeVO) {
-		//범칙금관리 조회 XML 호출
+		//범칙금관리 확정 상태 업데이트 XML 호출
 		return update("FineMngeDAO.updateCfmtStat", fineMngeVO);
 	}
 
 	//발송처부서명 목록 조회
 	public List<FineMngeVO> retrieveSendPlcDeptList(FineMngeVO fineMngeVO) {
-		//범칙금관리 조회 XML 호출
+		//발송처부서명 목록 조회 XML 호출
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveSendPlcDeptList", fineMngeVO);
+	}
+
+	//범칙금관리 수정
+	public int updateFine(FineMngeVO fineMngeVO) {
+		//범칙금관리 수정 XML 호출
+		return update("FineMngeDAO.updateFine", fineMngeVO);
 	}
 }

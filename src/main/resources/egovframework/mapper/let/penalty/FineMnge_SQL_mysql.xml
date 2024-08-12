@@ -161,4 +161,25 @@
 		ORDER BY CD_VAL
 		]]>
 	</select>
+
+	<!-- Update : 범칙금관리 수정 -->
+	<update id="updateFine" parameterType="egovframework.penalty.FineMngeVO">
+		<![CDATA[
+		UPDATE	BIZ_FINE_MAS /*BIZ_범칙금기본*/
+		SET		SEND_PLC_CD = #{sendPlcCd} /*발송처코드*/
+				, SEND_PLC_SEQ = #{sendPlcSeq} /*발송처일련번호*/
+				, VLT_KIND_CD = #{vltKindCd} /*위반종류코드*/
+				, FINE_AMT = #{fineAmt} /*범칙금금액*/
+				, VLT_CTS = #{vltCts} /*위반내용*/
+				, VLT_PNT = #{vltPnt} /*위반장소*/
+				, RCPT_DT = #{rcptDt} /*접수일자*/
+				, PYMT_DDAY_DT = #{pymtDdayDt} /*납부기한일자*/
+				, LAST_CHNGMN_ID = #{userId} /*최종변경자ID*/
+				, LAST_CHGE_IP_ADDR = #{userIp} /*최종변경IP주소*/
+		WHERE	VLT_DT = #{vltDt}
+		AND		VLT_ATIME = #{vltAtime}
+		AND		VHCL_NO = #{vhclNo}
+		AND		FINE_SEQ = #{fineSeq}
+		]]>
+	</update>
 </mapper>
