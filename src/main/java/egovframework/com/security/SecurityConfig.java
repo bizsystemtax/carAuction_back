@@ -52,6 +52,7 @@ public class SecurityConfig {
         "/fineMnge/comboBoxList",
         "/fineMnge/list",
         "/fineMnge/cfmt",
+        "/fineMnge/sendPlcDeptList",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",

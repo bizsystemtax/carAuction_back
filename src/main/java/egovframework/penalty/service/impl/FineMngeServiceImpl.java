@@ -42,4 +42,13 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		
 		return cnt;
 	}
+
+	//발송처부서명 목록 조회
+	@Override
+	public Map<String, Object> retrieveSendPlcDeptList(FineMngeVO fineMngeVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", FineMngeDAO.retrieveSendPlcDeptList(fineMngeVO));
+		
+		return map;
+	}
 }

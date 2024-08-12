@@ -15,4 +15,7 @@ public interface FineMngeService {
 
 	//범칙금관리 확정 상태 업데이트
 	public int updateCfmtStat(FineMngeVO fineMngeVO) throws Exception;
+
+	//발송처부서명 목록 조회
+	public Map<String, Object> retrieveSendPlcDeptList(FineMngeVO fineMngeVO) throws Exception;
 }

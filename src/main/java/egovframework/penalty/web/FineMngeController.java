@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
-import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +43,7 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/comboBoxList")
-	public ResultVO selectComboBoxList() throws Exception {
+	public ResultVO retrieveComboBoxList() throws Exception {
 		ComnCdVO paramVO = new ComnCdVO();
 		ResultVO resultVO = new ResultVO();
 		
@@ -68,7 +67,7 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/list")
-	public ResultVO selectFineMnge(@RequestBody Map<String, String> requestParams) throws Exception{
+	public ResultVO retrieveFineMnge(@RequestBody Map<String, String> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		
@@ -193,5 +192,36 @@ public class FineMngeController {
 			resultVO.setResult(resultMap);
 			return ResponseEntity.status(400).body(resultVO);
 		}
+	}
+	
+	/**
+	 * @author 발송처부서명 조회 컨트롤러
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/sendPlcDeptList")
+	public ResultVO retrieveSendPlcDeptList(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, String> list = requestParams.get(0);
+		
+		String sendPlcCd = list.get("sendPlcCd"); //발송처코드
+System.out.println(requestParams + "\n" + sendPlcCd);
+		//조회조건 VO 세팅
+		fineMngeVO.setSendPlcCd(sendPlcCd);
+			
+		//범칙금관리 조회 서비스 호출
+		Map<String, Object> resultMap = fineMngeService.retrieveSendPlcDeptList(fineMngeVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
 	}
 }
