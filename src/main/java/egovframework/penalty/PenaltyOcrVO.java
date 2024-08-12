@@ -2,6 +2,7 @@ package egovframework.penalty;
 
 import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +49,7 @@ public class PenaltyOcrVO implements Serializable {
     private String lastChngmnId = "";           // 최종변경자ID
     private String lastChgeTstmp = "";          // 최종변경타임스탬프
     private String lastChgeIpAddr = "";         // 최종변경IP주소
-
+  
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

@@ -1,7 +1,10 @@
 package egovframework.penalty.service;
 
-import egovframework.penalty.PenaltyOcrVO;
+import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public interface PenaltyOcrService {
-    void insertOcr(PenaltyOcrVO penaltyOcrVO) throws Exception;
+    Map<String, Object> processOcrFile(MultipartFile file) throws Exception;
+    String saveOcrResult(Map<String, String> confirmedData) throws Exception;
 }
