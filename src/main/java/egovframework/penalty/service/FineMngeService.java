@@ -21,4 +21,7 @@ public interface FineMngeService {
 
 	//범칙금관리 수정
 	public int updateFine(FineMngeVO fineMngeVO) throws Exception;
+
+	//범칙금관리 삭제
+	public int deleteFine(FineMngeVO fineMngeVO) throws Exception;
 }

@@ -59,4 +59,12 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		
 		return cnt;
 	}
+
+	//범칙금관리 삭제
+	@Override
+	public int deleteFine(FineMngeVO fineMngeVO) throws Exception {
+		int cnt = FineMngeDAO.deleteFine(fineMngeVO);
+		
+		return cnt;
+	}
 }

@@ -38,4 +38,10 @@ public class FineMngeDAO extends EgovAbstractMapper {
 		//범칙금관리 수정 XML 호출
 		return update("FineMngeDAO.updateFine", fineMngeVO);
 	}
+
+	//범칙금관리 삭제
+	public int deleteFine(FineMngeVO fineMngeVO) {
+		//범칙금관리 확정 상태 업데이트 XML 호출
+		return delete("FineMngeDAO.deleteFine", fineMngeVO);
+	}
 }

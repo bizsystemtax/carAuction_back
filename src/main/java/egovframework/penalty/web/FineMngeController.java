@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,7 +88,7 @@ public class FineMngeController {
 		fineMngeVO.setInGdCd(inGdCd);
 		fineMngeVO.setInCsNm(inCsNm);
 		fineMngeVO.setInVhclNo(inVhclNo);
-			
+
 		//범칙금관리 조회 서비스 호출
 		Map<String, Object> resultMap = fineMngeService.retrieveFineMnge(fineMngeVO);
 		
@@ -235,7 +236,7 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
-	@PostMapping(value = "/fineUpdate")
+	@PostMapping(value = "/updateFine")
 	public ResponseEntity<ResultVO> updateFine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
@@ -304,7 +305,7 @@ public class FineMngeController {
 			if(!"".equals(oldCfmtDt)) {
 				throw new BizException(ErrorCode.ERR002, "");
 			}
-			
+
 			//범칙금관리 수정 서비스 호출
 			int cnt = fineMngeService.updateFine(fineMngeVO);
 			
@@ -313,7 +314,101 @@ public class FineMngeController {
 				throw new BizException(ErrorCode.ERR005, "");
 			}
 				
-			resultMap.put("svcNm", "fineUpdate");
+			resultMap.put("svcNm", "updateFine");
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
+	
+	/**
+	 * @author 범칙금관리 삭제 컨트롤러
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/deleteFine")
+	public ResponseEntity<ResultVO> deleteFine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			LoginVO loginVO = null;
+
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				
+				String vltDt = list.get("vlt_dt");		//위반일자
+				String vltAtime = list.get("vlt_atime");//위반시각
+				String vhclNo = list.get("vhcl_no");	//차량번호
+				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				
+				//삭제용 VO 세팅
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineSeq(fineSeq);
+				
+				//유효한 데이터인지 확인용 VO 세팅
+				fineMngeVO.setInVltDtStrt(vltDt);
+				fineMngeVO.setInVltDtEnd(vltDt);
+	
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//범칙금관리 조회 서비스 호출
+				Map<String, Object> fineDataList = fineMngeService.retrieveFineMnge(fineMngeVO);
+				List<FineMngeVO> fineData = (List<FineMngeVO>)fineDataList.get("resultList");
+
+				//조회되지 않을 경우 오류
+				if(fineData.isEmpty() || fineData == null) {
+					throw new BizException(ErrorCode.ERR004, errKey);
+				}
+				
+				String oldCfmtDt = Objects.toString(fineData.get(0).getCfmtDt(), ""); //확정일자
+				
+				//이미 확정된 경우 오류
+				if(!"".equals(oldCfmtDt)) {
+					throw new BizException(ErrorCode.ERR002, errKey);
+				}
+				
+				//범칙금관리 삭제 서비스 호출
+				int cnt = fineMngeService.deleteFine(fineMngeVO);
+				
+				//삭제를 실패한 경우 오류
+				if(cnt <= 0) {
+					throw new BizException(ErrorCode.ERR006, errKey);
+				}
+			}
+			resultMap.put("svcNm", "deleteFine");
 			
 			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

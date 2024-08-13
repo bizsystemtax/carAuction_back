@@ -27,6 +27,7 @@
 		<result property="cfmtStatNm" column="CFMT_STAT_NM"/>
 		<result property="cfmtDt" column="CFMT_DT"/>
 		<result property="sendPlcNm" column="SEND_PLC_NM"/>
+		<result property="sendPlcSeq" column="SEND_PLC_SEQ"/>
 		<result property="sendPlcDeptNm" column="SEND_PLC_DEPT_NM"/>
 		<result property="vltKindNm" column="VLT_KIND_NM"/>
 		<result property="vltCts" column="VLT_CTS"/>
@@ -64,7 +65,7 @@
 	<!-- Retrieve : 범칙금관리 목록 조회 -->
 	<select id="retrieveFineMnge" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
 		<![CDATA[
-		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC) AS ID /*순번*/
+		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC, A.FIRST_REG_TSTMP DESC) AS ID /*순번*/
 				, CASE WHEN B.GD_CD LIKE 'RC%' THEN '렌터카' ELSE '리스' END AS GD_NM /*상품명*/
 				, B.CS_NM /*고객명*/
 				, A.VHCL_NO /*차량번호*/
@@ -76,7 +77,9 @@
 				, A.CFMT_DT /*확정일자*/
 				, C.SEND_PLC_CD AS SEND_PLC_CD /*발송처코드*/
 				, C.NTCDOC_SEND_PLC_NM AS SEND_PLC_NM /*발송처명*/
+				, C.SEND_PLC_SEQ AS SEND_PLC_SEQ /*발송처일련번호*/
 				, C.NTCDOC_SEND_PLC_DEPT_NM AS SEND_PLC_DEPT_NM /*발송처부서명*/
+				, A.VLT_KIND_CD AS VLT_KIND_CD /*위반종류코드*/
 				, (SELECT X.CD_NM FROM BIZ_COMN_CD_DTL X WHERE X.COMN_CD_ENG_NM = 'VLT_KIND_CD' AND X.CD_VAL = A.VLT_KIND_CD) AS VLT_KIND_NM /*위반종류명*/
 				, A.VLT_CTS  /*위반내용*/
 				, A.VLT_PNT  /*위반장소*/
@@ -104,6 +107,10 @@
 		<!-- 발송처코드 -->
 		<if test="inSendPlcCd != null and inSendPlcCd != ''">
 		AND		A.SEND_PLC_CD = #{inSendPlcCd}
+		</if>
+		<!-- 상품코드(X) -->
+		<if test="inGdCd == 99">
+		AND		B.GD_CD = NULL
 		</if>
 		<!-- 상품코드(리스) -->
 		<if test="inGdCd == 1">
@@ -182,4 +189,16 @@
 		AND		FINE_SEQ = #{fineSeq}
 		]]>
 	</update>
+	
+	<!-- Update : 범칙금관리 확정 상태 업데이트 -->
+	<delete id="deleteFine" parameterType="egovframework.penalty.FineMngeVO">
+		<![CDATA[
+		DELETE
+		FROM 	BIZ_FINE_MAS /*BIZ_범칙금기본*/
+		WHERE	VLT_DT = #{vltDt}
+		AND		VLT_ATIME = #{vltAtime}
+		AND		VHCL_NO = #{vhclNo}
+		AND		FINE_SEQ = #{fineSeq}
+		]]>
+	</delete>
 </mapper>
