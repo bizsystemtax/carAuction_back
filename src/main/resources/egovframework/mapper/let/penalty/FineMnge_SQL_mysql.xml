@@ -52,6 +52,12 @@
 		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
 		WHERE	COMN_CD_ENG_NM = 'VLT_KIND_CD'
 		UNION ALL
+		SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
+				, CD_VAL /*코드값*/
+				, CD_NM /*코드명*/
+		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
+		WHERE	COMN_CD_ENG_NM = 'FINE_UPLOAD_CD'
+		UNION ALL
 		SELECT	'SEND_PLC_CD' AS COMN_CD_ENG_NM /*공통코드영문명(발송처코드)*/
 				, A.SEND_PLC_CD AS CD_VAL /*발송처코드*/
 				, A.NTCDOC_SEND_PLC_NM AS CD_NM /*고지서발송처명*/
@@ -65,7 +71,7 @@
 	<!-- Retrieve : 범칙금관리 목록 조회 -->
 	<select id="retrieveFineMnge" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
 		<![CDATA[
-		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC, A.FIRST_REG_TSTMP DESC) AS ID /*순번*/
+		SELECT 	ROW_NUMBER() OVER (ORDER BY A.VLT_DT DESC, A.VLT_ATIME DESC, A.FINE_SEQ) AS ID /*순번*/
 				, CASE WHEN B.GD_CD LIKE 'RC%' THEN '렌터카' ELSE '리스' END AS GD_NM /*상품명*/
 				, B.CS_NM /*고객명*/
 				, A.VHCL_NO /*차량번호*/
