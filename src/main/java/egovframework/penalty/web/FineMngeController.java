@@ -426,4 +426,112 @@ public class FineMngeController {
 			return ResponseEntity.status(400).body(resultVO);
 		}
 	}
+	
+	/**
+	 * @author 범칙금관리 업로드(이파인)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/uploadEfine")
+	public ResponseEntity<ResultVO> uploadEfine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			LoginVO loginVO = null;
+
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				
+				//엑셀 열 제목을 기준으로 데이터를 매핑
+				
+				//차량번호로 유효한 대출 정보가 있는지 확인
+				
+				//위반종류 코드 매핑
+				
+				//발송처 코드 매핑
+				
+				//파라미터 세팅
+				
+				//BIZ_범칙금기본 등록
+				
+//				String vltDt = list.get("vlt_dt");		//위반일자
+//				String vltAtime = list.get("vlt_atime");//위반시각
+//				String vhclNo = list.get("vhcl_no");	//차량번호
+//				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+//				String cfmtDt = LocalDate.now().toString().replaceAll("-", ""); //확정일자(당일로 세팅)
+//				
+//				//확정일자 업데이트용 VO 세팅
+//				fineMngeVO.setVltDt(vltDt);
+//				fineMngeVO.setVltAtime(vltAtime);
+//				fineMngeVO.setVhclNo(vhclNo);
+//				fineMngeVO.setFineSeq(fineSeq);
+//				fineMngeVO.setCfmtDt(cfmtDt);
+//				
+//				//유효한 데이터인지 확인용 VO 세팅
+//				fineMngeVO.setInVltDtStrt(vltDt);
+//				fineMngeVO.setInVltDtEnd(vltDt);
+//	
+//				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+//				
+//				//범칙금관리 조회 서비스 호출
+//				Map<String, Object> fineDataList = fineMngeService.retrieveFineMnge(fineMngeVO);
+//				List<FineMngeVO> fineData = (List<FineMngeVO>)fineDataList.get("resultList");
+//
+//				//조회되지 않을 경우 오류
+//				if(fineData.isEmpty() || fineData == null) {
+//					throw new BizException(ErrorCode.ERR004, errKey);
+//				}
+//				
+//				String oldCfmtDt = Objects.toString(fineData.get(0).getCfmtDt(), ""); //확정일자
+//				
+//				//이미 확정된 경우 오류
+//				if(!"".equals(oldCfmtDt)) {
+//					throw new BizException(ErrorCode.ERR002, errKey);
+//				}
+//				
+//				//범칙금관리 확정 상태 업데이트 서비스 호출
+//				int cnt = fineMngeService.updateCfmtStat(fineMngeVO);
+//				
+//				//업데이트를 실패한 경우 오류
+//				if(cnt <= 0) {
+//					throw new BizException(ErrorCode.ERR003, errKey);
+//				}
+			}
+			resultMap.put("svcNm", "uploadEfine");
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
 }
