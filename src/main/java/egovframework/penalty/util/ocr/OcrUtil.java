@@ -72,13 +72,22 @@ public class OcrUtil {
             }
         }
         
-        // 계좌번호 패턴
+        // 계좌번호 가상계좌번호 패턴
         Pattern accountNumberPattern = Pattern.compile("\\d{6}-\\d{2}-\\d{6}");
         Matcher accountNumberMatcher = accountNumberPattern.matcher(ocrText);
         if (accountNumberMatcher.find()) {
-            data.put("가상계좌번호", accountNumberMatcher.group());
+            data.put("납부계좌", accountNumberMatcher.group());
         } else {
-            data.put("가상계좌번호", "");
+            data.put("납부계좌", "");
+        }
+        
+        // 고지서번호 패턴
+        Pattern billPattern = Pattern.compile("\\d{8}");
+        Matcher billMatcher = billPattern.matcher(ocrText);
+        if (billMatcher.find()) {
+            data.put("고지서번호", billMatcher.group());
+        } else {
+            data.put("고지서번호", "");
         }
 
         // 은행 패턴 (다양한 형식)
@@ -125,29 +134,32 @@ public class OcrUtil {
             }
         }
         
-        data.put("가상계좌은행명", fullName);
+        data.put("납부은행", fullName);
         
-        // 주소 패턴
-        String addressRegex = "([가-힣]{2,}(시|도))\\s*([가-힣]{2,}(구|군))\\s*([가-힣\\d]+(로|길)\\s*\\d+)" +
-                "(\\s+\\d+[동|호|층])?" +
-                "(\\s+[가-힣\\d]*[아파트|빌라|빌딩|타워|센터|마을])?";
+     // 주소 패턴 (기본 주소)
+        String baseAddressRegex = "([가-힣]{2,}(시|도))\\s*([가-힣]{2,}(구|군))\\s*([가-힣\\d]+(로|길)\\s*\\d+)";
+        Pattern baseAddressPattern = Pattern.compile(baseAddressRegex);
+        Matcher baseAddressMatcher = baseAddressPattern.matcher(ocrText);
 
-        Pattern addressPattern = Pattern.compile(addressRegex);
-        Matcher addressMatcher = addressPattern.matcher(ocrText);
+        if (baseAddressMatcher.find()) {
+            String baseAddress = baseAddressMatcher.group().trim();
+            data.put("발송처주소", baseAddress);
 
-        if (addressMatcher.find()) {
-            data.put("발송처주소", addressMatcher.group());
+            // 상세 주소 패턴
+            String detailAddressRegex = "\\s+(\\d+[동|호|층])?\\s*([가-힣\\d]*[아파트|빌라|빌딩|타워|센터|마을])?";
+            Pattern detailAddressPattern = Pattern.compile(Pattern.quote(baseAddress) + detailAddressRegex);
+            Matcher detailAddressMatcher = detailAddressPattern.matcher(ocrText);
+
+            if (detailAddressMatcher.find()) {
+                String fullAddress = detailAddressMatcher.group().trim();
+                String detailAddress = fullAddress.substring(baseAddress.length()).trim();
+                data.put("발송처상세주소", detailAddress);
+            } else {
+                data.put("발송처상세주소", "");
+            }
         } else {
             data.put("발송처주소", "");
-        }
-
-        // 지로번호(고지서)  <와 + 사이의 숫자 패턴
-        Pattern numberPattern = Pattern.compile("<(\\d+)\\+");
-        Matcher numberMatcher = numberPattern.matcher(ocrText);
-        if (numberMatcher.find()) {
-            data.put("고지서번호", numberMatcher.group(1));
-        } else {
-            data.put("고지서번호", "");
+            data.put("발송처상세주소", "");
         }
         
         // 구청 패턴
@@ -204,13 +216,8 @@ public class OcrUtil {
         
         data.put("위반장소", "");
         data.put("납부기한일자", "");
-        data.put("납부계좌", "");
-        data.put("범칙금발생금액", "");
-        data.put("우편번호", "");
-        data.put("발송처상세주소", "");
-        data.put("픽업일자", "");
-        data.put("이미지주소", "");
-        data.put("문서유형", "");
+        data.put("범칙금", "");
+
         
         return data;
     }
@@ -218,21 +225,22 @@ public class OcrUtil {
     public static PenaltyOcrVO mapToPenaltyOcrVO(Map<String, String> extractedData) {
         PenaltyOcrVO vo = new PenaltyOcrVO();
 
+        vo.setVhclNo(extractedData.getOrDefault("차량번호", ""));
+        vo.setFineAmt(extractedData.getOrDefault("범칙금", ""));
         vo.setVltDt(extractedData.getOrDefault("위반일자", ""));
         vo.setVltAtime(extractedData.getOrDefault("위반시각", ""));
-        vo.setVhclNo(extractedData.getOrDefault("차량번호", ""));
         vo.setVltCts(extractedData.getOrDefault("위반내용", ""));
         vo.setVltPnt(extractedData.getOrDefault("위반장소", ""));
-        vo.setRcptDt(extractedData.getOrDefault("접수일자", ""));
-        vo.setPymtDdayDt(extractedData.getOrDefault("납부기한일자", ""));
-        vo.setFineAmt(extractedData.getOrDefault("범칙금발생금액", ""));
-        vo.setActBankNm1(extractedData.getOrDefault("가상계좌은행명", ""));
-        vo.setActNo1(extractedData.getOrDefault("가상계좌번호", ""));
         vo.setNtcdocDocNo(extractedData.getOrDefault("고지서번호", ""));
-        vo.setNtcdocImgUrl(extractedData.getOrDefault("이미지주소", ""));
-        vo.setSendPlcCd(extractedData.getOrDefault("발송처주소", ""));
         vo.setSendEmpNo(extractedData.getOrDefault("발급관청", ""));
-
+        vo.setPymtDdayDt(extractedData.getOrDefault("납부기한일자", ""));
+        vo.setActBankNm1(extractedData.getOrDefault("납부은행", ""));
+        vo.setActNo1(extractedData.getOrDefault("납부계좌", ""));
+//        vo.setNtcdocImgUrl(extractedData.getOrDefault("이미지주소", ""));
+//        vo.setSendPlcCd(extractedData.getOrDefault("발송처주소", ""));
+//        vo.setSendPlcDtlCd(extractedData.getOrDefault("발송처상세주소", ""));
+//        vo.setRcptDt(extractedData.getOrDefault("접수일자", ""));
+        
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = now.format(formatter);

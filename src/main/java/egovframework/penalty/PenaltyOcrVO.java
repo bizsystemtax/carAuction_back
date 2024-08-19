@@ -16,6 +16,7 @@ public class PenaltyOcrVO implements Serializable {
     private String vltKindCd = "";              // 위반종류코드
     private String sendPlcCd = "";              // 발송처코드
     private String sendPlcSeq = "";             // 발송처일렬번호
+    private String SendPlcDtlCd = "";           // 발송처상세코드
     private String vltCts = "";                 // 위반내용
     private String vltPnt = "";                 // 위반장소
     private String rcptDt = "";                 // 접수일자
