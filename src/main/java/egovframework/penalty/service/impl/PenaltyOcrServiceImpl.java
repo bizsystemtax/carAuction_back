@@ -46,6 +46,12 @@ public class PenaltyOcrServiceImpl implements PenaltyOcrService {
 	        }
 
 	        PenaltyOcrVO penaltyOcrVO = OcrUtil.mapToPenaltyOcrVO(confirmedData);
+	        
+	        penaltyOcrVO.setFirstRegrId("admin");
+	        penaltyOcrVO.setFirstRegIpAddr("116.124.144.140");
+	        penaltyOcrVO.setLastChngmnId("admin");
+	        penaltyOcrVO.setLastChgeIpAddr("116.124.144.140");
+	        
 	        penaltyOcrDAO.insertOcr(penaltyOcrVO);
 
 	        return "OCR 결과가 성공적으로 저장되었습니다.";

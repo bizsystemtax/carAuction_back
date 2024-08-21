@@ -73,10 +73,13 @@ public class OcrUtil {
         }
         
         // 계좌번호 가상계좌번호 패턴
-        Pattern accountNumberPattern = Pattern.compile("\\d{6}-\\d{2}-\\d{6}");
+        Pattern accountNumberPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{14}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2})");
         Matcher accountNumberMatcher = accountNumberPattern.matcher(ocrText);
         if (accountNumberMatcher.find()) {
-            data.put("납부계좌", accountNumberMatcher.group());
+            String accountNumber = accountNumberMatcher.group();
+            // ':' 문자가 있으면 제거
+            accountNumber = accountNumber.startsWith(":") ? accountNumber.substring(1) : accountNumber;
+            data.put("납부계좌", accountNumber);
         } else {
             data.put("납부계좌", "");
         }
@@ -163,7 +166,7 @@ public class OcrUtil {
         }
         
         // 구청 패턴
-        Pattern districtOfficePattern = Pattern.compile("\\b\\S*구청\\b");
+        Pattern districtOfficePattern = Pattern.compile("\\b(?:\\S*구청|\\S*시장|\\S*개발공사|\\S*관리공단|\\S*대교|\\S*군수)\\b");
         Matcher districtOfficeMatcher = districtOfficePattern.matcher(ocrText);
         if (districtOfficeMatcher.find()) {
             data.put("발급관청", districtOfficeMatcher.group());
