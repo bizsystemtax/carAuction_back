@@ -3,98 +3,81 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PenaltyOcrDAO">
 
-	<select id="countSimilarRecords" parameterType="egovframework.penalty.PenaltyOcrVO" resultType="int">
-        SELECT COUNT(*) 
-        FROM biz_fine_mas 
-        WHERE VLT_DT = #{vltDt} 
-          AND VLT_ATIME = #{vltAtime} 
-          AND VHCL_NO = #{vhclNo}
-    </select>
+	<select id="countSimilarRecords"
+		parameterType="egovframework.penalty.PenaltyOcrVO" resultType="int">
+		SELECT COUNT(*)
+		FROM biz_fine_mas
+		WHERE VLT_DT = #{vltDt}
+		AND VLT_ATIME = #{vltAtime}
+		AND VHCL_NO = #{vhclNo}
+	</select>
 
 
-    <insert id="insertOcr" parameterType="egovframework.penalty.PenaltyOcrVO">
-        INSERT INTO biz_fine_mas (
-            VLT_DT,
-            VLT_ATIME,
-            VHCL_NO,
-            FINE_SEQ,
-            VLT_KIND_CD,
-            SEND_PLC_CD,
-            SEND_PLC_SEQ,
-            VLT_CTS,
-            VLT_PNT,
-            RCPT_DT,
-            PYMT_DDAY_DT,
-            PYMT_DT,
-            CFMT_DT,
-            SEND_DT,
-            SEND_EMP_NO,
-            FINE_AMT,
-            NTCDOC_KIND_CD,
-            NTCDOC_DOC_NO,
-            NTCDOC_IMG_URL,
-            ACT_BANK_NM1,
-            ACT_NO1,
-            ACT_BANK_NM2,
-            ACT_NO2,
-            ACT_BANK_NM3,
-            ACT_NO3,
-            ACT_BANK_NM4,
-            ACT_NO4,
-            DRVR_CHGE_DT,
-            FINE_UPLOAD_CD,
-            DOC_FINE_NO1,
-            DOC_FINE_NO2,
-            DOC_FINE_NO3,
-            DOC_FINE_NO4,
-            PNLT_STAT_NM,
-            FIRST_REGR_ID,
-            FIRST_REG_TSTMP,
-            FIRST_REG_IP_ADDR,
-            LAST_CHNGMN_ID,
-            LAST_CHGE_TSTMP,
-            LAST_CHGE_IP_ADDR
-        ) VALUES (
-            #{vltDt},
-            #{vltAtime},
-            #{vhclNo},
-            #{fineSeq},
-            #{vltKindCd},
-            #{sendPlcCd},
-            #{sendPlcSeq},
-            #{vltCts},
-            #{vltPnt},
-            #{rcptDt},
-            #{pymtDdayDt},
-            #{pymtDt},
-            #{cfmtDt},
-            #{sendDt},
-            #{sendEmpNo},
-            #{fineAmt},
-            #{ntcdocKindCd},
-            #{ntcdocDocNo},
-            #{ntcdocImgUrl},
-            #{actBankNm1},
-            #{actNo1},
-            #{actBankNm2},
-            #{actNo2},
-            #{actBankNm3},
-            #{actNo3},
-            #{actBankNm4},
-            #{actNo4},
-            #{drvrChgeDt},
-            #{fineUploadCd},
-            #{docFineNo1},
-            #{docFineNo2},
-            #{docFineNo3},
-            #{docFineNo4},
-            #{pnltStatNm},
-            #{firstRegrId},
-            #{firstRegTstmp},
-            #{firstRegIpAddr},
-            #{lastChngmnId},
-            #{lastChgeTstmp},
-            #{lastChgeIpAddr}
-        )
-    </insert>
+	<insert id="insertOcr" parameterType="egovframework.penalty.PenaltyOcrVO">
+		INSERT INTO biz_fine_mas (
+			   VHCL_NO, -- 차량번호 
+			   VLT_DT, -- 위반일자
+			   VLT_ATIME, -- 위반시각
+			   FINE_AMT, -- 범칙금
+		       FIRST_REGR_ID, -- 최초 등록자 ID 
+			   FIRST_REG_TSTMP,-- 최초 등록 시간
+			   FIRST_REG_IP_ADDR, -- 최초 등록 IP 주소
+			   LAST_CHNGMN_ID, -- 최종 변경자 ID
+			   LAST_CHGE_TSTMP,-- 최종 변경 시간
+			   LAST_CHGE_IP_ADDR, -- 최종 변경 IP 주소
+			   <if test="vltCts != null">
+					VLT_CTS,-- 위반내용
+			   </if>
+			   <if test="vltPnt != null">
+			   		VLT_PNT,-- 위반장소
+			   </if>
+			   <if test="ntcdocDocNo != null">
+			   		NTCDOC_DOC_NO,-- 고지서번호
+			   </if>
+			   <if test="sendEmpNo != null">
+			   		SEND_EMP_NO,-- 발급관청
+			   </if>
+			   <if test="pymtDdayDt != null">
+			  		PYMT_DDAY_DT,-- 납부기한일자
+			   </if>
+			   <if test="actBankNm1 != null">
+			   		ACT_BANK_NM1,-- 납부은행
+			   </if>
+			   <if test="actNo1 != null">
+			  		 ACT_NO1-- 납부계좌
+			   </if>
+		) VALUES (
+				#{vhclNo}, -- 차량번호
+				#{vltDt}, -- 위반일자
+				#{vltAtime}, -- 위반시각
+				#{fineAmt}, -- 범칙금
+				#{firstRegrId}, -- 최초 등록자 ID
+				CURRENT_TIMESTAMP(), -- 최초 등록 시간
+				#{firstRegIpAddr}, -- 최초 등록 IP 주소
+				#{lastChngmnId}, -- 최종 변경자 ID
+				CURRENT_TIMESTAMP(), -- 최종 변경 시간
+				#{lastChgeIpAddr}, -- 최종 변경 IP 주소
+				<if test="vltCts != null">
+					#{vltCts},-- 위반내용
+				</if>
+				<if test="vltPnt != null">
+					#{vltPnt},-- 위반장소
+				</if>
+				<if test="ntcdocDocNo != null">
+					#{ntcdocDocNo},-- 고지서번호
+				</if>
+				<if test="sendEmpNo != null">
+					#{sendEmpNo},-- 발급관청
+				</if>
+				<if test="pymtDdayDt != null">
+					#{pymtDdayDt},-- 납부기한일자
+				</if>
+				<if test="actBankNm1 != null">
+					#{actBankNm1},-- 납부은행
+				</if>
+				<if test="actNo1 != null">
+					#{actNo1}-- 납부계좌
+				</if>
+		)
+	</insert>
 </mapper>
