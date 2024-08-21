@@ -29,6 +29,7 @@
 		<result property="sendPlcNm" column="SEND_PLC_NM"/>
 		<result property="sendPlcSeq" column="SEND_PLC_SEQ"/>
 		<result property="sendPlcDeptNm" column="SEND_PLC_DEPT_NM"/>
+		<result property="vltKindCd" column="VLT_KIND_CD"/>
 		<result property="vltKindNm" column="VLT_KIND_NM"/>
 		<result property="vltCts" column="VLT_CTS"/>
 		<result property="vltPnt" column="VLT_PNT"/>
@@ -39,6 +40,10 @@
 		<result property="drvrChgeYn" column="DRVR_CHGE_YN"/>
 		<result property="drvrChgeDt" column="DRVR_CHGE_DT"/>
 		<result property="loanStatNm" column="LOAN_STAT_NM"/>
+		<result property="loanNo" column="LOAN_NO"/>
+		<result property="loanSeq" column="LOAN_SEQ"/>
+		<result property="vltKindCdKey1" column="VLT_KIND_CD_KEY1"/>
+		<result property="vltKindCdKey2" column="VLT_KIND_CD_KEY2"/>
 		<result property="userId" column="USER_ID"/>
 		<result property="userIp" column="USER_IP"/>
 	</resultMap>
@@ -196,7 +201,7 @@
 		]]>
 	</update>
 	
-	<!-- Update : 범칙금관리 확정 상태 업데이트 -->
+	<!-- Delete : 범칙금관리 확정 상태 업데이트 -->
 	<delete id="deleteFine" parameterType="egovframework.penalty.FineMngeVO">
 		<![CDATA[
 		DELETE
@@ -207,4 +212,34 @@
 		AND		FINE_SEQ = #{fineSeq}
 		]]>
 	</delete>
+
+	<!-- Retrieve : 차량번호로 대출정보 조회 -->
+	<select id="retrieveVhclNoLoanMas" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		SELECT 	A.LOAN_NO /*대출번호*/
+				, A.LOAN_SEQ /*대출일련번호*/
+		FROM 	BIZ_LOAN_MAS A /*BIZ_대출기본*/
+		WHERE 	A.VHCL_NO = #{vhcl_no}
+		AND		#{vlt_dt} BETWEEN A.LOAN_DT AND A.TMNT_DT /*대출 기간에 위반한 대출건*/ 
+		AND		(A.GD_CD LIKE 'AT%' OR A.GD_CD LIKE 'RC%') /*리스, 렌터카*/
+		AND		A.LOAN_STAT_CD NOT IN ('4101', '4102') /*대출취소, 중도해약 제외 (저 코드값은 임시로 지정한것임)*/
+		ORDER BY A.LOAN_NO DESC, A.LOAN_SEQ DESC
+		LIMIT 1 /*조건에 만족하는 대출 중 최신 1건 조회*/
+		]]>
+	</select>
+	
+	<!-- Retrieve : 위반종류코드 조회 -->
+	<select id="retrieveVltKindCd" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		SELECT 	CD_VAL AS VLT_KIND_CD /*위반종류코드*/
+		FROM 	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
+		WHERE 	COMN_CD_ENG_NM = 'VLT_KIND_CD'
+		AND		CD_NM LIKE '%'||#{vltKindCdKey1}||'%'
+		AND		(
+		]]>
+		<if test="vltKindCdKey2 != null and vltKindCdKey2 != ''">
+		AND		CD_NM LIKE '%'||#{vltKindCdKey2}||'%'
+		</if>
+		LIMIT 1
+	</select>
 </mapper>

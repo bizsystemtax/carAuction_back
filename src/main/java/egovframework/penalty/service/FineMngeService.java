@@ -19,9 +19,24 @@ public interface FineMngeService {
 	//발송처부서명 목록 조회
 	public Map<String, Object> retrieveSendPlcDeptList(FineMngeVO fineMngeVO) throws Exception;
 
+	//범칙금 상태 유효성 검사
+	public void checkFineStat(FineMngeVO fineMngeVO, String errKey) throws Exception;
+	
 	//범칙금관리 수정
 	public int updateFine(FineMngeVO fineMngeVO) throws Exception;
 
 	//범칙금관리 삭제
 	public int deleteFine(FineMngeVO fineMngeVO) throws Exception;
+
+	//차량번호로 대충정보 조회
+	public Map<String, Object> retrieveVhclNoLoanMas(FineMngeVO fineMngeVO) throws Exception;
+	
+	//차량번호로 대출정보 유효성 검사
+	public void checkVhclNoLoanInf(FineMngeVO fineMngeVO, String errKey) throws Exception;
+
+	//위반종류코드 매핑
+	public String retrieveVltKindCd(FineMngeVO fineMngeVO) throws Exception;
+	
+	//발송처코드 조회
+	public Map<String, Object> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception;
 }

@@ -41,7 +41,25 @@ public class FineMngeDAO extends EgovAbstractMapper {
 
 	//범칙금관리 삭제
 	public int deleteFine(FineMngeVO fineMngeVO) {
-		//범칙금관리 확정 상태 업데이트 XML 호출
+		//범칙금관리 삭제 XML 호출
 		return delete("FineMngeDAO.deleteFine", fineMngeVO);
+	}
+
+	//차량번호로 대출정보 조회
+	public List<FineMngeVO> retrieveVhclNoLoanMas(FineMngeVO fineMngeVO) {
+		//차량번호로 대출정보 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveVhclNoLoanMas", fineMngeVO);
+	}
+
+	//위반종류코드 조회
+	public List<FineMngeVO> retrieveVltKindCd(FineMngeVO fineMngeVO) {
+		//위반종류코드 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveVltKindCd", fineMngeVO);
+	}
+
+	//발송처코드 조회
+	public List<FineMngeVO> retrieveSendPlcCd(FineMngeVO fineMngeVO) {
+		//발송처코드 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveSendPlcCd", fineMngeVO);
 	}
 }

@@ -67,6 +67,17 @@ public class FineMngeVO implements Serializable {
 	private String drvrChgeYn = "";		// 운전자변경여부
 	private String loanStatNm = "";		// 대출상태명
 	
+	//대출정보
+	private String loanNo = "";			// 대출번호
+	private String loanSeq = "";		// 대출일련번호
+	
+	//위반종류 매핑 KEY
+	private String vltKindCdKey1 = "";	// 위반종류 매핑 키워드1
+	private String vltKindCdKey2 = "";	// 위반종류 매핑 키워드2
+	
+	//발송처코드 매핑 KEY
+	private String sendPlcCdKey = "";	// 발송처 매핑 키워드
+	
 	//서비스 처리 후 재조회용 반환 값
 	private String svcNm = "";			// 서비스명
 	private String submitYn = "";		// 결과여부

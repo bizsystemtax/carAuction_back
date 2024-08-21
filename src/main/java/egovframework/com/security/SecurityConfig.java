@@ -56,6 +56,7 @@ public class SecurityConfig {
         "/fineMnge/sendPlcDeptList",
         "/fineMnge/updateFine",
         "/fineMnge/deleteFine",
+        "/fineMnge/uploadEfine",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
