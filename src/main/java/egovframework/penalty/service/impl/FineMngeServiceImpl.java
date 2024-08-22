@@ -102,9 +102,53 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		}
 	}
 	
+	//범칙금관리 등록
+	@Override
+	public int insertFine(FineMngeVO fineMngeVO, String errKey) throws Exception {
+		//범칙금 중복 여부 확인
+		//기본적인 등록 서비스에선 차량번호, 위반일자와 위반시각의 범칙금을 중복으로 등록할 수 없다.
+		/*해지정산금 또는 가산세 등의 사후 처리가 필요할 경우(필요시 개발)
+		 * 1.화면에서 단일 행 체크 후 분할 버튼 클릭(미확정 상태만 가능)
+		 * 2.모달에서 원하는 분할금액 입력
+		 * 3.기존 범칙금 내역의 범칙금액 수정 (범칙금액-분할금액)
+		 * 4.신규 범칙금 내역은 기존 범칙금 내역을 복사한 후 범칙금액을 분할금액으로 세팅
+		 * # 분할 확인용 상태 코드 필요 시 범칙금구분코드(FINE_DIV_CD) 생성하여 코드값은 상황에 맞게 추가 (ex| 1:범칙금, 2:해지정산금, 3:가산세)
+		 */
+		FineMngeVO dupeCheck = new FineMngeVO();
+		dupeCheck.setVltDt(fineMngeVO.getVltDt());//위반일자
+		dupeCheck.setVltAtime(fineMngeVO.getVltAtime());//위반시각
+		dupeCheck.setVhclNo(fineMngeVO.getVhclNo());//차량번호
+		
+		//범칙금관리 조회 서비스 호출
+		List<FineMngeVO> fineDupeCehck = FineMngeDAO.retrieveFineDupeCheck(dupeCheck);
+		
+		//중복일 경우 오류
+		if(fineDupeCehck != null && fineDupeCehck.size() > 0) {
+			throw new BizException(ErrorCode.ERR010, errKey);
+		}
+		
+		//범칙금일련번호 채번
+		List<FineMngeVO> fineSeq = FineMngeDAO.retrieveFineSeqSN(fineMngeVO);
+		
+		//채번된 일련번호가 있을 경우 채번한 값 세팅
+		if(fineSeq.get(0) != null) {
+			fineMngeVO.setFineSeq(fineSeq.get(0).getFineSeq());
+		} 
+		//해당 위반일자에 내역이 없어서 채번하지 못한 경우 1로 세팅
+		else {
+			fineMngeVO.setFineSeq("1");
+		}
+		
+		//BIZ_범칙금기본 등록
+		int cnt = FineMngeDAO.insertFine(fineMngeVO);
+		
+		return cnt;
+	}
+
 	//범칙금관리 수정
 	@Override
 	public int updateFine(FineMngeVO fineMngeVO) throws Exception {
+		//BIZ_범칙금기본 수정
 		int cnt = FineMngeDAO.updateFine(fineMngeVO);
 		
 		return cnt;
@@ -113,6 +157,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	//범칙금관리 삭제
 	@Override
 	public int deleteFine(FineMngeVO fineMngeVO) throws Exception {
+		//BIZ_범칙금기본 삭제
 		int cnt = FineMngeDAO.deleteFine(fineMngeVO);
 		
 		return cnt;
@@ -211,10 +256,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		fineMngeVO.setVltKindCdKey2(keyWord2);
 		
 		//위반종류 코드 조회
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", FineMngeDAO.retrieveVltKindCd(fineMngeVO));
-		
-		List<FineMngeVO> vltKindCd = (List<FineMngeVO>)map.get("resultList");
+		List<FineMngeVO> vltKindCd = FineMngeDAO.retrieveVltKindCd(fineMngeVO);
 		String result = Objects.toString(vltKindCd.get(0).getVltKindCd(), "");
 		
 		//서버 오류로 인해 코드값을 조회 못했을 경우 오류
@@ -227,11 +269,9 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	
 	//발송처코드 매핑
 	@Override
-	public Map<String, Object> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception {
-		String vltCts = fineMngeVO.getVltCts(); //위반내용
-		String vlt = fineMngeVO.getVltPnt(); //위반내용
+	public List<FineMngeVO> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception {
 		String sendPlcNm = fineMngeVO.getSendPlcNm(); //발송처명(매핑용)
-		String sendPlcCdKey = ""; //발송처 매핑 키
+		String sendPlcCdKey = sendPlcNm; //발송처 매핑 키
 		
 		//발송처 매핑 키 설정 (선가공)
 		if(sendPlcNm.isEmpty()) {
@@ -277,10 +317,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		fineMngeVO.setSendPlcCdKey(sendPlcCdKey);
 		
 		//발송처코드 조회
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", FineMngeDAO.retrieveSendPlcCd(fineMngeVO));
-		
-		List<FineMngeVO> result = (List<FineMngeVO>)map.get("resultList");
+		List<FineMngeVO> result = FineMngeDAO.retrieveSendPlcCd(fineMngeVO);
 		
 		//조회 후 결과 '기타'일 경우 가공 후 재조회
 		if(result.get(0).getSendPlcNm().equals("기타")) {
@@ -311,23 +348,22 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 				sendPlcCdKey = sendPlcNm.substring(0, sendPlcNm.length()-2);
 			} else if(sendPlcNm.contains("강원") && !sendPlcNm.contains("강원도")) {
 				//'O강원O' -> 'O강원도O'
-				int endIdx = sendPlcNm.indexOf("강원")+2;
 				sendPlcCdKey = sendPlcNm.replace("강원", "강원도");
 			} else if(sendPlcNm.contains("강원도")) {
 				//'O강원도O' -> 'O강원O'
 				sendPlcCdKey = sendPlcNm.replace("강원도", "강원");
 			} else {
 				//가공할게 없으면 결과는 동일하므로 기존 값 반환
-				return map;
+				return result;
 			}
 			
 			//후가공 키 VO 세팅
 			fineMngeVO.setSendPlcCdKey(sendPlcCdKey);
 
 			//재조회
-			map.put("resultList", FineMngeDAO.retrieveSendPlcCd(fineMngeVO));
+			result = FineMngeDAO.retrieveSendPlcCd(fineMngeVO);
 		}
 		
-		return map;
+		return result;
 	}
 }

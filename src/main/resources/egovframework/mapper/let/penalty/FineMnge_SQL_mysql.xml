@@ -44,6 +44,7 @@
 		<result property="loanSeq" column="LOAN_SEQ"/>
 		<result property="vltKindCdKey1" column="VLT_KIND_CD_KEY1"/>
 		<result property="vltKindCdKey2" column="VLT_KIND_CD_KEY2"/>
+		<result property="sendPlcCdKey" column="SEND_PLC_CD_KEY"/>
 		<result property="userId" column="USER_ID"/>
 		<result property="userIp" column="USER_IP"/>
 	</resultMap>
@@ -153,6 +154,20 @@
 		</if>
 		ORDER BY ID
 	</select>
+
+	<!-- Retrieve : 범칙금관리 중복 조회 -->
+	<select id="retrieveFineDupeCheck" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		SELECT 	A.VHCL_NO /*차량번호*/
+				, A.VLT_DT /*위반일자*/
+				, A.VLT_ATIME /*위반시각*/
+				, A.FINE_SEQ /*범칙금일련번호*/
+		FROM 	BIZ_FINE_MAS A 
+		WHERE 	A.VLT_DT = #{vltDt} /*위반일자*/
+		AND		A.VLT_ATIME = #{vltAtime} /*위반시각*/
+		AND		A.VHCL_NO = #{vhclNo} /*차량번호*/
+		]]>
+	</select>
 	
 	<!-- Update : 범칙금관리 확정 상태 업데이트 -->
 	<update id="updateCfmtStat" parameterType="egovframework.penalty.FineMngeVO">
@@ -180,6 +195,80 @@
 		]]>
 	</select>
 
+	<!-- Update : 범칙금관리 등록 -->
+	<insert id="insertFine" parameterType="egovframework.penalty.FineMngeVO">
+		<![CDATA[
+		INSERT INTO BIZ_FINE_MAS /*BIZ_범칙금기본*/
+		(	
+			VLT_DT /*위반일자*/
+			,VLT_ATIME /*위반시각*/
+			,VHCL_NO /*차량번호*/
+			,FINE_SEQ /*범칙금일련번호*/
+			,VLT_KIND_CD /*위반종류코드*/
+			,SEND_PLC_CD /*발송처코드*/
+			,SEND_PLC_SEQ /*발송처일련번호*/
+			,VLT_CTS /*위반내용*/
+			,VLT_PNT /*위반장소*/
+			,RCPT_DT /*접수일자*/
+			,PYMT_DDAY_DT /*납부기한일자*/
+			,FINE_AMT /*범칙금금액*/
+			,NTCDOC_KIND_CD /*고지서종류코드*/
+			,ACT_BANK_NM1 /*계좌은행명1*/
+			,ACT_NO1 /*계좌번호1*/
+			,ACT_BANK_NM2 /*계좌은행명2*/
+			,ACT_NO2 /*계좌번호2*/
+			,ACT_BANK_NM3 /*계좌은행명3*/
+			,ACT_NO3 /*계좌번호3*/
+			,ACT_BANK_NM4 /*계좌은행명4*/
+			,ACT_NO4 /*계좌번호4*/
+			,FINE_UPLOAD_CD /*범칙금업로드코드*/
+			,DOC_FINE_NO1 /*문서범칙금번호1*/
+			,DOC_FINE_NO2 /*문서범칙금번호2*/
+			,DOC_FINE_NO3 /*문서범칙금번호3*/
+			,DOC_FINE_NO4 /*문서범칙금번호4*/
+			,PNLT_STAT_NM /*과태료상태명*/
+			,FIRST_REGR_ID /*최초등록자ID*/
+			,FIRST_REG_IP_ADDR /*최초등록IP주소*/
+			,LAST_CHNGMN_ID /*최종변경자ID*/
+			,LAST_CHGE_IP_ADDR /*최종변경IP주소*/
+		)
+		VALUE
+		(
+			CAST(#{vltDt} AS VARCHAR(8))
+			,CAST(#{vltAtime} AS VARCHAR(6))
+			,CAST(#{vhclNo} AS VARCHAR(20))
+			,CAST(#{fineSeq} AS DECIMAL(11,0))
+			,CAST(IFNULL(#{vltKindCd}, '') AS VARCHAR(2))
+			,CAST(IFNULL(#{sendPlcCd}, '') AS VARCHAR(3))
+			,CAST(IFNULL(#{sendPlcSeq}, 0) AS DECIMAL(4,0))
+			,CAST(IFNULL(#{vltCts}, '') AS VARCHAR(500))
+			,CAST(IFNULL(#{vltPnt}, '') AS VARCHAR(500))
+			,CAST(IFNULL(#{rcptDt}, '') AS VARCHAR(8))
+			,CAST(IFNULL(#{pymtDdayDt}, '') AS VARCHAR(8))
+			,CAST(IFNULL(#{fineAmt}, 0) AS DECIMAL(15,0))
+			,CAST(IFNULL(#{ntcdocKindCd}, '') AS VARCHAR(1))
+			,CAST(IFNULL(#{actBankNm1}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actNo1}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actBankNm2}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actNo2}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actBankNm3}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actNo3}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actBankNm4}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{actNo4}, '') AS VARCHAR(20))
+			,CAST(IFNULL(#{fineUploadCd}, '') AS VARCHAR(1))
+			,CAST(IFNULL(#{docFineNo1}, '') AS VARCHAR(50))
+			,CAST(IFNULL(#{docFineNo2}, '') AS VARCHAR(50))
+			,CAST(IFNULL(#{docFineNo3}, '') AS VARCHAR(50))
+			,CAST(IFNULL(#{docFineNo4}, '') AS VARCHAR(50))
+			,CAST(IFNULL(#{pnltStatNm}, '') AS VARCHAR(10))
+			,CAST(#{userId} AS VARCHAR(18))
+			,CAST(#{userIp} AS VARCHAR(18))
+			,CAST(#{userId} AS VARCHAR(18))
+			,CAST(#{userIp} AS VARCHAR(18))
+		)
+		]]>
+	</insert>
+
 	<!-- Update : 범칙금관리 수정 -->
 	<update id="updateFine" parameterType="egovframework.penalty.FineMngeVO">
 		<![CDATA[
@@ -201,7 +290,7 @@
 		]]>
 	</update>
 	
-	<!-- Delete : 범칙금관리 확정 상태 업데이트 -->
+	<!-- Delete : 범칙금관리 삭제 -->
 	<delete id="deleteFine" parameterType="egovframework.penalty.FineMngeVO">
 		<![CDATA[
 		DELETE
@@ -219,12 +308,22 @@
 		SELECT 	A.LOAN_NO /*대출번호*/
 				, A.LOAN_SEQ /*대출일련번호*/
 		FROM 	BIZ_LOAN_MAS A /*BIZ_대출기본*/
-		WHERE 	A.VHCL_NO = #{vhcl_no}
-		AND		#{vlt_dt} BETWEEN A.LOAN_DT AND A.TMNT_DT /*대출 기간에 위반한 대출건*/ 
+		WHERE 	A.VHCL_NO = #{vhclNo}
+		AND		((A.TMNT_DT != '' AND #{vltDt} BETWEEN A.LOAN_DT AND A.TMNT_DT)
+				OR A.TMNT_DT = '' AND #{vltDt} >= A.LOAN_DT) /*대출 기간 중에 위반한 대출건*/ 
 		AND		(A.GD_CD LIKE 'AT%' OR A.GD_CD LIKE 'RC%') /*리스, 렌터카*/
 		AND		A.LOAN_STAT_CD NOT IN ('4101', '4102') /*대출취소, 중도해약 제외 (저 코드값은 임시로 지정한것임)*/
 		ORDER BY A.LOAN_NO DESC, A.LOAN_SEQ DESC
 		LIMIT 1 /*조건에 만족하는 대출 중 최신 1건 조회*/
+		]]>
+	</select>
+
+	<!-- Retrieve : 범칙금일련번호 채번 -->
+	<select id="retrieveFineSeqSN" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		SELECT MAX(FINE_SEQ)+1 AS FINE_SEQ /*동일 위반일자의 MAX+1*/
+		FROM BIZ_FINE_MAS /*BIZ_범칙금기본*/
+		WHERE VLT_DT = #{vltDt}
 		]]>
 	</select>
 	
@@ -234,12 +333,201 @@
 		SELECT 	CD_VAL AS VLT_KIND_CD /*위반종류코드*/
 		FROM 	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
 		WHERE 	COMN_CD_ENG_NM = 'VLT_KIND_CD'
-		AND		CD_NM LIKE '%'||#{vltKindCdKey1}||'%'
-		AND		(
+		AND		CD_NM LIKE CONCAT('%', #{vltKindCdKey1}, '%')
 		]]>
 		<if test="vltKindCdKey2 != null and vltKindCdKey2 != ''">
-		AND		CD_NM LIKE '%'||#{vltKindCdKey2}||'%'
+		AND		CD_NM LIKE CONCAT('%', #{vltKindCdKey2}, '%')
 		</if>
 		LIMIT 1
+	</select>
+
+	<!-- Retrieve : 발송처코드 조회 -->
+	<select id="retrieveSendPlcCd" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		WITH SENDPLC AS ( /*조건에 부합하는 발송처 코드값 및 키워드 YN 값 찾기*/
+			SELECT	CASE 	WHEN A.ST1_DEPT_KEY_WORD_CTS = '' THEN 0
+						 	WHEN #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%') THEN 1 ELSE 0 END AS ST1_YN
+					,CASE	WHEN A.SCND_DEPT_KEY_WORD_CTS = '' THEN 0
+							WHEN #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%') THEN 1 ELSE 0 END AS SCND_YN
+					,CASE	WHEN A.THRD_DEPT_KEY_WORD_CTS = '' THEN 0
+							WHEN #{vltPnt} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%') THEN 1 ELSE 0 END AS THRD_YN
+					,CASE	WHEN A.THRD_DEPT_KEY_WORD_CTS = '' THEN 0
+							WHEN #{vltCts} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%') THEN 1 ELSE 0 END AS THRD2_YN
+					,A.SEND_PLC_CD
+			FROM	BIZ_FINE_SEND_PLC_STD_MNGE A /*BIZ_범칙금발송처기준관리*/
+					,(	SELECT CASE WHEN COUNT(SEND_PLC_CD) = 0
+									THEN '233'
+									ELSE SEND_PLC_CD
+							   END AS SEND_PLC_CD
+						FROM BIZ_FINE_SEND_PLC_STD_MNGE /*BIZ_범칙금발송처기준관리*/
+						WHERE CASE WHEN (CASE WHEN (SELECT 	COUNT(DISTINCT SEND_PLC_CD)
+													FROM	BIZ_FINE_SEND_PLC_STD_MNGE
+													WHERE	REPLACE(COMN_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey}, '%')) = 0
+											  THEN SEND_PLC_CD = '233'
+										END)
+								   THEN 1
+								   WHEN (CASE WHEN (SELECT	COUNT(DISTINCT SEND_PLC_CD)
+								   					FROM	BIZ_FINE_SEND_PLC_STD_MNGE
+													WHERE	REPLACE(COMN_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey})) = 1
+											  THEN	REPLACE(COMN_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey})
+											  WHEN	(SELECT	COUNT(DISTINCT SEND_PLC_CD)
+								   					FROM	BIZ_FINE_SEND_PLC_STD_MNGE
+													WHERE	REPLACE(COMN_SEND_PLC_NM, ' ', '') = #{sendPlcCdKey}) > 0
+											  THEN	REPLACE(COMN_SEND_PLC_NM, ' ', '') = #{sendPlcCdKey}
+											  WHEN	(SELECT	COUNT(DISTINCT SEND_PLC_CD)
+								   					FROM	BIZ_FINE_SEND_PLC_STD_MNGE
+													WHERE	REPLACE(COMN_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey}, '%')) > 0
+											  THEN	REPLACE(COMN_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey}, '%')
+										END)
+								   THEN 1
+								   ELSE 0
+							  END = 1
+					) B
+			WHERE	CASE WHEN (CASE WHEN B.SEND_PLC_CD = '233'
+									THEN (CASE WHEN (SELECT COUNT(DISTINCT SEND_PLC_CD)
+													 FROM	BIZ_FINE_SEND_PLC_STD_MNGE
+													 WHERE	REPLACE(NTCDOC_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey}, '%')) > 0
+											   THEN	REPLACE(A.NTCDOC_SEND_PLC_NM, ' ', '') LIKE CONCAT('%', #{sendPlcCdKey}, '%')
+											   ELSE A.SEND_PLC_CD = B.SEND_PLC_CD
+										 END)
+									ELSE A.SEND_PLC_CD = B.SEND_PLC_CD
+							  END)
+						 THEN 1
+						 ELSE 0
+					END = 1
+			ORDER BY A.SEND_PLC_CD ASC, A.SEND_PLC_SEQ ASC
+		),
+		
+		SEARCH_KEY_CODE AS ( /*SENDPLC에서 얻은 값으로 경우의 수에 따른 키코드 찾기*/
+			SELECT CASE WHEN A.ST1_SUM = 0 /*키워드1 걸린게 없을 때*/
+						THEN (CASE 	WHEN A.SCND_SUM = 0 /*키워드2 걸린게 없을 때*/
+									THEN (CASE WHEN A.THRD_SUM = 0 /*키워드3 걸린게 없을 때*/
+											   THEN (CASE 	WHEN A.THRD2_SUM = 0 /*키워드3-2 걸린게 없을 때*/
+															THEN '000'
+															WHEN A.THRD2_SUM >= 1 /*키워드3-2 걸린게 1개보다 크거나 같을 때*/
+															THEN '002'
+													 END)
+									
+									
+											   WHEN A.THRD_SUM >= 1 /*키워드3 걸린게 1개보다 크거나 같을 때*/
+											   THEN '001'
+							 			 END)
+									WHEN A.SCND_SUM = 1 /*키워드2 걸린게 1개일 때*/
+									THEN '010'
+									WHEN A.SCND_SUM > 1 /*키워드2 걸린게 1개보다 클 때*/
+									THEN (CASE WHEN A.SCND_THRD_SUM = 0 /*키워드2&키워드3 걸린게 없을 때*/
+											   THEN (CASE WHEN A.SCND_THRD2_SUM = 0 /*키워드2&키워드3-2 걸린게 없을 때*/
+											   			  THEN '010'
+											   			  WHEN A.SCND_THRD2_SUM >= 1 /*키워드2&키워드3-2 걸린게 1개보다 크거나 같을 때*/
+											   			  THEN '012'
+											   		END)
+											   WHEN A.SCND_THRD_SUM >= 1 /*키워드2&키워드3 걸린게 1개보다 크거나 같을 때*/
+											   THEN '011'
+										 END)
+							 END)
+						WHEN A.ST1_SUM = 1 /*키워드1 걸린게 1개일 때*/
+						THEN '100'
+						WHEN A.ST1_SUM > 1 /*키워드1 걸린게 1개보다 클 때*/
+						THEN (CASE WHEN A.ST1_SCND_SUM = 0 /*키워드1&키워드2 걸린게 없을 때*/
+								   THEN (CASE WHEN A.ST1_THRD_SUM = 0 /*키워드1&키워드3 걸린게 없을 때*/
+								   			  THEN (CASE WHEN A.ST1_THRD2_SUM = 0 /*키워드1&키워드3-2 걸린게 없을 때*/
+								   			  			 THEN '100'
+								   			  			 WHEN A.ST1_THRD2_SUM >= 1 /*키워드1&키워드3-2 걸린게 1개보다 크거나 같을 때*/
+								   			  			 THEN '102'
+								   			  	   END)
+								   			  WHEN A.ST1_THRD_SUM >= 1 /*키워드1&키워드3 걸린게 1개보다 크거나 같을 때*/
+								   			  THEN '101'
+								   		END)
+								   WHEN A.ST1_SCND_SUM = 1 /*키워드1&키워드2 걸린게 1개일 때*/
+								   THEN '110'
+								   WHEN A.ST1_SCND_SUM > 1 /*키워드1&키워드2 걸린게 1개보다 클 때*/
+								   THEN (CASE WHEN A.ST1_SCND_THRD_SUM = 0 /*키워드1&키워드2&키워드3 걸린게 없을 때*/
+								   			  THEN (CASE WHEN A.ST1_SCND_THRD2_SUM = 0 /*키워드1&키워드2&키워드3-2 걸린게 없을 때*/
+								   			  			 THEN '110'
+											   			 WHEN A.ST1_SCND_THRD2_SUM >= 1 /*키워드1&키워드2&키워드3-2 걸린게 1개보다 크거나 같을 때*/
+											   			 THEN '112'
+											   	   END)
+											  WHEN A.ST1_SCND_THRD_SUM >= 1 /*키워드1&키워드2&키워드3 걸린게 1개보다 크거나 같을 때*/
+											  THEN '111'
+										END)
+							 END)
+				   END AS KEYCODE
+				   ,A.ST1_SUM
+				   ,A.SCND_SUM
+				   ,A.THRD_SUM
+				   ,A.THRD2_SUM
+				   ,A.ST1_SCND_SUM
+				   ,A.ST1_SCND_THRD_SUM
+				   ,A.ST1_THRD_SUM
+				   ,A.SCND_THRD_SUM
+				   ,A.ST1_SCND_THRD2_SUM
+				   ,A.ST1_THRD2_SUM
+				   ,A.SCND_THRD2_SUM
+			FROM	(SELECT SUM(ST1_YN) AS ST1_SUM
+							,SUM(SCND_YN) AS SCND_SUM
+							,SUM(THRD_YN) AS THRD_SUM
+							,SUM(THRD2_YN) AS THRD2_SUM
+							,SUM(CASE WHEN ST1_YN=1 AND SCND_YN=1 THEN 1 ELSE 0 END) AS ST1_SCND_SUM
+							,SUM(CASE WHEN ST1_YN=1 AND SCND_YN=1 AND THRD_YN=1 THEN 1 ELSE 0 END) AS ST1_SCND_THRD_SUM
+							,SUM(CASE WHEN ST1_YN=1 AND THRD_YN=1 THEN 1 ELSE 0 END) AS ST1_THRD_SUM
+							,SUM(CASE WHEN SCND_YN=1 AND THRD_YN=1 THEN 1 ELSE 0 END) AS SCND_THRD_SUM
+							,SUM(CASE WHEN ST1_YN=1 AND SCND_YN=1 AND THRD2_YN=1 THEN 1 ELSE 0 END) AS ST1_SCND_THRD2_SUM
+							,SUM(CASE WHEN ST1_YN=1 AND THRD2_YN=1 THEN 1 ELSE 0 END) AS ST1_THRD2_SUM
+							,SUM(CASE WHEN SCND_YN=1 AND THRD2_YN=1 THEN 1 ELSE 0 END) AS SCND_THRD2_SUM
+					FROM SENDPLC) A
+		)
+		
+		SELECT	A.SEND_PLC_CD /*발송처코드*/
+				,A.SEND_PLC_SEQ /*발송처일련번호*/
+		FROM	BIZ_FINE_SEND_PLC_STD_MNGE A /*BIZ_범칙금발송처기준관리*/
+				,SEARCH_KEY_CODE K
+				,SENDPLC L
+		WHERE	A.SEND_PLC_CD = L.SEND_PLC_CD
+		AND		(K.KEYCODE = '000'
+				OR	(K.KEYCODE = '100'
+					AND A.ST1_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '010'
+					AND A.SCND_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '001'
+					AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltPnt} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '110'
+					AND A.ST1_DEPT_KEY_WORD_CTS != '' AND A.SCND_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '101'
+					AND A.ST1_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltPnt} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '011'
+					AND A.SCND_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltPnt} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '111'
+					AND A.ST1_DEPT_KEY_WORD_CTS != '' AND A.SCND_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltPnt} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '002'
+					AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '102'
+					AND A.ST1_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '012'
+					AND A.SCND_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%'))
+				OR	(K.KEYCODE = '112'
+					AND A.ST1_DEPT_KEY_WORD_CTS != '' AND A.SCND_DEPT_KEY_WORD_CTS != '' AND A.THRD_DEPT_KEY_WORD_CTS != ''
+					AND #{vltCts} LIKE CONCAT('%', A.ST1_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.SCND_DEPT_KEY_WORD_CTS, '%')
+					AND #{vltCts} LIKE CONCAT('%', A.THRD_DEPT_KEY_WORD_CTS, '%')))
+		ORDER BY A.SEND_PLC_CD ASC, A.SEND_PLC_SEQ ASC
+		LIMIT 1
+		]]>
 	</select>
 </mapper>

@@ -1,5 +1,6 @@
 package egovframework.penalty.service;
 
+import java.util.List;
 import java.util.Map;
 
 import egovframework.penalty.ComnCdVO;
@@ -22,6 +23,9 @@ public interface FineMngeService {
 	//범칙금 상태 유효성 검사
 	public void checkFineStat(FineMngeVO fineMngeVO, String errKey) throws Exception;
 	
+	//범칙금관리 등록
+	public int insertFine(FineMngeVO fineMngeVO, String errKey) throws Exception;
+
 	//범칙금관리 수정
 	public int updateFine(FineMngeVO fineMngeVO) throws Exception;
 
@@ -38,5 +42,5 @@ public interface FineMngeService {
 	public String retrieveVltKindCd(FineMngeVO fineMngeVO) throws Exception;
 	
 	//발송처코드 조회
-	public Map<String, Object> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception;
+	public List<FineMngeVO> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception;
 }

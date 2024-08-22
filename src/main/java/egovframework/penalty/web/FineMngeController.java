@@ -1,14 +1,13 @@
 package egovframework.penalty.web;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
-import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -472,18 +471,27 @@ public class FineMngeController {
 				
 				//위반종류 코드 매핑
 				String vltKindCd = fineMngeService.retrieveVltKindCd(fineMngeVO);
+				
 				fineMngeVO.setVltKindCd(vltKindCd);
 				
 				//발송처 코드 매핑
-				Map<String, Object> sendplc = fineMngeService.retrieveSendPlcCd(fineMngeVO);
-				List<FineMngeVO> sendplcData = (List<FineMngeVO>)sendplc.get("resultList");
-				fineMngeVO.setSendPlcCd(sendplcData.get(0).getSendPlcCd());
-				fineMngeVO.setSendPlcSeq(sendplcData.get(0).getSendPlcSeq());
+				List<FineMngeVO> sendplcData = fineMngeService.retrieveSendPlcCd(fineMngeVO);
+				
+				fineMngeVO.setSendPlcCd(sendplcData.get(0).getSendPlcCd()); //발송처코드
+				fineMngeVO.setSendPlcSeq(sendplcData.get(0).getSendPlcSeq()); //발송처일련번호
 
-				//파라미터 세팅
+				//추가 파라미터 세팅
+				fineMngeVO.setRcptDt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))); //접수일자(현재날짜)
+				fineMngeVO.setNtcdocKindCd("1"); //고지서종류코드(1:위반사실확인서)
+				fineMngeVO.setFineUploadCd("1"); //범칙금업로드코드(1:이파인)
 				
-				//BIZ_범칙금기본 등록
+				//범칙금관리 등록 서비스 호출
+				int cnt = fineMngeService.insertFine(fineMngeVO, errKey);
 				
+				//등록을 실패한 경우 오류
+				if(cnt <= 0) {
+					throw new BizException(ErrorCode.ERR009, errKey);
+				}
 			}
 			resultMap.put("svcNm", "uploadEfine");
 			
