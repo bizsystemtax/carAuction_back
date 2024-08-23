@@ -318,7 +318,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		
 		//발송처코드 조회
 		List<FineMngeVO> result = FineMngeDAO.retrieveSendPlcCd(fineMngeVO);
-		
+
 		//조회 후 결과 '기타'일 경우 가공 후 재조회
 		if(result.get(0).getSendPlcNm().equals("기타")) {
 			//발송처 매핑 키 설정 (후가공)

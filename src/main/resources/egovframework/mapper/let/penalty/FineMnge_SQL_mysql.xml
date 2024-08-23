@@ -479,6 +479,7 @@
 		
 		SELECT	A.SEND_PLC_CD /*발송처코드*/
 				,A.SEND_PLC_SEQ /*발송처일련번호*/
+				,A.NTCDOC_SEND_PLC_NM AS SEND_PLC_NM /*고지서발송처명*/
 		FROM	BIZ_FINE_SEND_PLC_STD_MNGE A /*BIZ_범칙금발송처기준관리*/
 				,SEARCH_KEY_CODE K
 				,SENDPLC L

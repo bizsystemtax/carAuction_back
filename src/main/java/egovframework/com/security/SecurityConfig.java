@@ -58,6 +58,8 @@ public class SecurityConfig {
         "/fineMnge/updateFine",
         "/fineMnge/deleteFine",
         "/fineMnge/uploadEfine",
+        "/fineMnge/uploadEx",
+        "/fineMnge/uploadWetax",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
