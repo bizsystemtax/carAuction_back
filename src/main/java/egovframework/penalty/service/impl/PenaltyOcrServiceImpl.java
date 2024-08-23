@@ -36,6 +36,7 @@ public class PenaltyOcrServiceImpl implements PenaltyOcrService {
 	        response.put("extractedData", extractedData);
 	        response.put("message", "OCR 처리가 완료되었습니다. 데이터를 확인해 주세요.");
 
+	        System.out.println("데이터확인::::::::::::::::::::::::::::::::"+rawText);
 	        return response;
 	    }
 

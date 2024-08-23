@@ -1,6 +1,8 @@
 package egovframework.penalty.util.ocr;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,25 +36,76 @@ public class OcrUtil {
             data.put("차량번호", "");
         }
 
-        // 위반 일자 패턴
-        Pattern violationDatePatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
-        Pattern violationDatePatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+        // 주차일시/단속일시/위반일시/통행일시 뒤에 오는 yyyy-MM-dd 또는 yyyy.MM.dd 형식의 날짜를 찾는 패턴
+        Pattern dateAfterEventPattern = Pattern.compile("(주차일시|단속일시|위반일시|통행일시)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
 
-        Matcher violationDateMatcher = violationDatePatternFull.matcher(ocrText);
-        if (violationDateMatcher.find()) {
-            String year = violationDateMatcher.group(1);
-            String month = violationDateMatcher.group(2);
-            String day = violationDateMatcher.group(3);
-            data.put("위반일자", String.format("%s년 %s월 %s일", year, month, day));
+        Matcher eventDateMatcher = dateAfterEventPattern.matcher(ocrText);
+
+        if (eventDateMatcher.find()) {
+            String year = eventDateMatcher.group(2);
+            String month = eventDateMatcher.group(3);
+            String day = eventDateMatcher.group(4);
+
+            // 월과 일을 유효 범위 내로 보정
+            int monthInt = Integer.parseInt(month);
+            int dayInt = Integer.parseInt(day);
+
+            // 월 보정 (1월~12월)
+            if (monthInt < 1) monthInt = 1;
+            if (monthInt > 12) monthInt = 12;
+
+            // 일 보정 (1일~31일)
+            if (dayInt < 1) dayInt = 1;
+            if (dayInt > 31) dayInt = 31;
+
+            data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
         } else {
-            violationDateMatcher = violationDatePatternShort.matcher(ocrText);
-            if (violationDateMatcher.find()) {
-                String year = "20" + violationDateMatcher.group(1);
-                String month = violationDateMatcher.group(2);
-                String day = violationDateMatcher.group(3);
-                data.put("위반일자", String.format("%s년 %s월 %s일", year, month, day));
+            // 기존 로직 유지 (yyyy년 mm월 dd일 및 yyMMdd 패턴)
+            Pattern dateOfEventPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
+            Pattern dateOfEventPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+
+            eventDateMatcher = dateOfEventPatternFull.matcher(ocrText);
+            if (eventDateMatcher.find()) {
+                String year = eventDateMatcher.group(1);
+                String month = eventDateMatcher.group(2);
+                String day = eventDateMatcher.group(3);
+
+                // 월과 일을 유효 범위 내로 보정
+                int monthInt = Integer.parseInt(month);
+                int dayInt = Integer.parseInt(day);
+
+                // 월 보정 (1월~12월)
+                if (monthInt < 1) monthInt = 1;
+                if (monthInt > 12) monthInt = 12;
+
+                // 일 보정 (1일~31일)
+                if (dayInt < 1) dayInt = 1;
+                if (dayInt > 31) dayInt = 31;
+
+                data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
             } else {
-                data.put("위반일자", "");
+                eventDateMatcher = dateOfEventPatternShort.matcher(ocrText);
+                if (eventDateMatcher.find()) {
+                    String year = "20" + eventDateMatcher.group(1);
+                    String month = eventDateMatcher.group(2);
+                    String day = eventDateMatcher.group(3);
+
+                    // 월과 일을 유효 범위 내로 보정
+                    int monthInt = Integer.parseInt(month);
+                    int dayInt = Integer.parseInt(day);
+
+                    // 월 보정 (1월~12월)
+                    if (monthInt < 1) monthInt = 1;
+                    if (monthInt > 12) monthInt = 12;
+
+                    // 일 보정 (1일~31일)
+                    if (dayInt < 1) dayInt = 1;
+                    if (dayInt > 31) dayInt = 31;
+
+                    data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
+                } else {
+                    data.put("위반일자", "");
+                }
             }
         }
         
@@ -73,7 +126,7 @@ public class OcrUtil {
         }
         
         // 계좌번호 가상계좌번호 패턴
-        Pattern accountNumberPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{14}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2})");
+        Pattern accountNumberPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
         Matcher accountNumberMatcher = accountNumberPattern.matcher(ocrText);
         if (accountNumberMatcher.find()) {
             String accountNumber = accountNumberMatcher.group();
@@ -194,34 +247,115 @@ public class OcrUtil {
             data.put("위반내용", "위반내용을 찾을 수 없습니다.");
         }
         
-        
-        // 접수 일자 패턴
-        Pattern dateOfReceiptPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
-        Pattern dateOfReceiptPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+        // 위반 장소 패턴
+        String locationRegex = "(단속|위반|적발)장소\\s*[：:](\\s*[^\\n\\r]+)";
+        Pattern locationPattern = Pattern.compile(locationRegex);
+        Matcher locationMatcher = locationPattern.matcher(ocrText);
 
-        Matcher dateOfReceiptMatcher = dateOfReceiptPatternFull.matcher(ocrText);
-        if (dateOfReceiptMatcher.find()) {
-            String year = dateOfReceiptMatcher.group(1);
-            String month = dateOfReceiptMatcher.group(2);
-            String day = dateOfReceiptMatcher.group(3);
-            data.put("위반일자", String.format("%s년 %s월 %s일", year, month, day));
+        if (locationMatcher.find()) {
+            String location = locationMatcher.group(2).trim(); // 그룹 2를 사용
+            data.put("위반장소", location);
+            System.out.println("추출된 위반장소: " + location); // 디버깅용 출력
         } else {
-        	dateOfReceiptMatcher = dateOfReceiptPatternShort.matcher(ocrText);
-            if (dateOfReceiptMatcher.find()) {
-                String year = "20" + dateOfReceiptMatcher.group(1);
-                String month = dateOfReceiptMatcher.group(2);
-                String day = dateOfReceiptMatcher.group(3);
-                data.put("접수일자", String.format("%s년 %s월 %s일", year, month, day));
-            } else {
-                data.put("접수일자", "");
-            }
+            data.put("위반장소", "");
+            System.out.println("위반장소를 찾을 수 없습니다."); // 디버깅용 출력
         }
         
-        data.put("위반장소", "");
-        data.put("납부기한일자", "");
-        data.put("범칙금", "");
+        // 범칙금 패턴 (여러 용어 포함)
+        String amountRegex = "(주정차과태료|합계금액|납기내금액|납부금액|과태료금액)\\s*:?\\s*(\\d{1,3}(,\\d{3})*)(\\s*원)?";
+        Pattern amountPattern = Pattern.compile(amountRegex);
+        Matcher amountMatcher = amountPattern.matcher(ocrText);
 
+        if (amountMatcher.find()) {
+            String termUsed = amountMatcher.group(1); // 사용된 용어
+            String amountWithCommas = amountMatcher.group(2);
+            String amountWithoutCommas = amountWithCommas.replaceAll(",", "");
+            
+            // 숫자 포맷을 위해 숫자 변환 및 쉼표 추가
+            int amount = Integer.parseInt(amountWithoutCommas); // 문자열을 정수로 변환
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA); // 한국 로케일
+            String formattedAmount = numberFormat.format(amount); //
+            
+            data.put("범칙금", formattedAmount);
+            System.out.println("추출된 " + termUsed + ": " + formattedAmount + "원");
+        } else {
+            data.put("범칙금", "");
+            System.out.println("범칙금을 찾을 수 없습니다.");
+        }
         
+     // 납기내/납기일자/납부기한/납기 뒤에 오는 yyyy-MM-dd 또는 yyyy.MM.dd 형식의 날짜를 찾는 패턴
+        Pattern dateAfterKeywordPattern = Pattern.compile("(납기내|납기일자|납부기한|납기)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
+
+        Matcher dateOfReceiptMatcher = dateAfterKeywordPattern.matcher(ocrText);
+
+        if (dateOfReceiptMatcher.find()) {
+            String year = dateOfReceiptMatcher.group(2);
+            String month = dateOfReceiptMatcher.group(3);
+            String day = dateOfReceiptMatcher.group(4);
+
+            // 월과 일을 유효 범위 내로 보정
+            int monthInt = Integer.parseInt(month);
+            int dayInt = Integer.parseInt(day);
+
+            // 월 보정 (1월~12월)
+            if (monthInt < 1) monthInt = 1;
+            if (monthInt > 12) monthInt = 12;
+
+            // 일 보정 (1일~31일)
+            if (dayInt < 1) dayInt = 1;
+            if (dayInt > 31) dayInt = 31;
+
+            data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
+        } else {
+            // 기존 로직 유지 (yyyy년 mm월 dd일 및 yyMMdd 패턴)
+            Pattern dateOfReceiptPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
+            Pattern dateOfReceiptPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+
+            dateOfReceiptMatcher = dateOfReceiptPatternFull.matcher(ocrText);
+            if (dateOfReceiptMatcher.find()) {
+                String year = dateOfReceiptMatcher.group(1);
+                String month = dateOfReceiptMatcher.group(2);
+                String day = dateOfReceiptMatcher.group(3);
+
+                // 월과 일을 유효 범위 내로 보정
+                int monthInt = Integer.parseInt(month);
+                int dayInt = Integer.parseInt(day);
+
+                // 월 보정 (1월~12월)
+                if (monthInt < 1) monthInt = 1;
+                if (monthInt > 12) monthInt = 12;
+
+                // 일 보정 (1일~31일)
+                if (dayInt < 1) dayInt = 1;
+                if (dayInt > 31) dayInt = 31;
+
+                data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
+            } else {
+                dateOfReceiptMatcher = dateOfReceiptPatternShort.matcher(ocrText);
+                if (dateOfReceiptMatcher.find()) {
+                    String year = "20" + dateOfReceiptMatcher.group(1);
+                    String month = dateOfReceiptMatcher.group(2);
+                    String day = dateOfReceiptMatcher.group(3);
+
+                    // 월과 일을 유효 범위 내로 보정
+                    int monthInt = Integer.parseInt(month);
+                    int dayInt = Integer.parseInt(day);
+
+                    // 월 보정 (1월~12월)
+                    if (monthInt < 1) monthInt = 1;
+                    if (monthInt > 12) monthInt = 12;
+
+                    // 일 보정 (1일~31일)
+                    if (dayInt < 1) dayInt = 1;
+                    if (dayInt > 31) dayInt = 31;
+
+                    data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
+                } else {
+                    data.put("납부기한일자", "");
+                }
+            }
+        }
+
         return data;
     }
 

@@ -43,6 +43,7 @@ public class SecurityConfig {
         "/auth/login-jwt",
         "/auth/login",
         "/file",
+        "/file/upload",
         "/ocr/process",
         "/ocr/save",
         "/excel/upload",
