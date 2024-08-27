@@ -938,4 +938,79 @@ public class FineMngeController {
 			return ResponseEntity.status(400).body(resultVO);
 		}
 	}
+
+	/**
+	 * @author 범칙금관리 다운로드(이파인)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+//	@ApiResponses(value = {
+//			@ApiResponse(responseCode = "200", description = "조회 성공"),
+//			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+//	})
+//	@PostMapping(value = "/downloadEfine")
+//	public ResponseEntity<ResultVO> downloadEfine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+//		FineMngeVO fineMngeVO = new FineMngeVO();
+//		ResultVO resultVO = new ResultVO();
+//		List<Map<String, String>> resultList = new Has
+//		
+//		try {
+//			LoginVO loginVO = null;
+//			
+//			//로그인 여부 확인
+////			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+////			
+////			if(isLogin) {
+////				//사용자 정보 세팅
+////				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+////				fineMngeVO.setUserId(loginVO.getId());
+////				fineMngeVO.setUserIp(loginVO.getIp());
+////			} else {
+////				throw new BizException(ErrorCode.ERR300, "");
+////			}
+//			for(int i=0; i<requestParams.size(); i++) {
+//				Map<String, String> list = requestParams.get(i);
+//				//화면에서 넘어온 데이터 VO 세팅
+//				String vltDt = list.get("vlt_dt");		//위반일자
+//				String vltAtime = list.get("vlt_atime");//위반시각
+//				String vhclNo = list.get("vhcl_no");	//차량번호
+//				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+//				
+//				//삭제용 VO 세팅
+//				fineMngeVO.setVltDt(vltDt);
+//				fineMngeVO.setVltAtime(vltAtime);
+//				fineMngeVO.setVhclNo(vhclNo);
+//				fineMngeVO.setFineSeq(fineSeq);
+//				
+//				//유효한 데이터인지 확인용 VO 세팅
+//				fineMngeVO.setInVltDtStrt(vltDt);
+//				fineMngeVO.setInVltDtEnd(vltDt);
+//	
+//				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+//				
+//				//범칙금 내역 존재 여부 확인
+////				fineMngeService.checkVhclNoLoanInf(fineMngeVO, errKey);
+//				
+//				//다운로드 데이터 조회
+//				Map<String, Object> resultMap = fineMngeService.retrieveFineMnge(fineMngeVO);
+//				resultList.add(resultMap);
+//			}
+//			
+//			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+//			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+//			resultVO.setResult(resultMap);
+//			return ResponseEntity.ok(resultVO);
+//		} catch (BizException e) {
+//			e.printStackTrace();
+//			resultMap.put("errMsg", e.getMessage());
+//			resultVO.setResult(resultMap);
+//			return ResponseEntity.status(400).body(resultVO);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+//			resultVO.setResult(resultMap);
+//			return ResponseEntity.status(400).body(resultVO);
+//		}
+//	}
 }

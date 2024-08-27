@@ -62,6 +62,7 @@ public class SecurityConfig {
         "/fineMnge/uploadWetax",
         "/fineMnge/uploadOCR",
         "/fineMnge/uploadCartax",
+        "/fineMnge/downloadEfine",
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
