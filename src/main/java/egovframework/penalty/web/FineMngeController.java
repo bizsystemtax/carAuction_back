@@ -718,4 +718,224 @@ public class FineMngeController {
 			return ResponseEntity.status(400).body(resultVO);
 		}
 	}
+	
+	/**
+	 * @author 범칙금관리 업로드(OCR)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/uploadOCR")
+	public ResponseEntity<ResultVO> uploadOCR(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			LoginVO loginVO = null;
+			
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				//화면에서 넘어온 데이터 VO 세팅
+				String docFineNo1 = list.get("docFineNo1");						//문서범칙금번호1(순번)
+				String vhclNo = list.get("vhclNo");								//차량번호
+				String fineAmt = list.get("fineAmt").replaceAll("[^0-9]","");	//범칙금금액
+				String vltDt = list.get("vltDt").replaceAll("-", "");			//위반일자
+				String vltAtime = list.get("vltAtime").replaceAll(":", "");		//위반시각
+				String vltCts = list.get("vltCts");								//위반내용
+				String vltPnt = list.get("vltPnt");								//위반장소
+				String docFineNo2 = list.get("docFineNo2");						//문서범칙금번호2(요청번호)
+				String sendPlcNm = list.get("sendPlcNm");						//발송처명(발송처코드 매핑용)
+				String pymtDdayDt = list.get("pymtDdayDt").replaceAll("-", "");	//납부기한일자
+				String actBankNm1 = list.get("actBankNm1");						//계좌은행명1
+				String actNo1 = list.get("actNo1");								//계좌번호1
+				
+				fineMngeVO.setDocFineNo1(docFineNo1);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineAmt(fineAmt);
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVltCts(vltCts + " " + vltPnt); //발송처 검색을 위해 위반장소까지 세팅 후 후반에 위반내용만 재세팅 한다.
+				fineMngeVO.setVltPnt(vltPnt);
+				fineMngeVO.setDocFineNo2(docFineNo2);
+				fineMngeVO.setSendPlcNm(sendPlcNm);
+				fineMngeVO.setPymtDdayDt(pymtDdayDt);
+				fineMngeVO.setActBankNm1(actBankNm1);
+				fineMngeVO.setActNo1(actNo1);
+				
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//차량번호로 대출정보 유효성 검사
+				fineMngeService.checkVhclNoLoanInf(fineMngeVO, errKey);
+				
+				//위반종류 코드 매핑
+				String vltKindCd = fineMngeService.retrieveVltKindCd(fineMngeVO);
+				
+				fineMngeVO.setVltKindCd(vltKindCd);
+				
+				//발송처 코드 매핑
+				List<FineMngeVO> sendplcData = fineMngeService.retrieveSendPlcCd(fineMngeVO);
+				
+				fineMngeVO.setSendPlcCd(sendplcData.get(0).getSendPlcCd()); //발송처코드
+				fineMngeVO.setSendPlcSeq(sendplcData.get(0).getSendPlcSeq()); //발송처일련번호
+				fineMngeVO.setVltCts(vltCts);
+
+				//추가 파라미터 세팅
+				//원랜 관공서명에 '경찰서', '경찰청'이 들어갈 경우 업로드코드를 이파인 업로드로 세팅하는 조건이 있긴 한데 이건 추후 따져봐야 할듯. (20240827)
+				fineMngeVO.setRcptDt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))); //접수일자(현재날짜)
+				fineMngeVO.setNtcdocKindCd("1"); //고지서종류코드(1:위반사실확인서)
+				fineMngeVO.setFineUploadCd("4"); //범칙금업로드코드(4:OCR)
+				
+				//범칙금관리 등록 서비스 호출
+				int cnt = fineMngeService.insertFine(fineMngeVO, errKey);
+				
+				//등록을 실패한 경우 오류
+				if(cnt <= 0) {
+					throw new BizException(ErrorCode.ERR009, errKey);
+				}
+			}
+			resultMap.put("svcNm", "uploadOCR");
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
+	
+	/**
+	 * @author 범칙금관리 업로드(카택스)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/uploadCartax")
+	public ResponseEntity<ResultVO> uploadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			LoginVO loginVO = null;
+			
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				//화면에서 넘어온 데이터 VO 세팅
+				String docFineNo1 = list.get("docFineNo1");						//문서범칙금번호1(no)
+				String sendPlcNm = list.get("sendPlcNm");						//발송처명(발송처코드 매핑용)
+				String vltCts = list.get("vltCts");								//위반내용
+				String vhclNo = list.get("vhclNo");								//차량번호
+				String docFineNo2 = list.get("docFineNo2");						//문서범칙금번호2(회사명 / 고지날짜)
+				String vltDt = list.get("vltDt").replaceAll("-", "");			//위반일자
+				String vltAtime = list.get("vltAtime").replaceAll(":", "");		//위반시각
+				String pymtDdayDt = list.get("pymtDdayDt").replaceAll("-","");	//납부기한일자
+				String fineAmt = list.get("fineAmt").replaceAll("[^0-9]","");	//범칙금금액
+				String vltPnt = list.get("vltPnt");								//위반장소
+				
+				fineMngeVO.setDocFineNo1(docFineNo1);
+				fineMngeVO.setSendPlcNm(sendPlcNm);
+				fineMngeVO.setVltCts(vltCts);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setDocFineNo2(docFineNo2);
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setPymtDdayDt(pymtDdayDt);
+				fineMngeVO.setFineAmt(fineAmt);
+				fineMngeVO.setVltPnt(vltPnt);
+				
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//차량번호로 대출정보 유효성 검사
+				fineMngeService.checkVhclNoLoanInf(fineMngeVO, errKey);
+				
+				//카택스는 '버스전용차로위반'과 '전용차로위반'을 제외한 나머지는 '주정차위반'으로 설정하기 때문에 별도의 VO를 만들어 위반종류 코드를 조회한다.
+				FineMngeVO vltKindCdVO = new FineMngeVO();
+				if(!vltCts.contains("전용차로위반")) {
+					vltKindCdVO.setVltCts("주정차위반");
+				} else {
+					vltKindCdVO.setVltCts(vltCts);
+				}
+				
+				//위반종류 코드 매핑
+				String vltKindCd = fineMngeService.retrieveVltKindCd(vltKindCdVO);
+				
+				fineMngeVO.setVltKindCd(vltKindCd);
+				
+				//발송처 코드 매핑
+				List<FineMngeVO> sendplcData = fineMngeService.retrieveSendPlcCd(fineMngeVO);
+				
+				fineMngeVO.setSendPlcCd(sendplcData.get(0).getSendPlcCd()); //발송처코드
+				fineMngeVO.setSendPlcSeq(sendplcData.get(0).getSendPlcSeq()); //발송처일련번호
+				
+				//추가 파라미터 세팅
+				fineMngeVO.setRcptDt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))); //접수일자(현재날짜)
+				fineMngeVO.setNtcdocKindCd("1"); //고지서종류코드(1:위반사실확인서)
+				fineMngeVO.setFineUploadCd("5"); //범칙금업로드코드(5:카택스)
+				
+				//범칙금관리 등록 서비스 호출
+				int cnt = fineMngeService.insertFine(fineMngeVO, errKey);
+				
+				//등록을 실패한 경우 오류
+				if(cnt <= 0) {
+					throw new BizException(ErrorCode.ERR009, errKey);
+				}
+			}
+			resultMap.put("svcNm", "uploadCartax");
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
 }

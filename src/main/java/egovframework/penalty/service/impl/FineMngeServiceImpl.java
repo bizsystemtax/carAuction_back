@@ -45,6 +45,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
         vltKindCdKeywordMap.put("통행구분", "통행구분");
         vltKindCdKeywordMap.put("끼어들기", "끼어들기");
         vltKindCdKeywordMap.put("진로변경", "진로변경");
+        vltKindCdKeywordMap.put("기타", "기타");
     }
 	
 	//범칙금관리 검색조건 콤보박스 조회
@@ -241,6 +242,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
         	for (Map.Entry<String, String> entry : vltKindCdKeywordMap.entrySet()) {
                 if (vltCts.contains(entry.getKey())) {
                 	keyWord1 = entry.getValue();
+                	break;
                 }
             }
             
