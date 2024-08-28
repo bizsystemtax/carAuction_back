@@ -80,4 +80,10 @@ public class FineMngeDAO extends EgovAbstractMapper {
 		//발송처코드 조회 XML 호출
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveSendPlcCd", fineMngeVO);
 	}
+	
+	//다운로드(이파인) 조회
+	public List<FineMngeVO> downloadEfine(FineMngeVO fineMngeVO) {
+		//다운로드(이파인) 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveDownloadEfine", fineMngeVO);
+	}
 }

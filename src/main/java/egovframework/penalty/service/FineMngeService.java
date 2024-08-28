@@ -43,4 +43,7 @@ public interface FineMngeService {
 	
 	//발송처코드 조회
 	public List<FineMngeVO> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception;
+
+	//다운로드(이파인) 조회
+	public List<FineMngeVO> downloadEfine(FineMngeVO fineMngeVO) throws Exception;
 }

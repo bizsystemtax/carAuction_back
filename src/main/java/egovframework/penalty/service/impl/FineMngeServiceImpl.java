@@ -368,4 +368,10 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 		
 		return result;
 	}
+	
+	//다운로드(이파인) 조회
+	@Override
+	public List<FineMngeVO> downloadEfine(FineMngeVO fineMngeVO) throws Exception {
+		return FineMngeDAO.downloadEfine(fineMngeVO);
+	}
 }

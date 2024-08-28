@@ -531,4 +531,80 @@
 		LIMIT 1
 		]]>
 	</select>
+	
+	<!-- Retrieve : 다운로드(이파인) 조회 -->
+	<select id="retrieveDownloadEfine" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
+		<![CDATA[
+		SELECT 	A.DOC_FINE_NO1 AS col1 /*순번*/
+				,A.DOC_FINE_NO2 AS col2 /*요청번호*/
+				,A.DOC_FINE_NO3 AS col3 /*과태료번호*/
+				,CONCAT(CONCAT(SUBSTRING(A.VLT_DT, 1, 4), '-', SUBSTRING(A.VLT_DT, 5, 2), '-', SUBSTRING(A.VLT_DT, 7, 2))
+						, ' '
+						, CONCAT(SUBSTRING(A.VLT_ATIME, 1, 2), ':', SUBSTRING(A.VLT_ATIME, 3, 2), ':', SUBSTRING(A.VLT_ATIME, 5, 2))
+       			) AS col4 /*위반일시*/
+       			,A.VLT_PNT AS col5 /*위반장소*/
+       			,A.VLT_CTS AS col6 /*위반내용*/
+       			,A.VHCL_NO AS col7 /*차량번호*/
+       			,B.NTCDOC_SEND_PLC_NM AS col8 /*관할관서*/
+       			,A.PNLT_STAT_NM AS col9 /*과태료상태*/
+       			,A.FINE_AMT AS col10 /*과태료금액*/
+       			,A.DOC_FINE_NO4 AS col11 /*일련번호*/
+       			,CONCAT(A.ACT_BANK_NM1, ' ', A.ACT_NO1,
+       					CASE WHEN A.ACT_BANK_NM2 != '' THEN CONCAT(' ', A.ACT_BANK_NM2, ' ', A.ACT_NO2) ELSE '' END,
+       					CASE WHEN A.ACT_BANK_NM3 != '' THEN CONCAT(' ', A.ACT_BANK_NM3, ' ', A.ACT_NO3) ELSE '' END,
+       					CASE WHEN A.ACT_BANK_NM4 != '' THEN CONCAT(' ', A.ACT_BANK_NM4, ' ', A.ACT_NO4) ELSE '' END) AS col12 /*가상계좌번호*/
+       			,CASE WHEN A.PYMT_DDAY_DT != ''
+       				  THEN CONCAT(SUBSTRING(A.PYMT_DDAY_DT , 1, 4),
+		       				  	  '-',
+		       				  	  SUBSTRING(A.PYMT_DDAY_DT , 5, 2), 
+		       				  	  '-',
+		       				  	  SUBSTRING(A.PYMT_DDAY_DT , 7, 2))
+       				  ELSE ''
+       			END AS col13 /*납부기한*/
+       			,C.CS_NM AS col14 /*위반자성명*/
+       			,CASE WHEN C.CS_TYP_CD IN ('1', '2', '5') THEN '0'
+       				  WHEN C.CS_TYP_CD IN ('3', '4') THEN '2'
+       				  ELSE ''
+       			END AS col15 /*위반자구분*/
+       			,CASE WHEN C.GD_CD LIKE 'RC%' AND C.CS_TYP_CD IN ('1', '2', '5') THEN ''
+       				  ELSE CONCAT(SUBSTRING(C.RNM_NO , 1, 6),
+		       				  	  '-', 
+		       				  	  SUBSTRING(C.RNM_NO , 7, 13))
+       			END AS col16 /*주민법인번호(렌터카 개인은 공란)*/
+       			,CASE WHEN C.GD_CD LIKE 'RC%' AND C.CS_TYP_CD IN ('1', '2', '5') THEN ''
+       				  ELSE CONCAT(SUBSTRING(C.DRV_LIC_NO , 1, 2),
+       				  			  '-',
+       				  			  SUBSTRING(C.DRV_LIC_NO , 3, 4),
+       				  			  '-',
+       				  			  SUBSTRING(C.DRV_LIC_NO , 5, 10),
+       				  			  '-',
+       				  			  SUBSTRING(C.DRV_LIC_NO , 11, 12))
+       			END AS col17 /*면허번호(렌터카 개인은 공란)*/
+       			,CONCAT(C.CS_ADDR, CASE WHEN C.CS_ADDR_DTL != '' THEN CONCAT(', ', C.CS_ADDR_DTL) ELSE '' END) AS col18 /*주소(필수)*/
+       			,CONCAT(C.LOAN_NO, '-', C.LOAN_SEQ) AS col19 /*계약번호(필수)*/
+       			,CONCAT(SUBSTRING(C.LOAN_DT , 1, 4),
+	   				  	'-',
+	   				  	SUBSTRING(C.LOAN_DT , 5, 2), 
+	   				  	'-',
+	   				  	SUBSTRING(C.LOAN_DT , 7, 2)) AS col20 /*계약일자(필수)*/
+	   			,CONCAT(SUBSTRING(C.MTRT_DT , 1, 4),
+	   				  	'-',
+	   				  	SUBSTRING(C.MTRT_DT , 5, 2), 
+	   				  	'-',
+	   				  	SUBSTRING(C.MTRT_DT , 7, 2)) AS col21 /*계약먄료일(필수)*/
+	   			,A.VHCL_NO AS col22 /*계약차량번호*/
+		FROM 	BIZ_FINE_MAS A /*BIZ_범칙금기본*/
+				,BIZ_FINE_SEND_PLC_STD_MNGE B /*BIZ_범칙금관공서기준관리*/
+				,BIZ_LOAN_MAS C /*BIZ_대출기본*/
+		WHERE 	A.VLT_DT = #{vltDt} /*위반일자*/
+		AND		A.VLT_ATIME = #{vltAtime} /*위반시각*/
+		AND		A.VHCL_NO = #{vhclNo} /*차량번호*/
+		AND		A.FINE_SEQ = #{fineSeq} /*범칙금일련번호*/
+		AND		A.SEND_PLC_CD = B.SEND_PLC_CD 
+		AND		A.SEND_PLC_SEQ = B.SEND_PLC_SEQ
+		AND		A.VHCL_NO = C.VHCL_NO 
+		AND 	A.VLT_DT >= C.LOAN_DT
+		AND 	(A.VLT_DT < C.TMNT_DT OR C.TMNT_DT = '')
+		]]>
+	</select>
 </mapper>
