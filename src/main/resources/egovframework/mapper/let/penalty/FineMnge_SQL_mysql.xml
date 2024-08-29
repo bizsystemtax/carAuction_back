@@ -52,11 +52,16 @@
 	<!-- Retrieve : 범칙금관리 검색조건 콤보박스 조회 -->
 	<select id="retrieveComboBoxList" resultMap="ComnCdVO">
 		<![CDATA[
-		SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
-				, CD_VAL /*코드값*/
-				, CD_NM /*코드명*/
-		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
-		WHERE	COMN_CD_ENG_NM = 'VLT_KIND_CD'
+		/*위반종류 코드명 오름차순 정렬 (20240829 박낙구 상무님 요청)*/
+		SELECT 	COMN_CD_ENG_NM
+				,CD_VAL
+				,CD_NM
+		FROM (SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
+						, CD_VAL /*코드값*/
+						, CD_NM /*코드명*/
+						,ROW_NUMBER() OVER (ORDER BY CD_NM) AS RANGE_COL
+				FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
+				WHERE	COMN_CD_ENG_NM = 'VLT_KIND_CD') AS VLT_KIND_CD
 		UNION ALL
 		SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
 				, CD_VAL /*코드값*/
