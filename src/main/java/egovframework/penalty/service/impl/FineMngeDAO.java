@@ -86,4 +86,22 @@ public class FineMngeDAO extends EgovAbstractMapper {
 		//다운로드(이파인) 조회 XML 호출
 		return (List<FineMngeVO>) list("FineMngeDAO.retrieveDownloadEfine", fineMngeVO);
 	}
+
+	//다운로드(한국도로공사) 조회
+	public List<FineMngeVO> downloadEx(FineMngeVO fineMngeVO) {
+		//다운로드(한국도로공사) 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveDownloadEx", fineMngeVO);
+	}
+	
+	//다운로드(OCR) 조회
+	public List<FineMngeVO> downloadOCR(FineMngeVO fineMngeVO) {
+		//다운로드(OCR) 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveDownloadOCR", fineMngeVO);
+	}
+	
+	//다운로드(카택스) 조회
+	public List<FineMngeVO> downloadCartax(FineMngeVO fineMngeVO) {
+		//다운로드(카택스) 조회 XML 호출
+		return (List<FineMngeVO>) list("FineMngeDAO.retrieveDownloadCartax", fineMngeVO);
+	}
 }

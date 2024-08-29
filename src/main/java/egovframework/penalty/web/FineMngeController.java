@@ -868,7 +868,9 @@ public class FineMngeController {
 				String sendPlcNm = list.get("sendPlcNm");						//발송처명(발송처코드 매핑용)
 				String vltCts = list.get("vltCts");								//위반내용
 				String vhclNo = list.get("vhclNo");								//차량번호
-				String docFineNo2 = list.get("docFineNo2");						//문서범칙금번호2(회사명 / 고지날짜)
+				String docFineNo2 = list.get("docFineNo2");						//문서범칙금번호2(회사명)
+				String docFineNo3 = list.get("docFineNo3");						//문서범칙금번호3(자치구)
+				String docFineNo4 = list.get("docFineNo4");						//문서범칙금번호4(고지날짜)
 				String vltDt = list.get("vltDt").replaceAll("-", "");			//위반일자
 				String vltAtime = list.get("vltAtime").replaceAll(":", "");		//위반시각
 				String pymtDdayDt = list.get("pymtDdayDt").replaceAll("-","");	//납부기한일자
@@ -880,6 +882,8 @@ public class FineMngeController {
 				fineMngeVO.setVltCts(vltCts);
 				fineMngeVO.setVhclNo(vhclNo);
 				fineMngeVO.setDocFineNo2(docFineNo2);
+				fineMngeVO.setDocFineNo3(docFineNo3);
+				fineMngeVO.setDocFineNo4(docFineNo4);
 				fineMngeVO.setVltDt(vltDt);
 				fineMngeVO.setVltAtime(vltAtime);
 				fineMngeVO.setPymtDdayDt(pymtDdayDt);
@@ -982,7 +986,7 @@ public class FineMngeController {
 				String vhclNo = list.get("vhcl_no");	//차량번호
 				String fineSeq = list.get("fine_seq");	//범칙금일련번호
 				
-				//삭제용 VO 세팅
+				//VO 세팅
 				fineMngeVO.setVltDt(vltDt);
 				fineMngeVO.setVltAtime(vltAtime);
 				fineMngeVO.setVhclNo(vhclNo);
@@ -1003,7 +1007,7 @@ public class FineMngeController {
 				}
 				
 				for (FineMngeVO vo : data) {
-		            vo.setFileName("이파인_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+		            vo.setFileName("eFine_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 		        }
 
 				finalList.addAll(data);
@@ -1016,6 +1020,302 @@ public class FineMngeController {
 			}).thenComparing(vo -> {
 			    FineMngeVO fmVO = (FineMngeVO) vo;
 			    return Integer.parseInt(fmVO.getCol2());
+			}));
+			
+			resultMap.put("resultList", finalList);
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
+
+	/**
+	 * @author 범칙금관리 다운로드(한국도로공사)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/downloadEx")
+	public ResponseEntity<ResultVO> downloadEx(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		List<FineMngeVO> finalList = new ArrayList<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			LoginVO loginVO = null;
+			
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				//화면에서 넘어온 데이터 VO 세팅
+				String vltDt = list.get("vlt_dt");		//위반일자
+				String vltAtime = list.get("vlt_atime");//위반시각
+				String vhclNo = list.get("vhcl_no");	//차량번호
+				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				
+				//VO 세팅
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineSeq(fineSeq);
+				
+				//유효한 데이터인지 확인용 VO 세팅
+				fineMngeVO.setInVltDtStrt(vltDt);
+				fineMngeVO.setInVltDtEnd(vltDt);
+				
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//다운로드 데이터 조회
+				List<FineMngeVO> data = fineMngeService.downloadEx(fineMngeVO);
+				
+				//범칙금 또는 고객정보가 조회되지 않으면 오류
+				if(data.size() == 0) {
+					throw new BizException(ErrorCode.ERR012, errKey);
+				}
+				
+				for (FineMngeVO vo : data) {
+					vo.setFileName("한국도로공사_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+				}
+				
+				finalList.addAll(data);
+			}
+			
+			//범칙금일련번호를 이용하여 등록한 순서대로 오름차순으로 정렬
+			finalList.sort(Comparator.comparing(vo -> {
+				FineMngeVO fmVO = (FineMngeVO) vo;
+				return Integer.parseInt(fmVO.getFineSeq());
+			}));
+			
+			resultMap.put("resultList", finalList);
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
+	
+	/**
+	 * @author 범칙금관리 다운로드(OCR)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/downloadOCR")
+	public ResponseEntity<ResultVO> downloadOCR(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		List<FineMngeVO> finalList = new ArrayList<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			LoginVO loginVO = null;
+			
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				//화면에서 넘어온 데이터 VO 세팅
+				String vltDt = list.get("vlt_dt");		//위반일자
+				String vltAtime = list.get("vlt_atime");//위반시각
+				String vhclNo = list.get("vhcl_no");	//차량번호
+				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				
+				//VO 세팅
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineSeq(fineSeq);
+				
+				//유효한 데이터인지 확인용 VO 세팅
+				fineMngeVO.setInVltDtStrt(vltDt);
+				fineMngeVO.setInVltDtEnd(vltDt);
+				
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//다운로드 데이터 조회
+				List<FineMngeVO> data = fineMngeService.downloadOCR(fineMngeVO);
+				
+				//범칙금 또는 고객정보가 조회되지 않으면 오류
+				if(data.size() == 0) {
+					throw new BizException(ErrorCode.ERR012, errKey);
+				}
+				
+				for (FineMngeVO vo : data) {
+					vo.setFileName("OCR_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+				}
+				
+				finalList.addAll(data);
+			}
+			
+			//문서범칙금번호1(no)를 이용하여 등록한 순서대로 오름차순으로 정렬
+			finalList.sort(Comparator.comparing(FineMngeVO::getDocFineNo1));
+			
+			resultMap.put("resultList", finalList);
+			
+			resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+			resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.ok(resultVO);
+		} catch (BizException e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", e.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+			resultVO.setResult(resultMap);
+			return ResponseEntity.status(400).body(resultVO);
+		}
+	}
+	
+	/**
+	 * @author 범칙금관리 다운로드(카택스)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/downloadCartax")
+	public ResponseEntity<ResultVO> downloadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+		FineMngeVO fineMngeVO = new FineMngeVO();
+		ResultVO resultVO = new ResultVO();
+		List<FineMngeVO> finalList = new ArrayList<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			LoginVO loginVO = null;
+			
+			//로그인 여부 확인
+//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+//			
+//			if(isLogin) {
+//				//사용자 정보 세팅
+//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//				fineMngeVO.setUserId(loginVO.getId());
+//				fineMngeVO.setUserIp(loginVO.getIp());
+//			} else {
+//				throw new BizException(ErrorCode.ERR300, "");
+//			}
+			
+			//2행에 들어가는 헤더 설명문구 세팅
+			FineMngeVO subHeader = new FineMngeVO();
+			subHeader.setCol1("수정불가");
+			subHeader.setCol2("수정불가");
+			subHeader.setCol3("수정불가");
+			subHeader.setCol4("수정불가");
+			subHeader.setCol5("수정불가");
+			subHeader.setCol6("수정불가");
+			subHeader.setCol7("수정불가");
+			subHeader.setCol8("수정불가");
+			subHeader.setCol9("수정불가");
+			subHeader.setCol10("수정불가");
+			subHeader.setCol11("수정불가");
+			subHeader.setCol12("개인, 개인사업자 = '개인' / 법인, 법인사업장 = '법인' / 외국인 = '외국인'");
+			subHeader.setCol13("개인, 개인사업자는 고객 실명번호(렌터카는 뒷자리 마스킹) 기재 / 법인, 법인사업장은 법인번호 기재 / 외국인은 외국인번호(렌터카는 뒷자리 마스킹) 기재");
+			subHeader.setCol14("개인, 개인사업자, 외국인은 (대표자)운전면허번호 기재 / 법인, 법인사업장은 공란");
+			subHeader.setCol15("개인, 개인사업자, 외국인은 고객명 기재 / 법인은 법인사업장명 기재");
+			subHeader.setCol16("예) YYYY-MM-DD");
+			subHeader.setCol17("예) YYYY-MM-DD");
+			subHeader.setCol18("예) 00000");
+			subHeader.setCol21("예) 010-0000-0000");
+			subHeader.setCol22("외부 기관에 업로드 할 PDF 파일명과 동일하게 기재");
+			subHeader.setFineSeq("0");
+			subHeader.setFileName("cartax_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+			
+			finalList.add(subHeader);
+			
+			for(int i=0; i<requestParams.size(); i++) {
+				Map<String, String> list = requestParams.get(i);
+				//화면에서 넘어온 데이터 VO 세팅
+				String vltDt = list.get("vlt_dt");		//위반일자
+				String vltAtime = list.get("vlt_atime");//위반시각
+				String vhclNo = list.get("vhcl_no");	//차량번호
+				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				
+				//VO 세팅
+				fineMngeVO.setVltDt(vltDt);
+				fineMngeVO.setVltAtime(vltAtime);
+				fineMngeVO.setVhclNo(vhclNo);
+				fineMngeVO.setFineSeq(fineSeq);
+				
+				//유효한 데이터인지 확인용 VO 세팅
+				fineMngeVO.setInVltDtStrt(vltDt);
+				fineMngeVO.setInVltDtEnd(vltDt);
+				
+				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+				
+				//다운로드 데이터 조회
+				List<FineMngeVO> data = fineMngeService.downloadCartax(fineMngeVO);
+				
+				//범칙금 또는 고객정보가 조회되지 않으면 오류
+				if(data.size() == 0) {
+					throw new BizException(ErrorCode.ERR012, errKey);
+				}
+				
+				finalList.addAll(data);
+			}
+			
+			//범칙금일련번호를 이용하여 등록한 순서대로 오름차순으로 정렬
+			finalList.sort(Comparator.comparing(vo -> {
+				FineMngeVO fmVO = (FineMngeVO) vo;
+				return Integer.parseInt(fmVO.getFineSeq());
 			}));
 			
 			resultMap.put("resultList", finalList);

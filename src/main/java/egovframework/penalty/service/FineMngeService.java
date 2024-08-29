@@ -46,4 +46,13 @@ public interface FineMngeService {
 
 	//다운로드(이파인) 조회
 	public List<FineMngeVO> downloadEfine(FineMngeVO fineMngeVO) throws Exception;
+
+	//다운로드(한국도로공사) 조회
+	public List<FineMngeVO> downloadEx(FineMngeVO fineMngeVO) throws Exception;
+	
+	//다운로드(OCR) 조회
+	public List<FineMngeVO> downloadOCR(FineMngeVO fineMngeVO) throws Exception;
+	
+	//다운로드(카택스) 조회
+	public List<FineMngeVO> downloadCartax(FineMngeVO fineMngeVO) throws Exception;
 }

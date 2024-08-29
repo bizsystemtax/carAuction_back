@@ -374,4 +374,22 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	public List<FineMngeVO> downloadEfine(FineMngeVO fineMngeVO) throws Exception {
 		return FineMngeDAO.downloadEfine(fineMngeVO);
 	}
+
+	//다운로드(한국도로공사) 조회
+	@Override
+	public List<FineMngeVO> downloadEx(FineMngeVO fineMngeVO) throws Exception {
+		return FineMngeDAO.downloadEx(fineMngeVO);
+	}
+	
+	//다운로드(OCR) 조회
+	@Override
+	public List<FineMngeVO> downloadOCR(FineMngeVO fineMngeVO) throws Exception {
+		return FineMngeDAO.downloadOCR(fineMngeVO);
+	}
+	
+	//다운로드(카택스) 조회
+	@Override
+	public List<FineMngeVO> downloadCartax(FineMngeVO fineMngeVO) throws Exception {
+		return FineMngeDAO.downloadCartax(fineMngeVO);
+	}
 }
