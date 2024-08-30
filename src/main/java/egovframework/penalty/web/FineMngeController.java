@@ -76,19 +76,23 @@ public class FineMngeController {
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		
-		String inVltDtStrt = requestParams.get("in_vlt_dt_strt").replaceAll("-", "");//위반일자시작
-		String inVltDtEnd = requestParams.get("in_vlt_dt_end").replaceAll("-", "");	//위반일자종료
-		String inVltKindCd = requestParams.get("in_vlt_kind_cd");					//위반종류코드
-		String inSendPlcCd = requestParams.get("in_send_plc_cd");					//발송처코드
-		String inGdCd = requestParams.get("in_gd_cd").replaceAll("[^0-9]","");		//상품코드
-		String inCsNm = requestParams.get("in_cs_nm");								//고객명
-		String inVhclNo = requestParams.get("in_vhcl_no");							//차량번호
+		String inVltDtStrt = requestParams.get("inVltDtStrt").replaceAll("-", "");//위반일자시작
+		String inVltDtEnd = requestParams.get("inVltDtEnd").replaceAll("-", "");  //위반일자종료
+		String inVltKindCd = requestParams.get("inVltKindCd");					  //위반종류코드
+		String inSendPlcCd = requestParams.get("inSendPlcCd");					  //발송처코드
+		String inFineUploadCd = requestParams.get("inFineUploadCd");			  //업로드구분
+		String inCfmtYn = requestParams.get("inCfmtYn").replaceAll("[^0-9]","");  //확정여부
+		String inGdCd = requestParams.get("inGdCd").replaceAll("[^0-9]","");	  //상품코드
+		String inCsNm = requestParams.get("inCsNm");							  //고객명
+		String inVhclNo = requestParams.get("inVhclNo");						  //차량번호
 
 		//조회조건 VO 세팅
 		fineMngeVO.setInVltDtStrt(inVltDtStrt);
 		fineMngeVO.setInVltDtEnd(inVltDtEnd);
 		fineMngeVO.setInVltKindCd(inVltKindCd);
 		fineMngeVO.setInSendPlcCd(inSendPlcCd);
+		fineMngeVO.setInFineUploadCd(inFineUploadCd);
+		fineMngeVO.setInCfmtYn(inCfmtYn);
 		fineMngeVO.setInGdCd(inGdCd);
 		fineMngeVO.setInCsNm(inCsNm);
 		fineMngeVO.setInVhclNo(inVhclNo);
@@ -137,10 +141,10 @@ public class FineMngeController {
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				String cfmtDt = LocalDate.now().toString().replaceAll("-", ""); //확정일자(당일로 세팅)
 				
 				//확정일자 업데이트용 VO 세팅
@@ -250,17 +254,17 @@ public class FineMngeController {
 
 			Map<String, String> list = requestParams.get(0);
 			
-			String vltDt = list.get("vltDt"); //위반일자
-			String vltAtime = list.get("vltAtime"); //위반시각
-			String vhclNo = list.get("vhclNo"); //차량번호
-			String fineSeq = list.get("fineSeq"); //범칙금일련번호
-			String sendPlcCd = list.get("sendPlcCd"); //발송처코드
-			String sendPlcSeq = list.get("sendPlcSeq"); //발송처일련번호
-			String vltKindCd = list.get("vltKindCd"); //위반종류코드
-			String fineAmt = list.get("fineAmt").replaceAll("[^0-9]",""); //범칙금금액
-			String vltCts = list.get("vltCts");	//위반내용
-			String vltPnt = list.get("vltPnt");	//위반장소
-			String rcptDt = list.get("rcptDt").replaceAll("-", "");	//접수일자
+			String vltDt = list.get("vltDt");								//위반일자
+			String vltAtime = list.get("vltAtime");							//위반시각
+			String vhclNo = list.get("vhclNo");								//차량번호
+			String fineSeq = list.get("fineSeq");							//범칙금일련번호
+			String sendPlcCd = list.get("sendPlcCd");						//발송처코드
+			String sendPlcSeq = list.get("sendPlcSeq");						//발송처일련번호
+			String vltKindCd = list.get("vltKindCd");						//위반종류코드
+			String fineAmt = list.get("fineAmt").replaceAll("[^0-9]","");	//범칙금금액
+			String vltCts = list.get("vltCts");								//위반내용
+			String vltPnt = list.get("vltPnt");								//위반장소
+			String rcptDt = list.get("rcptDt").replaceAll("-", "");			//접수일자
 			String pymtDdayDt = list.get("pymtDdayDt").replaceAll("-", "");	//납부기한일자
 			
 			//업데이트 VO 세팅
@@ -345,10 +349,10 @@ public class FineMngeController {
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				
 				//삭제용 VO 세팅
 				fineMngeVO.setVltDt(vltDt);
@@ -981,10 +985,10 @@ public class FineMngeController {
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				//화면에서 넘어온 데이터 VO 세팅
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				
 				//VO 세팅
 				fineMngeVO.setVltDt(vltDt);
@@ -1076,10 +1080,10 @@ public class FineMngeController {
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				//화면에서 넘어온 데이터 VO 세팅
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				
 				//VO 세팅
 				fineMngeVO.setVltDt(vltDt);
@@ -1168,10 +1172,10 @@ public class FineMngeController {
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				//화면에서 넘어온 데이터 VO 세팅
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				
 				//VO 세팅
 				fineMngeVO.setVltDt(vltDt);
@@ -1254,40 +1258,13 @@ public class FineMngeController {
 //				throw new BizException(ErrorCode.ERR300, "");
 //			}
 			
-			//2행에 들어가는 헤더 설명문구 세팅
-			FineMngeVO subHeader = new FineMngeVO();
-			subHeader.setCol1("수정불가");
-			subHeader.setCol2("수정불가");
-			subHeader.setCol3("수정불가");
-			subHeader.setCol4("수정불가");
-			subHeader.setCol5("수정불가");
-			subHeader.setCol6("수정불가");
-			subHeader.setCol7("수정불가");
-			subHeader.setCol8("수정불가");
-			subHeader.setCol9("수정불가");
-			subHeader.setCol10("수정불가");
-			subHeader.setCol11("수정불가");
-			subHeader.setCol12("개인, 개인사업자 = '개인' / 법인, 법인사업장 = '법인' / 외국인 = '외국인'");
-			subHeader.setCol13("개인, 개인사업자는 고객 실명번호(렌터카는 뒷자리 마스킹) 기재 / 법인, 법인사업장은 법인번호 기재 / 외국인은 외국인번호(렌터카는 뒷자리 마스킹) 기재");
-			subHeader.setCol14("개인, 개인사업자, 외국인은 (대표자)운전면허번호 기재 / 법인, 법인사업장은 공란");
-			subHeader.setCol15("개인, 개인사업자, 외국인은 고객명 기재 / 법인은 법인사업장명 기재");
-			subHeader.setCol16("예) YYYY-MM-DD");
-			subHeader.setCol17("예) YYYY-MM-DD");
-			subHeader.setCol18("예) 00000");
-			subHeader.setCol21("예) 010-0000-0000");
-			subHeader.setCol22("외부 기관에 업로드 할 PDF 파일명과 동일하게 기재");
-			subHeader.setFineSeq("0");
-			subHeader.setFileName("cartax_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-			
-			finalList.add(subHeader);
-			
 			for(int i=0; i<requestParams.size(); i++) {
 				Map<String, String> list = requestParams.get(i);
 				//화면에서 넘어온 데이터 VO 세팅
-				String vltDt = list.get("vlt_dt");		//위반일자
-				String vltAtime = list.get("vlt_atime");//위반시각
-				String vhclNo = list.get("vhcl_no");	//차량번호
-				String fineSeq = list.get("fine_seq");	//범칙금일련번호
+				String vltDt = list.get("vltDt");	   //위반일자
+				String vltAtime = list.get("vltAtime");//위반시각
+				String vhclNo = list.get("vhclNo");	   //차량번호
+				String fineSeq = list.get("fineSeq");  //범칙금일련번호
 				
 				//VO 세팅
 				fineMngeVO.setVltDt(vltDt);
@@ -1307,6 +1284,10 @@ public class FineMngeController {
 				//범칙금 또는 고객정보가 조회되지 않으면 오류
 				if(data.size() == 0) {
 					throw new BizException(ErrorCode.ERR012, errKey);
+				}
+				
+				for (FineMngeVO vo : data) {
+					vo.setFileName("cartax_다운로드_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 				}
 				
 				finalList.addAll(data);

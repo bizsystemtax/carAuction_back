@@ -15,6 +15,8 @@ public class FineMngeVO implements Serializable {
 	private String inVltDtEnd = "";		// 위반일자종료
 	private String inVltKindCd = "";	// 위반종류코드
 	private String inSendPlcCd = "";	// 발송처코드
+	private String inFineUploadCd = "";	// 업로드구분
+	private String inCfmtYn = "";		// 확정여부
 	private String inGdCd = "";			// 상품코드
 	private String inCsNm = "";			// 고객명
 	private String inVhclNo = "";		// 차량번호

@@ -13,6 +13,8 @@
 		<result property="inVltDtEnd" column="IN_VLT_DT_END"/>
 		<result property="inVltKindCd" column="IN_VLT_KIND_CD"/>
 		<result property="inSendPlcCd" column="IN_SEND_PLC_CD"/>
+		<result property="inFineUploadCd" column="IN_FINE_UPLOAD_CD"/>
+		<result property="inCfmtYn" column="IN_CFMT_YN"/>
 		<result property="inGdCd" column="IN_GD_CD"/>
 		<result property="inCsNm" column="IN_CS_NM"/>
 		<result property="inVhclNo" column="IN_VHCL_NO"/>
@@ -126,6 +128,22 @@
 		<if test="inSendPlcCd != null and inSendPlcCd != ''">
 		AND		A.SEND_PLC_CD = #{inSendPlcCd}
 		</if>
+		<!-- 업로드구분 -->
+		<if test="inFineUploadCd != null and inFineUploadCd != ''">
+		AND		A.FINE_UPLOAD_CD = #{inFineUploadCd}
+		</if>
+		<!-- 확정여부(X) -->
+		<if test="inCfmtYn == 99">
+		AND		A.CFMT_DT = NULL
+		</if>
+		<!-- 확정여부(확정) -->
+		<if test="inCfmtYn == 1">
+		AND		A.CFMT_DT != ''
+		</if>
+		<!-- 확정여부(미확정) -->
+		<if test="inCfmtYn == 2">
+		AND		A.CFMT_DT = ''
+		</if>
 		<!-- 상품코드(X) -->
 		<if test="inGdCd == 99">
 		AND		B.GD_CD = NULL
@@ -140,11 +158,11 @@
 		</if>
 		<!-- 고객명 -->
 		<if test="inCsNm != null and inCsNm != ''">
-		AND		B.CS_NM = #{inCsNm}
+		AND		B.CS_NM LIKE CONCAT('%', #{inCsNm}, '%')
 		</if>
 		<!-- 차량번호 -->
 		<if test="inVhclNo != null and inVhclNo != ''">
-		AND		A.VHCL_NO = #{inVhclNo}
+		AND		A.VHCL_NO LIKE CONCAT('%', #{inVhclNo}, '%')
 		</if>
 		<!-- 위반시각(유효성) -->
 		<if test="vltAtime != null and vltAtime != ''">
