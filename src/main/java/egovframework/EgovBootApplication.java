@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import egovframework.com.config.EgovWebApplicationInitializer;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ServletComponentScan
 @SpringBootApplication
+@PropertySource("classpath:application.properties")
 @Import({EgovWebApplicationInitializer.class})
 public class EgovBootApplication {
 	public static void main(String[] args) {

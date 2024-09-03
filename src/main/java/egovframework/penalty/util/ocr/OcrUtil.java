@@ -1,6 +1,12 @@
 package egovframework.penalty.util.ocr;
 
-import java.io.File;
+import egovframework.penalty.PenaltyOcrVO;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.time.LocalDateTime;
@@ -12,351 +18,239 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import egovframework.penalty.PenaltyOcrVO;
-import net.sourceforge.tess4j.Tesseract;
-
 public class OcrUtil {
+    private static final Logger logger = LoggerFactory.getLogger(OcrUtil.class);
 
-    public static String performOcr(File file) throws Exception {
-        Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("tessdata/");
-        tesseract.setLanguage("kor4");
-        return tesseract.doOCR(file);
+    public static Map<String, String> extractDataFromOcrResult(String jsonResponse) {
+        logger.debug("받은 JSON 응답: " + jsonResponse);
+
+        Map<String, String> data = new HashMap<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONArray images = jsonObject.getJSONArray("images");
+            if (images.length() > 0) {
+                JSONObject firstImage = images.getJSONObject(0);
+                JSONArray fields = firstImage.getJSONArray("fields");
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    String inferText = field.getString("inferText");
+                    data.put("field" + i, inferText);
+                }
+            }
+        } catch (JSONException e) {
+            logger.error("JSON 파싱 중 오류 발생: " + e.getMessage());
+        }
+        
+        // 추가적인 정보 추출
+        extractAdditionalInfo(data);
+        return data;
     }
 
-    public static Map<String, String> extractDataFromOcrResult(String ocrText) {
-        Map<String, String> data = new HashMap<>();
+    private static void extractAdditionalInfo(Map<String, String> data) {
+        String fullText = String.join(" ", data.values());
 
         // 차량번호 패턴
-        Pattern carNumberPattern = Pattern.compile("\\d{3}[가-힣]\\d{4}");
-        Matcher carNumberMatcher = carNumberPattern.matcher(ocrText);
-        if (carNumberMatcher.find()) {
-            data.put("차량번호", carNumberMatcher.group());
-        } else {
-            data.put("차량번호", "");
+        extractPattern(data, fullText, "차량번호", "\\d{3}[가-힣]\\d{4}");
+
+        // 위반일자 패턴
+        extractDatePattern(data, fullText, "위반일자", "(주차일시|단속일시|위반일시|통행일시)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
+
+        // 위반 시각 패턴
+        extractTimePattern(data, fullText, "위반시각");
+
+        // 계좌번호 가상계좌번호 패턴
+        extractPattern(data, fullText, "납부계좌", "(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
+
+        // 고지서번호 패턴
+        extractPattern(data, fullText, "고지서번호", "\\d{8}");
+
+        // 은행 패턴
+        extractBankPattern(data, fullText);
+
+        // 주소 패턴
+        extractAddressPattern(data, fullText);
+
+        // 구청 패턴
+        extractPattern(data, fullText, "발급관청", "\\b(?:\\S*구청|\\S*시장|\\S*개발공사|\\S*관리공단|\\S*대교|\\S*군수)\\b");
+
+        // 위반내용 패턴
+        extractViolationPattern(data, fullText);
+
+        // 위반 장소 패턴
+        extractLocationPattern(data, fullText);
+
+        // 범칙금 패턴
+        extractFinePattern(data, fullText);
+
+        // 납부기한 패턴
+        extractPaymentDeadlinePattern(data, fullText);
+    }
+
+    private static void extractPattern(Map<String, String> data, String text, String key, String regex) {
+        if (!data.containsKey(key) || data.get(key).isEmpty()) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                data.put(key, matcher.group().replaceAll("^:", ""));
+            }
         }
+    }
 
-        // 주차일시/단속일시/위반일시/통행일시 뒤에 오는 yyyy-MM-dd 또는 yyyy.MM.dd 형식의 날짜를 찾는 패턴
-        Pattern dateAfterEventPattern = Pattern.compile("(주차일시|단속일시|위반일시|통행일시)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
+    private static void extractDatePattern(Map<String, String> data, String text, String key, String regex) {
+        if (!data.containsKey(key) || data.get(key).isEmpty()) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                String year = matcher.group(2);
+                String month = matcher.group(3);
+                String day = matcher.group(4);
+                data.put(key, String.format("%s-%s-%s", year, month, day));
+            }
+        }
+    }
 
-        Matcher eventDateMatcher = dateAfterEventPattern.matcher(ocrText);
-
-        if (eventDateMatcher.find()) {
-            String year = eventDateMatcher.group(2);
-            String month = eventDateMatcher.group(3);
-            String day = eventDateMatcher.group(4);
-
-            // 월과 일을 유효 범위 내로 보정
-            int monthInt = Integer.parseInt(month);
-            int dayInt = Integer.parseInt(day);
-
-            // 월 보정 (1월~12월)
-            if (monthInt < 1) monthInt = 1;
-            if (monthInt > 12) monthInt = 12;
-
-            // 일 보정 (1일~31일)
-            if (dayInt < 1) dayInt = 1;
-            if (dayInt > 31) dayInt = 31;
-
-            data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
-        } else {
-            // 기존 로직 유지 (yyyy년 mm월 dd일 및 yyMMdd 패턴)
-            Pattern dateOfEventPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
-            Pattern dateOfEventPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
-
-            eventDateMatcher = dateOfEventPatternFull.matcher(ocrText);
-            if (eventDateMatcher.find()) {
-                String year = eventDateMatcher.group(1);
-                String month = eventDateMatcher.group(2);
-                String day = eventDateMatcher.group(3);
-
-                // 월과 일을 유효 범위 내로 보정
-                int monthInt = Integer.parseInt(month);
-                int dayInt = Integer.parseInt(day);
-
-                // 월 보정 (1월~12월)
-                if (monthInt < 1) monthInt = 1;
-                if (monthInt > 12) monthInt = 12;
-
-                // 일 보정 (1일~31일)
-                if (dayInt < 1) dayInt = 1;
-                if (dayInt > 31) dayInt = 31;
-
-                data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
+    private static void extractTimePattern(Map<String, String> data, String text, String key) {
+        if (!data.containsKey(key) || data.get(key).isEmpty()) {
+            Pattern patternWithSeconds = Pattern.compile("([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])");
+            Pattern patternWithoutSeconds = Pattern.compile("([0-1][0-9]|2[0-3]):([0-5][0-9])");
+            Matcher matcherWithSeconds = patternWithSeconds.matcher(text);
+            if (matcherWithSeconds.find()) {
+                data.put(key, matcherWithSeconds.group());
             } else {
-                eventDateMatcher = dateOfEventPatternShort.matcher(ocrText);
-                if (eventDateMatcher.find()) {
-                    String year = "20" + eventDateMatcher.group(1);
-                    String month = eventDateMatcher.group(2);
-                    String day = eventDateMatcher.group(3);
-
-                    // 월과 일을 유효 범위 내로 보정
-                    int monthInt = Integer.parseInt(month);
-                    int dayInt = Integer.parseInt(day);
-
-                    // 월 보정 (1월~12월)
-                    if (monthInt < 1) monthInt = 1;
-                    if (monthInt > 12) monthInt = 12;
-
-                    // 일 보정 (1일~31일)
-                    if (dayInt < 1) dayInt = 1;
-                    if (dayInt > 31) dayInt = 31;
-
-                    data.put("위반일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
-                } else {
-                    data.put("위반일자", "");
+                Matcher matcherWithoutSeconds = patternWithoutSeconds.matcher(text);
+                if (matcherWithoutSeconds.find()) {
+                    data.put(key, matcherWithoutSeconds.group());
                 }
             }
         }
-        
-        // 위반 시각 패턴
-        Pattern violationTimePatternWithSeconds = Pattern.compile("([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])");
-        Pattern violationTimePatternWithoutSeconds = Pattern.compile("([0-1][0-9]|2[0-3]):([0-5][0-9])");
+    }
 
-        Matcher violationTimeMatcher = violationTimePatternWithSeconds.matcher(ocrText);
-        if (violationTimeMatcher.find()) {
-            data.put("위반시각", violationTimeMatcher.group());
-        } else {
-            violationTimeMatcher = violationTimePatternWithoutSeconds.matcher(ocrText);
-            if (violationTimeMatcher.find()) {
-                data.put("위반시각", violationTimeMatcher.group());
-            } else {
-                data.put("위반시각", "");
+    private static void extractBankPattern(Map<String, String> data, String text) {
+        if (!data.containsKey("납부은행") || data.get("납부은행").isEmpty()) {
+            Pattern bankPattern = Pattern.compile("\\b(국민은행|우리은행|부산은행|SC제일은행|한국씨티은행|신한은행|하나은행|수협은행|NH농협은행|국민|부산|우리|제일|씨티|신한|하나|수협|농협)\\b");
+            Matcher bankMatcher = bankPattern.matcher(text);
+            if (bankMatcher.find()) {
+                String match = bankMatcher.group();
+                String fullName = getBankFullName(match);
+                data.put("납부은행", fullName);
             }
         }
-        
-        // 계좌번호 가상계좌번호 패턴
-        Pattern accountNumberPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
-        Matcher accountNumberMatcher = accountNumberPattern.matcher(ocrText);
-        if (accountNumberMatcher.find()) {
-            String accountNumber = accountNumberMatcher.group();
-            // ':' 문자가 있으면 제거
-            accountNumber = accountNumber.startsWith(":") ? accountNumber.substring(1) : accountNumber;
-            data.put("납부계좌", accountNumber);
-        } else {
-            data.put("납부계좌", "");
+    }
+
+    private static String getBankFullName(String shortName) {
+        switch (shortName) {
+            case "국민": case "국민은행": return "국민은행";
+            case "우리": case "우리은행": return "우리은행";
+            case "제일": case "SC제일은행": return "SC제일은행";
+            case "씨티": case "한국씨티은행": return "한국씨티은행";
+            case "신한": case "신한은행": return "신한은행";
+            case "하나": case "하나은행": return "하나은행";
+            case "수협": case "수협은행": return "수협은행";
+            case "농협": case "NH농협은행": return "NH농협은행";
+            default: return "";
         }
-        
-        // 고지서번호 패턴
-        Pattern billPattern = Pattern.compile("\\d{8}");
-        Matcher billMatcher = billPattern.matcher(ocrText);
-        if (billMatcher.find()) {
-            data.put("고지서번호", billMatcher.group());
-        } else {
-            data.put("고지서번호", "");
-        }
+    }
 
-        // 은행 패턴 (다양한 형식)
-        Pattern bankPattern = Pattern.compile("\\b(국민은행|우리은행|SC제일은행|한국씨티은행|신한은행|하나은행|수협은행|NH농협은행|국민|우리|제일|씨티|신한|하나|수협|농협)\\b");
-        Matcher bankMatcher = bankPattern.matcher(ocrText);
-
-        String fullName = "";
-
-        if (bankMatcher.find()) {
-            String match = bankMatcher.group();
-            switch (match) {
-                case "국민":
-                case "국민은행":
-                    fullName = "국민은행";
-                    break;
-                case "우리":
-                case "우리은행":
-                    fullName = "우리은행";
-                    break;
-                case "제일":
-                case "SC제일은행":
-                    fullName = "SC제일은행";
-                    break;
-                case "씨티":
-                case "한국씨티은행":
-                    fullName = "한국씨티은행";
-                    break;
-                case "신한":
-                case "신한은행":
-                    fullName = "신한은행";
-                    break;
-                case "하나":
-                case "하나은행":
-                    fullName = "하나은행";
-                    break;
-                case "수협":
-                case "수협은행":
-                    fullName = "수협은행";
-                    break;
-                case "농협":
-                case "NH농협은행":
-                    fullName = "NH농협은행";
-                    break;
+    private static void extractAddressPattern(Map<String, String> data, String text) {
+        if ((!data.containsKey("발송처주소") || data.get("발송처주소").isEmpty()) &&
+            (!data.containsKey("발송처상세주소") || data.get("발송처상세주소").isEmpty())) {
+            String baseAddressRegex = "([가-힣]{2,}(시|도))\\s*([가-힣]{2,}(구|군))\\s*([가-힣\\d]+(로|길)\\s*\\d+)";
+            Pattern baseAddressPattern = Pattern.compile(baseAddressRegex);
+            Matcher baseAddressMatcher = baseAddressPattern.matcher(text);
+            if (baseAddressMatcher.find()) {
+                String baseAddress = baseAddressMatcher.group().trim();
+                data.put("발송처주소", baseAddress);
+                String detailAddressRegex = "\\s+(\\d+[동|호|층])?\\s*([가-힣\\d]*[아파트|빌라|빌딩|타워|센터|마을])?";
+                Pattern detailAddressPattern = Pattern.compile(Pattern.quote(baseAddress) + detailAddressRegex);
+                Matcher detailAddressMatcher = detailAddressPattern.matcher(text);
+                if (detailAddressMatcher.find()) {
+                    String fullAddress = detailAddressMatcher.group().trim();
+                    String detailAddress = fullAddress.substring(baseAddress.length()).trim();
+                    data.put("발송처상세주소", detailAddress);
+                }
             }
         }
-        
-        data.put("납부은행", fullName);
-        
-     // 주소 패턴 (기본 주소)
-        String baseAddressRegex = "([가-힣]{2,}(시|도))\\s*([가-힣]{2,}(구|군))\\s*([가-힣\\d]+(로|길)\\s*\\d+)";
-        Pattern baseAddressPattern = Pattern.compile(baseAddressRegex);
-        Matcher baseAddressMatcher = baseAddressPattern.matcher(ocrText);
+    }
 
-        if (baseAddressMatcher.find()) {
-            String baseAddress = baseAddressMatcher.group().trim();
-            data.put("발송처주소", baseAddress);
-
-            // 상세 주소 패턴
-            String detailAddressRegex = "\\s+(\\d+[동|호|층])?\\s*([가-힣\\d]*[아파트|빌라|빌딩|타워|센터|마을])?";
-            Pattern detailAddressPattern = Pattern.compile(Pattern.quote(baseAddress) + detailAddressRegex);
-            Matcher detailAddressMatcher = detailAddressPattern.matcher(ocrText);
-
-            if (detailAddressMatcher.find()) {
-                String fullAddress = detailAddressMatcher.group().trim();
-                String detailAddress = fullAddress.substring(baseAddress.length()).trim();
-                data.put("발송처상세주소", detailAddress);
-            } else {
-                data.put("발송처상세주소", "");
+    private static void extractViolationPattern(Map<String, String> data, String text) {
+        if (!data.containsKey("위반내용") || data.get("위반내용").isEmpty()) {
+            List<Pattern> violationPatterns = new ArrayList<>();
+            violationPatterns.add(Pattern.compile("\\b\\S*주차\\S*\\b"));
+            violationPatterns.add(Pattern.compile("\\b\\S*주정차\\S*\\b"));
+            violationPatterns.add(Pattern.compile("\\b\\S*통행\\S*\\b"));
+            for (Pattern pattern : violationPatterns) {
+                Matcher matcher = pattern.matcher(text);
+                if (matcher.find()) {
+                    data.put("위반내용", matcher.group());
+                    return;
+                }
             }
-        } else {
-            data.put("발송처주소", "");
-            data.put("발송처상세주소", "");
-        }
-        
-        // 구청 패턴
-        Pattern districtOfficePattern = Pattern.compile("\\b(?:\\S*구청|\\S*시장|\\S*개발공사|\\S*관리공단|\\S*대교|\\S*군수)\\b");
-        Matcher districtOfficeMatcher = districtOfficePattern.matcher(ocrText);
-        if (districtOfficeMatcher.find()) {
-            data.put("발급관청", districtOfficeMatcher.group());
-        } else {
-            data.put("발급관청", "");
-        }
-
-        // 위반내용 패턴 리스트
-        List<Pattern> violationPatterns = new ArrayList<>();
-        violationPatterns.add(Pattern.compile("\\b\\S*주차\\S*\\b")); // ex) **주차***
-        violationPatterns.add(Pattern.compile("\\b\\S*주정차\\S*\\b")); // ex) **주정차***
-        violationPatterns.add(Pattern.compile("\\b\\S*통행\\S*\\b")); // ex) **통행**
-
-        boolean found = false;
-        for (Pattern pattern : violationPatterns) {
-            Matcher matcher = pattern.matcher(ocrText);
-            if (matcher.find()) {
-                data.put("위반내용", matcher.group());
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
             data.put("위반내용", "위반내용을 찾을 수 없습니다.");
         }
-        
-        // 위반 장소 패턴
-        String locationRegex = "(단속|위반|적발)장소\\s*[：:](\\s*[^\\n\\r]+)";
-        Pattern locationPattern = Pattern.compile(locationRegex);
-        Matcher locationMatcher = locationPattern.matcher(ocrText);
+    }
 
-        if (locationMatcher.find()) {
-            String location = locationMatcher.group(2).trim(); // 그룹 2를 사용
-            data.put("위반장소", location);
-            System.out.println("추출된 위반장소: " + location); // 디버깅용 출력
-        } else {
-            data.put("위반장소", "");
-            System.out.println("위반장소를 찾을 수 없습니다."); // 디버깅용 출력
-        }
-        
-        // 범칙금 패턴 (여러 용어 포함)
-        String amountRegex = "(주정차과태료|합계금액|납기내금액|납부금액|과태료금액)\\s*:?\\s*(\\d{1,3}(,\\d{3})*)(\\s*원)?";
-        Pattern amountPattern = Pattern.compile(amountRegex);
-        Matcher amountMatcher = amountPattern.matcher(ocrText);
+//    private static void extractLocationPattern(Map<String, String> data, String text) {
+//        if (!data.containsKey("위반장소") || data.get("위반장소").isEmpty()) {
+//            String locationRegex = "(단속|위반|적발)장소\\s*[：:](\\s*[^\\n\\r]+)";
+//            Pattern locationPattern = Pattern.compile(locationRegex);
+//            Matcher locationMatcher = locationPattern.matcher(text);
+//            if (locationMatcher.find()) {
+//                String location = locationMatcher.group(2).trim();
+//                data.put("위반장소", location);
+//            }
+//        }
+//    }
 
-        if (amountMatcher.find()) {
-            String termUsed = amountMatcher.group(1); // 사용된 용어
-            String amountWithCommas = amountMatcher.group(2);
-            String amountWithoutCommas = amountWithCommas.replaceAll(",", "");
-            
-            // 숫자 포맷을 위해 숫자 변환 및 쉼표 추가
-            int amount = Integer.parseInt(amountWithoutCommas); // 문자열을 정수로 변환
-            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA); // 한국 로케일
-            String formattedAmount = numberFormat.format(amount); //
-            
-            data.put("범칙금", formattedAmount);
-            System.out.println("추출된 " + termUsed + ": " + formattedAmount + "원");
-        } else {
-            data.put("범칙금", "");
-            System.out.println("범칙금을 찾을 수 없습니다.");
-        }
-        
-     // 납기내/납기일자/납부기한/납기 뒤에 오는 yyyy-MM-dd 또는 yyyy.MM.dd 형식의 날짜를 찾는 패턴
-        Pattern dateAfterKeywordPattern = Pattern.compile("(납기내|납기일자|납부기한|납기)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
+    private static void extractLocationPattern(Map<String, String> data, String text) {
+        if (!data.containsKey("위반장소") || data.get("위반장소").isEmpty()) {
+            // 위반장소를 추출하기 위한 보다 포괄적인 정규 표현식
+            String locationRegex = "(?:위반|단속|적발)[\\s:]*([\\d가-힣\\w\\s\\-.,]+)";
+            Pattern locationPattern = Pattern.compile(locationRegex, Pattern.MULTILINE);
+            Matcher locationMatcher = locationPattern.matcher(text);
 
-        Matcher dateOfReceiptMatcher = dateAfterKeywordPattern.matcher(ocrText);
+            if (locationMatcher.find()) {
+                String location = locationMatcher.group(1).trim();
 
-        if (dateOfReceiptMatcher.find()) {
-            String year = dateOfReceiptMatcher.group(2);
-            String month = dateOfReceiptMatcher.group(3);
-            String day = dateOfReceiptMatcher.group(4);
-
-            // 월과 일을 유효 범위 내로 보정
-            int monthInt = Integer.parseInt(month);
-            int dayInt = Integer.parseInt(day);
-
-            // 월 보정 (1월~12월)
-            if (monthInt < 1) monthInt = 1;
-            if (monthInt > 12) monthInt = 12;
-
-            // 일 보정 (1일~31일)
-            if (dayInt < 1) dayInt = 1;
-            if (dayInt > 31) dayInt = 31;
-
-            data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
-        } else {
-            // 기존 로직 유지 (yyyy년 mm월 dd일 및 yyMMdd 패턴)
-            Pattern dateOfReceiptPatternFull = Pattern.compile("(\\d{4})년\\s*(\\d{1,2})월\\s*(\\d{1,2})일");
-            Pattern dateOfReceiptPatternShort = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
-
-            dateOfReceiptMatcher = dateOfReceiptPatternFull.matcher(ocrText);
-            if (dateOfReceiptMatcher.find()) {
-                String year = dateOfReceiptMatcher.group(1);
-                String month = dateOfReceiptMatcher.group(2);
-                String day = dateOfReceiptMatcher.group(3);
-
-                // 월과 일을 유효 범위 내로 보정
-                int monthInt = Integer.parseInt(month);
-                int dayInt = Integer.parseInt(day);
-
-                // 월 보정 (1월~12월)
-                if (monthInt < 1) monthInt = 1;
-                if (monthInt > 12) monthInt = 12;
-
-                // 일 보정 (1일~31일)
-                if (dayInt < 1) dayInt = 1;
-                if (dayInt > 31) dayInt = 31;
-
-                data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
-            } else {
-                dateOfReceiptMatcher = dateOfReceiptPatternShort.matcher(ocrText);
-                if (dateOfReceiptMatcher.find()) {
-                    String year = "20" + dateOfReceiptMatcher.group(1);
-                    String month = dateOfReceiptMatcher.group(2);
-                    String day = dateOfReceiptMatcher.group(3);
-
-                    // 월과 일을 유효 범위 내로 보정
-                    int monthInt = Integer.parseInt(month);
-                    int dayInt = Integer.parseInt(day);
-
-                    // 월 보정 (1월~12월)
-                    if (monthInt < 1) monthInt = 1;
-                    if (monthInt > 12) monthInt = 12;
-
-                    // 일 보정 (1일~31일)
-                    if (dayInt < 1) dayInt = 1;
-                    if (dayInt > 31) dayInt = 31;
-
-                    data.put("납부기한일자", String.format("%s-%02d-%02d", year, monthInt, dayInt));
-                } else {
-                    data.put("납부기한일자", "");
-                }
+                // 위치 정보를 정리하여 최종 결과에 넣기
+                // 예: 불필요한 텍스트나 불필요한 공백을 제거
+                location = cleanLocationText(location);
+                data.put("위반장소", location);
             }
         }
+    }
+    private static String cleanLocationText(String text) {
+        // 일반적으로 위반장소의 형식에 맞지 않는 부분을 제거
+        // 예: "부과대상", "영수증", 등 불필요한 부분을 제거
+        return text.replaceAll("(부과대상|영수증|납부자보관용|주소:|소재지:|\\d{3}-\\d{2}-\\d{5})", "").trim();
+    }
+    
+    private static void extractFinePattern(Map<String, String> data, String text) {
+        if (!data.containsKey("범칙금") || data.get("범칙금").isEmpty()) {
+            String amountRegex = "(주정차과태료|합계금액|납기내금액|납부금액|과태료금액)\\s*:?\\s*(\\d{1,3}(,\\d{3})*)(\\s*원)?";
+            Pattern amountPattern = Pattern.compile(amountRegex);
+            Matcher amountMatcher = amountPattern.matcher(text);
+            if (amountMatcher.find()) {
+                String amountWithCommas = amountMatcher.group(2);
+                String amountWithoutCommas = amountWithCommas.replaceAll(",", "");
+                int amount = Integer.parseInt(amountWithoutCommas);
+                NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+                String formattedAmount = numberFormat.format(amount);
+                data.put("범칙금", formattedAmount);
+            }
+        }
+    }
 
-        return data;
+    private static void extractPaymentDeadlinePattern(Map<String, String> data, String text) {
+        if (!data.containsKey("납부기한일자") || data.get("납부기한일자").isEmpty()) {
+            Pattern dateAfterKeywordPattern = Pattern.compile("(납기내|납기일자|납부기한|납기)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
+            Matcher dateOfReceiptMatcher = dateAfterKeywordPattern.matcher(text);
+            if (dateOfReceiptMatcher.find()) {
+                String year = dateOfReceiptMatcher.group(2);
+                String month = dateOfReceiptMatcher.group(3);
+                String day = dateOfReceiptMatcher.group(4);
+                data.put("납부기한일자", String.format("%s-%s-%s", year, month, day));
+            }
+        }
     }
 
     public static PenaltyOcrVO mapToPenaltyOcrVO(Map<String, String> extractedData) {
@@ -373,11 +267,7 @@ public class OcrUtil {
         vo.setPymtDdayDt(extractedData.getOrDefault("납부기한일자", ""));
         vo.setActBankNm1(extractedData.getOrDefault("납부은행", ""));
         vo.setActNo1(extractedData.getOrDefault("납부계좌", ""));
-//        vo.setNtcdocImgUrl(extractedData.getOrDefault("이미지주소", ""));
-//        vo.setSendPlcCd(extractedData.getOrDefault("발송처주소", ""));
-//        vo.setSendPlcDtlCd(extractedData.getOrDefault("발송처상세주소", ""));
-//        vo.setRcptDt(extractedData.getOrDefault("접수일자", ""));
-        
+
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = now.format(formatter);

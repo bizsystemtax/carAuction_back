@@ -278,10 +278,11 @@
 	        <artifactId>spring-integration-ftp</artifactId>
 	        <version>5.5.8</version> <!-- 또는 최신 버전 -->
 	    </dependency>
-
-
-
-
+ <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
 		<dependency>
 		    <groupId>commons-net</groupId>
 		    <artifactId>commons-net</artifactId>
