@@ -602,9 +602,6 @@ public class OcrUtil {
         String formattedDateTime = now.format(formatter);
 
         vo.setFirstRegTstmp(formattedDateTime);
-        
-        
-        vo.setFirstRegTstmp(formattedDateTime);
         vo.setLastChgeTstmp(formattedDateTime);
         vo.setFirstRegrId("SYSTEM");
         vo.setLastChngmnId("SYSTEM");
