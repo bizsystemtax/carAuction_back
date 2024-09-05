@@ -11,19 +11,47 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * OCR 결과를 처리하고 데이터를 추출하는 유틸리티 클래스
+ */
 public class OcrUtil {
     private static final Logger logger = LoggerFactory.getLogger(OcrUtil.class);
 
+    
+    /**
+     * OCR 결과에서 데이터를 추출하는 메인 메서드
+     * @param jsonResponse OCR 서비스로부터 받은 JSON 응답
+     * @return 추출된 데이터를 포함하는 Map
+     */
     public static Map<String, String> extractDataFromOcrResult(String jsonResponse) {
         logger.debug("받은 JSON 응답: " + jsonResponse);
 
+        Map<String, String> rawData = parseJsonResponse(jsonResponse);
+        String region = identifyRegion(rawData);
+        Map<String, String> extractedData = extractDataForRegion(rawData, region);
+
+        // 추가적인 정보 추출
+        extractAdditionalInfo(extractedData);
+        
+        // 원본 field 데이터와 추출된 데이터 병합
+        Map<String, String> result = new HashMap<>(rawData);
+        result.putAll(extractedData);
+        
+        return result;
+    }
+
+    
+    /**
+     * JSON 응답을 파싱하여 Map으로 변환
+     * @param jsonResponse JSON 형식의 문자열
+     * @return 파싱된 데이터를 포함하는 Map
+     */
+    private static Map<String, String> parseJsonResponse(String jsonResponse) {
         Map<String, String> data = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
@@ -40,52 +68,365 @@ public class OcrUtil {
         } catch (JSONException e) {
             logger.error("JSON 파싱 중 오류 발생: " + e.getMessage());
         }
-        
-        // 추가적인 정보 추출
-        extractAdditionalInfo(data);
         return data;
     }
 
+    /**
+     * 데이터를 기반으로 지역을 식별
+     * @param data 파싱된 OCR 데이터
+     * @return 식별된 지역명
+     */
+    private static String identifyRegion(Map<String, String> data) {
+        String fullText = String.join(" ", data.values());
+        if (fullText.contains("금산군")) return "금산군";
+        if (fullText.contains("김해시")) return "경상남도 김해시";
+        if (fullText.contains("부산시")) return "부산시 강서구";
+        if (fullText.contains("남양주시")) return "경기도 남양주시";
+        if (fullText.contains("동구")) return "대전광역시 동구";
+        if (fullText.contains("동작구")) return "서울시 동작구";
+        if (fullText.contains("성남시")) return "경기도 성남시";
+        return "unknown";
+    }
+
+    /**
+     * 식별된 지역에 따라 데이터 추출
+     * @param responseData 전체 응답 데이터
+     * @param region 식별된 지역
+     * @return 추출된 데이터를 포함하는 Map
+     */
+    private static Map<String, String> extractDataForRegion(Map<String, String> responseData, String region) {
+        Map<String, String> extractedData = new HashMap<>();
+        Map<String, String> accountInfo = parseAccountInfoFromFullResponse(responseData);
+        extractedData.put("납부은행", accountInfo.get("은행명"));
+        extractedData.put("납부계좌", accountInfo.get("계좌번호"));
+        
+
+        switch (region) {
+            case "금산군":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field65", "")));
+                extractedData.put("위반장소", (responseData.getOrDefault("field70", "") + " " + responseData.getOrDefault("field71", "")).trim());
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field155", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field151", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field174", ""));
+                extractedData.put("위반내용", (responseData.getOrDefault("field76", "") + " " + responseData.getOrDefault("field77", "")).trim());
+                extractedData.put("고지서번호", responseData.getOrDefault("field128", ""));
+                extractedData.put("발급관청", responseData.getOrDefault("field11", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field79", "")));
+                extractedData.put("납부은행", responseData.getOrDefault("field67", ""));
+                extractedData.put("납부계좌", responseData.getOrDefault("field68", ""));
+                break;
+            case "경상남도 김해시":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field156", "")));
+                extractedData.put("위반장소", responseData.getOrDefault("field162", ""));
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field157", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field75", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field169", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field84", ""));
+                extractedData.put("고지서번호", responseData.getOrDefault("field130", ""));
+                extractedData.put("발급관청", (responseData.getOrDefault("field12", "") + " " + 
+                                            responseData.getOrDefault("field13", "") + " " + 
+                                            responseData.getOrDefault("field14", "")).trim());
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field159", "")));
+                extractedData.put("납부은행", responseData.getOrDefault("field70", ""));
+                extractedData.put("납부계좌", responseData.getOrDefault("field71", ""));
+                break;
+            case "부산시 강서구":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field181", "")));
+                extractedData.put("위반장소", responseData.getOrDefault("field30", ""));
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field66", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field158", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field60", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field2", ""));
+                extractedData.put("고지서번호", responseData.getOrDefault("field138", ""));
+                extractedData.put("발급관청", responseData.getOrDefault("field6", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field111", "")));
+                extractedData.put("납부은행", accountInfo.get("은행명"));
+                extractedData.put("납부계좌", accountInfo.get("계좌번호"));
+                break;
+            case "경기도 남양주시":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field79", "")));
+                extractedData.put("위반장소", (responseData.getOrDefault("field214", "") + " " + responseData.getOrDefault("field215", "")).trim());
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field80", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field124", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field91", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field165", ""));
+                extractedData.put("고지서번호", "");
+                extractedData.put("발급관청", responseData.getOrDefault("field18", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field217", "")));
+                extractedData.put("납부은행", responseData.getOrDefault("field234", ""));
+                extractedData.put("납부계좌", responseData.getOrDefault("field239", ""));
+                break;
+            case "대전광역시 동구":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field74", "")));
+                extractedData.put("위반장소", responseData.getOrDefault("field80", ""));
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("위반시각", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field167", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field56", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field75", ""));
+                extractedData.put("고지서번호", responseData.getOrDefault("field151", ""));
+                extractedData.put("발급관청", responseData.getOrDefault("field1", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field172", "")));
+                extractedData.put("납부은행", responseData.getOrDefault("field108", ""));
+                extractedData.put("납부계좌", responseData.getOrDefault("field109", ""));
+                break;
+            case "서울시 동작구":
+                extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field183", "")));
+                extractedData.put("위반장소", "");
+                extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field184", "")));
+                extractedData.put("차량번호", responseData.getOrDefault("field178", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field186", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field50", ""));
+                extractedData.put("고지서번호", responseData.getOrDefault("field128", ""));
+                extractedData.put("발급관청", responseData.getOrDefault("field6", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field136", "")));
+                extractedData.put("납부은행", accountInfo.get("은행명"));
+                extractedData.put("납부계좌", accountInfo.get("계좌번호"));
+                break;
+            case "경기도 성남시":
+                Map<String, String> dateTime = extractDateAndTime(responseData.getOrDefault("field254", ""));
+                extractedData.put("위반일자", standardizeDate(dateTime.get("date")));
+                extractedData.put("위반장소", removePattern(responseData.getOrDefault("field130", "")));
+                extractedData.put("위반시각", standardizeTime(dateTime.get("time")));
+                extractedData.put("차량번호", responseData.getOrDefault("field128", ""));
+                extractedData.put("범칙금", responseData.getOrDefault("field197", ""));
+                extractedData.put("위반내용", responseData.getOrDefault("field59", ""));
+                extractedData.put("고지서번호", "");
+                extractedData.put("발급관청", responseData.getOrDefault("field3", ""));
+                extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field217", "")));
+                extractedData.put("납부은행", accountInfo.get("은행명"));
+                extractedData.put("납부계좌", accountInfo.get("계좌번호"));
+                break;
+            default:
+                // 기본 추출 로직
+                break;
+        }
+
+        return extractedData;
+    }
+
+    /**
+     * 계좌 정보를 파싱하는 메서드
+     * @param accountString 계좌 정보를 포함하는 문자열
+     * @return 파싱된 계좌 정보
+     */
+    private static Map<String, String> parseAccountInfo(String accountString) {
+        Map<String, String> result = new HashMap<>();
+        String 계좌번호 = "";
+        String 은행명 = "";
+
+        // 계좌번호 패턴
+        Pattern accountPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
+        Matcher matcher = accountPattern.matcher(accountString);
+
+        if (matcher.find()) {
+            계좌번호 = matcher.group().replaceAll("^:", "");
+        } else {
+            // "계좌번호:" 패턴
+            Pattern pattern = Pattern.compile("계좌번호:([\\d-]+)");
+            matcher = pattern.matcher(accountString);
+            if (matcher.find()) {
+                계좌번호 = matcher.group(1);
+            } else {
+                // "은행명:계좌번호" 패턴
+                pattern = Pattern.compile("([^:]+):([\\d-]+)");
+                matcher = pattern.matcher(accountString);
+                if (matcher.find()) {
+                    은행명 = matcher.group(1).trim();
+                    계좌번호 = matcher.group(2);
+                } else {
+                    // "가상계좌:(은행명)계좌번호" 패턴
+                    pattern = Pattern.compile("가상계좌:\\s*\\(([^)]+)\\)([\\d-]+)");
+                    matcher = pattern.matcher(accountString);
+                    if (matcher.find()) {
+                        은행명 = matcher.group(1);
+                        계좌번호 = matcher.group(2);
+                    } else {
+                        // "계좌번호(은행명)" 패턴
+                        pattern = Pattern.compile("^([\\d-]+)\\s*\\(([^)]+)\\)$");
+                        matcher = pattern.matcher(accountString);
+                        if (matcher.find()) {
+                            계좌번호 = matcher.group(1);
+                            은행명 = matcher.group(2);
+                        } else {
+                            // 마지막 방법: 숫자와 하이픈만 추출
+                            계좌번호 = accountString.replaceAll("[^\\d-]", "");
+                        }
+                    }
+                }
+            }
+        }
+
+        // 은행명 추출 (괄호 안의 은행명)
+        if (은행명.isEmpty()) {
+            Pattern bankPattern = Pattern.compile("\\(([^)]+은행)\\)");
+            Matcher bankMatcher = bankPattern.matcher(accountString);
+            if (bankMatcher.find()) {
+                은행명 = bankMatcher.group(1);
+            }
+        }
+
+        result.put("계좌번호", 계좌번호);
+        result.put("은행명", 은행명);
+        return result;
+    }
+
+    /**
+     * 전체 응답 데이터에서 계좌 정보를 추출하는 메서드
+     * @param responseData 전체 응답 데이터
+     * @return 추출된 계좌 정보
+     */
+    private static Map<String, String> parseAccountInfoFromFullResponse(Map<String, String> responseData) {
+        Map<String, String> result = new HashMap<>();
+        String 계좌번호 = "";
+        String 은행명 = "";
+
+        // 모든 필드의 텍스트를 하나의 문자열로 합침
+        String fullText = String.join(" ", responseData.values());
+
+        // 먼저 기존 메서드로 파싱 시도
+        Map<String, String> initialResult = parseAccountInfo(fullText);
+        계좌번호 = initialResult.get("계좌번호");
+        은행명 = initialResult.get("은행명");
+
+        // 은행명이 여전히 비어있다면 추가 패턴 시도
+        if (은행명.isEmpty()) {
+            Pattern bankPattern = Pattern.compile("(국민은행|우리은행|신한은행|하나은행|농협은행|기업은행|SC제일은행|씨티은행|대구은행|부산은행|경남은행|광주은행|전북은행|제주은행|수협은행|산업은행|우체국)");
+            Matcher bankMatcher = bankPattern.matcher(fullText);
+            if (bankMatcher.find()) {
+                은행명 = bankMatcher.group();
+            } else {
+                // 약식 은행명 패턴
+                bankPattern = Pattern.compile("(국민|우리|신한|하나|농협|기업|SC제일|씨티|대구|부산|경남|광주|전북|제주|수협|산업|우체국)");
+                bankMatcher = bankPattern.matcher(fullText);
+                if (bankMatcher.find()) {
+                    은행명 = bankMatcher.group() + "은행";
+                }
+            }
+        }
+
+        result.put("계좌번호", 계좌번호);
+        result.put("은행명", 은행명);
+        return result;
+    }
+
+    /**
+     * 날짜 문자열을 표준 형식으로 변환
+     * @param dateString 변환할 날짜 문자열
+     * @return 표준화된 날짜 문자열
+     */
+    private static String standardizeDate(String dateString) {
+        // YYYY.MM.DD 형식 처리
+        Pattern pattern = Pattern.compile("(\\d{4})[.](\\d{2})[.](\\d{2})");
+        Matcher matcher = pattern.matcher(dateString);
+        if (matcher.find()) {
+            return String.format("%s-%s-%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        // YYYY년 MM월 DD일 형식 처리
+        pattern = Pattern.compile("(\\d{4})년\\s*(\\d{2})월\\s*(\\d{2})일");
+        matcher = pattern.matcher(dateString);
+        if (matcher.find()) {
+            return String.format("%s-%s-%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        // YYYYMMDD 형식 처리
+        pattern = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})");
+        matcher = pattern.matcher(dateString);
+        if (matcher.find()) {
+            return String.format("%s-%s-%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        // 원본 반환 (변환할 수 없는 경우)
+        return dateString;
+    }
+
+    /**
+     * 시간 문자열을 표준 형식으로 변환
+     * @param timeString 변환할 시간 문자열
+     * @return 표준화된 시간 문자열
+     */
+    private static String standardizeTime(String timeString) {
+        // HH:MM:SS 형식 처리
+        Pattern pattern = Pattern.compile("(\\d{2}):(\\d{2}):(\\d{2})");
+        Matcher matcher = pattern.matcher(timeString);
+        if (matcher.find()) {
+            return timeString;
+        }
+
+        // HHMMSS 형식 처리
+        pattern = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+        matcher = pattern.matcher(timeString);
+        if (matcher.find()) {
+            return String.format("%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+        
+        // HH MM SS 형식 처리 (공백으로 구분된 경우)
+        pattern = Pattern.compile("(\\d{2})\\s+(\\d{2})\\s+(\\d{2})");
+        matcher = pattern.matcher(timeString);
+        if (matcher.find()) {
+            return String.format("%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        // 원본 반환 (변환할 수 없는 경우)
+        return timeString;
+    }
+
+    /**
+     * 날짜와 시간을 동시에 추출
+     * @param dateTimeString 날짜와 시간을 포함한 문자열
+     * @return 추출된 날짜와 시간
+     */
+    private static Map<String, String> extractDateAndTime(String dateTimeString) {
+        Map<String, String> result = new HashMap<>();
+        Pattern pattern = Pattern.compile("(\\d{4}-\\d{2}-\\d{2}).*?(\\d{2}:\\d{2})");
+        Matcher matcher = pattern.matcher(dateTimeString);
+        if (matcher.find()) {
+            result.put("date", matcher.group(1));
+            result.put("time", matcher.group(2));
+        } else {
+            result.put("date", "");
+            result.put("time", "");
+        }
+        return result;
+    }
+
+    /**
+     * 특정 패턴을 제거
+     * @param str 처리할 문자열
+     * @return 패턴이 제거된 문자열
+     */
+    private static String removePattern(String str) {
+        return str.replaceAll("\\([-\\)]+\\)", "").trim();
+    }
+
+    /**
+     * 추가적인 정보를 추출하는 메서드
+     * @param data 기존에 추출된 데이터
+     */
     private static void extractAdditionalInfo(Map<String, String> data) {
         String fullText = String.join(" ", data.values());
 
-        // 차량번호 패턴
         extractPattern(data, fullText, "차량번호", "\\d{3}[가-힣]\\d{4}");
-
-        // 위반일자 패턴
         extractDatePattern(data, fullText, "위반일자", "(주차일시|단속일시|위반일시|통행일시)[^\\d]*(\\d{4})[-.](\\d{2})[-.](\\d{2})");
-
-        // 위반 시각 패턴
         extractTimePattern(data, fullText, "위반시각");
-
-        // 계좌번호 가상계좌번호 패턴
         extractPattern(data, fullText, "납부계좌", "(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
-
-        // 고지서번호 패턴
         extractPattern(data, fullText, "고지서번호", "\\d{8}");
-
-        // 은행 패턴
         extractBankPattern(data, fullText);
-
-        // 주소 패턴
         extractAddressPattern(data, fullText);
-
-        // 구청 패턴
         extractPattern(data, fullText, "발급관청", "\\b(?:\\S*구청|\\S*시장|\\S*개발공사|\\S*관리공단|\\S*대교|\\S*군수)\\b");
-
-        // 위반내용 패턴
         extractViolationPattern(data, fullText);
-
-        // 위반 장소 패턴
         extractLocationPattern(data, fullText);
-
-        // 범칙금 패턴
         extractFinePattern(data, fullText);
-
-        // 납부기한 패턴
         extractPaymentDeadlinePattern(data, fullText);
     }
 
+    /**
+     * 정규표현식을 이용해 특정 패턴을 추출
+     * @param data 데이터를 저장할 Map
+     * @param text 검색할 텍스트
+     * @param key 저장할 키
+     * @param regex 정규표현식 패턴
+     */
     private static void extractPattern(Map<String, String> data, String text, String key, String regex) {
         if (!data.containsKey(key) || data.get(key).isEmpty()) {
             Pattern pattern = Pattern.compile(regex);
@@ -147,7 +488,7 @@ public class OcrUtil {
             case "하나": case "하나은행": return "하나은행";
             case "수협": case "수협은행": return "수협은행";
             case "농협": case "NH농협은행": return "NH농협은행";
-            default: return "";
+            default: return shortName;
         }
     }
 
@@ -189,38 +530,21 @@ public class OcrUtil {
         }
     }
 
-//    private static void extractLocationPattern(Map<String, String> data, String text) {
-//        if (!data.containsKey("위반장소") || data.get("위반장소").isEmpty()) {
-//            String locationRegex = "(단속|위반|적발)장소\\s*[：:](\\s*[^\\n\\r]+)";
-//            Pattern locationPattern = Pattern.compile(locationRegex);
-//            Matcher locationMatcher = locationPattern.matcher(text);
-//            if (locationMatcher.find()) {
-//                String location = locationMatcher.group(2).trim();
-//                data.put("위반장소", location);
-//            }
-//        }
-//    }
-
     private static void extractLocationPattern(Map<String, String> data, String text) {
         if (!data.containsKey("위반장소") || data.get("위반장소").isEmpty()) {
-            // 위반장소를 추출하기 위한 보다 포괄적인 정규 표현식
             String locationRegex = "(?:위반|단속|적발)[\\s:]*([\\d가-힣\\w\\s\\-.,]+)";
             Pattern locationPattern = Pattern.compile(locationRegex, Pattern.MULTILINE);
             Matcher locationMatcher = locationPattern.matcher(text);
 
             if (locationMatcher.find()) {
                 String location = locationMatcher.group(1).trim();
-
-                // 위치 정보를 정리하여 최종 결과에 넣기
-                // 예: 불필요한 텍스트나 불필요한 공백을 제거
                 location = cleanLocationText(location);
                 data.put("위반장소", location);
             }
         }
     }
+
     private static String cleanLocationText(String text) {
-        // 일반적으로 위반장소의 형식에 맞지 않는 부분을 제거
-        // 예: "부과대상", "영수증", 등 불필요한 부분을 제거
         return text.replaceAll("(부과대상|영수증|납부자보관용|주소:|소재지:|\\d{3}-\\d{2}-\\d{5})", "").trim();
     }
     
@@ -253,6 +577,11 @@ public class OcrUtil {
         }
     }
 
+    /**
+     * 추출된 데이터를 PenaltyOcrVO 객체로 매핑
+     * @param extractedData 추출된 데이터
+     * @return 생성된 PenaltyOcrVO 객체
+     */
     public static PenaltyOcrVO mapToPenaltyOcrVO(Map<String, String> extractedData) {
         PenaltyOcrVO vo = new PenaltyOcrVO();
 
@@ -272,6 +601,9 @@ public class OcrUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = now.format(formatter);
 
+        vo.setFirstRegTstmp(formattedDateTime);
+        
+        
         vo.setFirstRegTstmp(formattedDateTime);
         vo.setLastChgeTstmp(formattedDateTime);
         vo.setFirstRegrId("SYSTEM");
