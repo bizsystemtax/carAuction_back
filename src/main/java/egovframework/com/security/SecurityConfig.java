@@ -64,6 +64,7 @@ public class SecurityConfig {
         "/fineMnge/uploadCartax",
         "/fineMnge/downloadEfine",
         "/fineMnge/downloadEx",
+        "/fineMnge/downloadWetax",
         "/fineMnge/downloadOCR",
         "/fineMnge/downloadCartax",
         "/v3/api-docs/**",

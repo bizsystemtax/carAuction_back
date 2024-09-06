@@ -777,7 +777,7 @@ public class FineMngeController {
 				fineMngeVO.setFineAmt(fineAmt);
 				fineMngeVO.setVltDt(vltDt);
 				fineMngeVO.setVltAtime(vltAtime);
-				fineMngeVO.setVltCts(vltCts + " " + vltPnt); //발송처 검색을 위해 위반장소까지 세팅 후 후반에 위반내용만 재세팅 한다.
+				fineMngeVO.setVltCts(vltCts);
 				fineMngeVO.setVltPnt(vltPnt);
 				fineMngeVO.setDocFineNo2(docFineNo2);
 				fineMngeVO.setSendPlcNm(sendPlcNm);
@@ -795,12 +795,17 @@ public class FineMngeController {
 				
 				fineMngeVO.setVltKindCd(vltKindCd);
 				
+				//발송처 코드 매핑 파라미터 세팅
+				FineMngeVO sendplcParam = new FineMngeVO();
+				sendplcParam.setSendPlcNm(sendPlcNm);
+				sendplcParam.setVltCts(vltCts + " " + vltPnt);
+				sendplcParam.setVltPnt(vltPnt);
+				
 				//발송처 코드 매핑
-				List<FineMngeVO> sendplcData = fineMngeService.retrieveSendPlcCd(fineMngeVO);
+				List<FineMngeVO> sendplcData = fineMngeService.retrieveSendPlcCd(sendplcParam);
 				
 				fineMngeVO.setSendPlcCd(sendplcData.get(0).getSendPlcCd()); //발송처코드
 				fineMngeVO.setSendPlcSeq(sendplcData.get(0).getSendPlcSeq()); //발송처일련번호
-				fineMngeVO.setVltCts(vltCts);
 
 				//추가 파라미터 세팅
 				//원랜 관공서명에 '경찰서', '경찰청'이 들어갈 경우 업로드코드를 이파인 업로드로 세팅하는 조건이 있긴 한데 이건 추후 따져봐야 할듯. (20240827)
@@ -1136,6 +1141,145 @@ public class FineMngeController {
 			return ResponseEntity.status(400).body(resultVO);
 		}
 	}
+	
+	/**
+	 * @author 범칙금관리 다운로드(위택스)
+	 * @param  fineMngeVO
+	 * @return resultVO
+	 * @throws Exception
+	 */
+//	@ApiResponses(value = {
+//			@ApiResponse(responseCode = "200", description = "조회 성공"),
+//			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+//	})
+//	@PostMapping(value = "/downloadWetax")
+//	public ResponseEntity<ResultVO> downloadWetax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+//		FineMngeVO fineMngeVO = new FineMngeVO();
+//		ResultVO resultVO = new ResultVO();
+//		List<FineMngeVO> finalList = new ArrayList<>();
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//		String ntcdocDocNo = null;
+//		
+//		try {
+//			LoginVO loginVO = null;
+//			
+//			//로그인 여부 확인
+////			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
+////			
+////			if(isLogin) {
+////				//사용자 정보 세팅
+////				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+////				fineMngeVO.setUserId(loginVO.getId());
+////				fineMngeVO.setUserIp(loginVO.getIp());
+////			} else {
+////				throw new BizException(ErrorCode.ERR300, "");
+////			}
+//			
+//			//발송처코드, 발송처일련번호를 오름차순으로 정렬
+//			requestParams.sort(Comparator.comparing(vo -> {
+//			    FineMngeVO fmVO = (FineMngeVO) vo;
+//			    return Integer.parseInt(fmVO.getSendPlcCd());
+//			}).thenComparing(vo -> {
+//			    FineMngeVO fmVO = (FineMngeVO) vo;
+//			    return Integer.parseInt(fmVO.getSendPlcSeq());
+//			}));
+//			
+//			//유효성 검사 및 발송처 부서별 문서번호 채번
+//			for(int i=0; i<requestParams.size(); i++) {
+//				Map<String, String> list = requestParams.get(i);
+//				
+//				//화면에서 넘어온 데이터 VO 세팅
+//				String vltDt = list.get("vltDt");	   //위반일자
+//				String vltAtime = list.get("vltAtime");//위반시각
+//				String vhclNo = list.get("vhclNo");	   //차량번호
+//				String fineSeq = list.get("fineSeq");  //범칙금일련번호
+//				String sendPlcCd = list.get("sendPlcCd");  //발송처코드
+//				String sendPlcSeq = list.get("sendPlcSeq");  //발송처일련번호
+//				
+//				//VO 세팅
+//				fineMngeVO.setVltDt(vltDt);
+//				fineMngeVO.setVltAtime(vltAtime);
+//				fineMngeVO.setVhclNo(vhclNo);
+//				fineMngeVO.setFineSeq(fineSeq);
+//				
+//				//유효한 데이터인지 확인용 VO 세팅
+//				fineMngeVO.setInVltDtStrt(vltDt);
+//				fineMngeVO.setInVltDtEnd(vltDt);
+//				
+//				String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+//				
+//				//다운로드 데이터 조회
+//				List<FineMngeVO> data = fineMngeService.downloadWetax(fineMngeVO);
+//				
+//				//범칙금 또는 고객정보가 조회되지 않으면 오류
+//				if(data.size() == 0) {
+//					throw new BizException(ErrorCode.ERR012, errKey);
+//				}
+//				
+//				//인덱스 0번은 무조건 문서번호를 신규 채번한다.
+//				//이전과 현재의 발송처코드, 발송처일련번호가 다를 경우 문서번호를 신규 채번한다.
+//				//이전과 현재의 발송처코드, 발송처일련번호가 같은 경우 채번해둔 문서번호를 세팅한다.
+//				if(i == 0) {
+//					ntcdocDocNo = fineMngeService.retrieveNtcdocDocNo(fineMngeVO);
+//				} else if(!sendPlcCd.equals(requestParams.get(i-1).get("sendPlcCd")) && !sendPlcSeq.equals(requestParams.get(i-1).get("sendPlcSeq"))) {
+//					ntcdocDocNo = fineMngeService.retrieveNtcdocDocNo(fineMngeVO);
+//				}
+//				
+//				fineMngeVO.setNtcdocDocNo(ntcdocDocNo);
+//
+//				//문서번호를 DB에 업데이트 한다.
+//				int cnt = fineMngeService.updateNtcdocDocNo(fineMngeVO, errKey);
+//				
+//				//업데이트를 실패한 경우 오류
+//				if(cnt <= 0) {
+//					throw new BizException(ErrorCode.ERR009, errKey);
+//				}
+//				
+//				//현재와 다음의 발송처코드, 발송처일련번호가 다를 경우 PDF를 생성한다.
+//				if(!sendPlcCd.equals(requestParams.get(i+1).get("sendPlcCd")) && !sendPlcSeq.equals(requestParams.get(i+1).get("sendPlcSeq"))) {
+//					//리스트 적재
+//					finalList.addAll(data);
+//					
+//					//레포트 파일 경로
+//					String reportPath = "src/main/webapp/META-INF/report/bizFineReport001.jrxml";
+//					
+//					//VO List를 레포트에 직접 전달하는 방식
+//				    JRDataSource datasource = new JRBeanCollectionDataSource(finalList);
+//				    
+//				    //파라미터 직접 세팅 방식
+//				    Map<String, Object> parameters = new HashMap<>();
+//				    //parameters.put("param1", "value1");
+//				    
+//				    //
+//				    JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+//				    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, datasource);
+//
+//				    HttpHeaders headers = new HttpHeaders();
+//				    headers.setContentDispositionFormData("filename", "test.pdf");
+//					
+//					//리스트 초기화
+//					finalList.clear();
+//				} else {
+//					//리스트 적재
+//					finalList.addAll(data);
+//				}
+//			}
+//			
+//			//생성한 PDF를 압축하여 전달
+//			
+//			return new ResponseEntity<byte[]> (JasperExportManager.exportReportToPdf(jasperPrint), headers, HttpStatus.OK);
+//		} catch (BizException e) {
+//			e.printStackTrace();
+//			resultMap.put("errMsg", e.getMessage());
+//			resultVO.setResult(resultMap);
+//			return ResponseEntity.status(400).body(resultVO);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultMap.put("errMsg", ErrorCode.ERR000.getMessage());
+//			resultVO.setResult(resultMap);
+//			return ResponseEntity.status(400).body(resultVO);
+//		}
+//	}
 	
 	/**
 	 * @author 범칙금관리 다운로드(OCR)
