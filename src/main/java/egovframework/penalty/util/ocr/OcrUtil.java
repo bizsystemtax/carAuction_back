@@ -1,6 +1,5 @@
 package egovframework.penalty.util.ocr;
 
-import egovframework.penalty.PenaltyOcrVO;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -578,34 +577,30 @@ public class OcrUtil {
     }
 
     /**
-     * 추출된 데이터를 PenaltyOcrVO 객체로 매핑
+     * 추출된 데이터를 Map으로 매핑
      * @param extractedData 추출된 데이터
-     * @return 생성된 PenaltyOcrVO 객체
+     * @return 매핑된 데이터를 포함하는 Map
      */
-    public static PenaltyOcrVO mapToPenaltyOcrVO(Map<String, String> extractedData) {
-        PenaltyOcrVO vo = new PenaltyOcrVO();
+    public static Map<String, String> mapExtractedData(Map<String, String> extractedData) {
+        Map<String, String> mappedData = new HashMap<>(extractedData);
 
-        vo.setVhclNo(extractedData.getOrDefault("차량번호", ""));
-        vo.setFineAmt(extractedData.getOrDefault("범칙금", ""));
-        vo.setVltDt(extractedData.getOrDefault("위반일자", ""));
-        vo.setVltAtime(extractedData.getOrDefault("위반시각", ""));
-        vo.setVltCts(extractedData.getOrDefault("위반내용", ""));
-        vo.setVltPnt(extractedData.getOrDefault("위반장소", ""));
-        vo.setNtcdocDocNo(extractedData.getOrDefault("고지서번호", ""));
-        vo.setSendEmpNo(extractedData.getOrDefault("발급관청", ""));
-        vo.setPymtDdayDt(extractedData.getOrDefault("납부기한일자", ""));
-        vo.setActBankNm1(extractedData.getOrDefault("납부은행", ""));
-        vo.setActNo1(extractedData.getOrDefault("납부계좌", ""));
+        // 기본값 설정
+        String[] keys = {"차량번호", "범칙금", "위반일자", "위반시각", "위반내용", "위반장소", 
+                         "고지서번호", "발급관청", "납부기한일자", "납부은행", "납부계좌"};
+        for (String key : keys) {
+            mappedData.putIfAbsent(key, "");
+        }
 
+        // 시스템 정보 추가
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = now.format(formatter);
 
-        vo.setFirstRegTstmp(formattedDateTime);
-        vo.setLastChgeTstmp(formattedDateTime);
-        vo.setFirstRegrId("SYSTEM");
-        vo.setLastChngmnId("SYSTEM");
-        
-        return vo;
+        mappedData.put("최초등록일시", formattedDateTime);
+        mappedData.put("최종변경일시", formattedDateTime);
+        mappedData.put("최초등록자", "SYSTEM");
+        mappedData.put("최종변경자", "SYSTEM");
+
+        return mappedData;
     }
 }
