@@ -2,36 +2,37 @@ package egovframework.penalty.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.net.InetAddress;
 
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
-import egovframework.penalty.PenaltyStdManageVO;
-import egovframework.penalty.service.PenaltyStdManageService;
+import egovframework.penalty.FineStdManageVO;
+import egovframework.penalty.service.FineStdManageService;
 
-@Service("PenaltyStdManageService")
-public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl implements PenaltyStdManageService {
-	@Resource(name = "PenaltyStdManageDAO")
-	private PenaltyStdManageDAO penaltyStdManageDAO;
+@Service("FineStdManageService")
+public class FineStdManageServiceImpl extends EgovAbstractServiceImpl implements FineStdManageService {
+	@Resource(name = "FineStdManageDAO")
+	private FineStdManageDAO FineStdManageDAO;
 	
 	// 범칙금 발송처 기준관리 콤보박스 값 조회
 	@Override
 	public Map<String, Object> selectComboBoxList() throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", penaltyStdManageDAO.selectComboBoxList());
+		map.put("resultList", FineStdManageDAO.selectComboBoxList());
 		
 		return map;
 	}
 	
 	// 범칙금 발송처 기준관리 조회
 	@Override
-	public Map<String, Object> selectPenaltyStdManageList(PenaltyStdManageVO penaltyStdManageVO) throws Exception {
+	public Map<String, Object> selectFineStdManageList(FineStdManageVO FineStdManageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", penaltyStdManageDAO.selectPenaltyStdManageList(penaltyStdManageVO));
+		map.put("resultList", FineStdManageDAO.selectFineStdManageList(FineStdManageVO));
 		
 		return map;
 	}
@@ -41,7 +42,7 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 	public Map<String, Object> selectNtcdocSendPlcList(Map<String, Object> paramMap) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", penaltyStdManageDAO.selectNtcdocSendPlcList(paramMap));
+		map.put("resultList", FineStdManageDAO.selectNtcdocSendPlcList(paramMap));
 		
 		return map;
 	}
@@ -51,8 +52,11 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 	public Map<String, Object> insertSendPlcData(Map<String, Object> paramMap) throws Exception {
 		Map<String, Object> sendPlcCdMap;
 		String sendPlcCd = paramMap.containsKey("sendPlcCd") ? (String) paramMap.get("sendPlcCd") : "";
+		
+		String ipAddress = InetAddress.getLocalHost().getHostAddress();
+		
 		if (sendPlcCd.equals("")) {
-			sendPlcCdMap = penaltyStdManageDAO.selectMaxSendPlcCd();
+			sendPlcCdMap = FineStdManageDAO.selectMaxSendPlcCd();
 			
 			paramMap.put("sendPlcCd", String.format("%03d", ((Long) sendPlcCdMap.get("SEND_PLC_CD")).intValue()));
 			paramMap.put("sendPlcSeq", "1");
@@ -60,16 +64,16 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 			sendPlcCdMap = new HashMap<String, Object>();
 			sendPlcCdMap.put("sendPlcCd", sendPlcCd);
 			
-			Map<String, Object> sendPlcSeqMap = penaltyStdManageDAO.selectMaxSendPlcSeq(sendPlcCdMap);
+			Map<String, Object> sendPlcSeqMap = FineStdManageDAO.selectMaxSendPlcSeq(sendPlcCdMap);
 			
 			paramMap.put("sendPlcSeq", sendPlcSeqMap.get("SEND_PLC_SEQ"));
 		}
 		paramMap.put("firstRegrId", "admin");
-		paramMap.put("firstRegIpAddr", "116.124.144.140");
+		paramMap.put("firstRegIpAddr", ipAddress);
 		paramMap.put("lastChngmnId", "admin");
-		paramMap.put("lastChgeIpAddr", "116.124.144.140");
+		paramMap.put("lastChgeIpAddr", ipAddress);
 
-		int cnt = penaltyStdManageDAO.insertSendPlcData(paramMap);
+		int cnt = FineStdManageDAO.insertSendPlcData(paramMap);
 		
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -96,7 +100,7 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 		paramMap.put("lastChngmnId", "admin");
 		paramMap.put("lastChgeIpAddr", "116.124.144.140");
 
-		int cnt = penaltyStdManageDAO.updateSendPlcData(paramMap);
+		int cnt = FineStdManageDAO.updateSendPlcData(paramMap);
 		
 		String resultCd = cnt > 0 ? "000" : "999";
 		String resultMsg = cnt > 0 ? "성공적으로 저장되었습니다." : "저장에 실패했습니다.";
@@ -118,7 +122,7 @@ public class PenaltyStdManageServiceImpl extends EgovAbstractServiceImpl impleme
 			return map;
 		}
 
-		int cnt = penaltyStdManageDAO.deleteSendPlcData(paramMap);
+		int cnt = FineStdManageDAO.deleteSendPlcData(paramMap);
 		
 		String resultCd = cnt > 0 ? "000" : "999";
 		String resultMsg = cnt > 0 ? "성공적으로 삭제되었습니다." : "삭제에 실패했습니다.";

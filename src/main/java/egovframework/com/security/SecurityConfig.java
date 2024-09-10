@@ -51,6 +51,7 @@ public class SecurityConfig {
         "/code/commonCode",
         "/excel/search",
         "/penaltyStd/**",
+        "/fineStd/**",
         "/fineMnge/comboBoxList",
         "/fineMnge/list",
         "/fineMnge/cfmt",

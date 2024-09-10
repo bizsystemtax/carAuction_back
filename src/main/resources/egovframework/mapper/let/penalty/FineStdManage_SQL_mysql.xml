@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="PenaltyStdManageDAO">
+<mapper namespace="FineStdManageDAO">
 	<resultMap id="ComnCdVO" type="egovframework.penalty.ComnCdVO">
 		<result property="comnCdEngNm" column="COMN_CD_ENG_NM"/>
 		<result property="cdNm" column="CD_NM"/>
 		<result property="cdVal" column="CD_VAL"/>
 	</resultMap>
 
-	<resultMap id="PenaltyStdManageVO" type="egovframework.penalty.PenaltyStdManageVO">
+	<resultMap id="FineStdManageVO" type="egovframework.penalty.FineStdManageVO">
 		<result property="sendPlcCd" column="SEND_PLC_CD"/>
 		<result property="sendPlcSeq" column="SEND_PLC_SEQ"/>
 		<result property="sendPlcCdSeq" column="SEND_PLC_CD_SEQ"/>
@@ -42,7 +42,7 @@
 		select COMN_CD_ENG_NM, CD_NM, CD_VAL from biz_comn_cd_dtl where COMN_CD_ENG_NM in ('DOC_TYP_CD', 'HDLG_TYP_CD', 'RCPT_TYP_CD', 'SEND_PLC_KIND_CD')
 	</select>
 	
-	<select id="selectPenaltyStdManageList" parameterType="egovframework.penalty.PenaltyStdManageVO" resultMap="PenaltyStdManageVO">
+	<select id="selectFineStdManageList" parameterType="egovframework.penalty.FineStdManageVO" resultMap="FineStdManageVO">
 		select
 			(select CD_NM from biz_comn_cd_dtl where COMN_CD_ENG_NM = 'SEND_PLC_KIND_CD' AND CD_VAL = std.SEND_PLC_KIND_CD) as SEND_PLC_KIND_NM,
 			CONCAT(std.SEND_PLC_CD, '-', std.SEND_PLC_SEQ) as SEND_PLC_CD_SEQ,
@@ -67,7 +67,7 @@
 		</where>
 	</select>
 	
-	<select id="selectNtcdocSendPlcNmList" parameterType="java.util.Map" resultMap="PenaltyStdManageVO">
+	<select id="selectNtcdocSendPlcNmList" parameterType="java.util.Map" resultMap="FineStdManageVO">
 		select SEND_PLC_CD, NTCDOC_SEND_PLC_NM from biz_fine_send_plc_std_mnge
 		<where>
 			<if test="ntcdocSendPlcNm != null and ntcdocSendPlcNm != ''">

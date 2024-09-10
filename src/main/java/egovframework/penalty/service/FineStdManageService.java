@@ -2,14 +2,14 @@ package egovframework.penalty.service;
 
 import java.util.Map;
 
-import egovframework.penalty.PenaltyStdManageVO;
+import egovframework.penalty.FineStdManageVO;
 
-public interface PenaltyStdManageService {
+public interface FineStdManageService {
 	// 범칙금 발송처 기준관리 콤보박스 값 조회
 	public Map<String, Object> selectComboBoxList() throws Exception;
 
 	// 범칙금 발송처 기준관리 조회
-	public Map<String, Object> selectPenaltyStdManageList(PenaltyStdManageVO penaltyStdManageVO) throws Exception;
+	public Map<String, Object> selectFineStdManageList(FineStdManageVO FineStdManageVO) throws Exception;
 	
 	// 고지서 발송처명 조회
 	public Map<String, Object> selectNtcdocSendPlcList(Map<String, Object> paramMap) throws Exception;

@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PenaltyStdManageVO implements Serializable {
+public class FineStdManageVO implements Serializable {
 	private String sendPlcCd = "";				// 발송처 코드
 	private String sendPlcSeq = "";				// 발송처 일련번호
 	private String sendPlcCdSeq = "";			// 발송처 코드 + 일련번호

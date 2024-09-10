@@ -7,47 +7,47 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.penalty.ComnCdVO;
-import egovframework.penalty.PenaltyStdManageVO;
+import egovframework.penalty.FineStdManageVO;
 
-@Repository("PenaltyStdManageDAO")
-public class PenaltyStdManageDAO extends EgovAbstractMapper {
+@Repository("FineStdManageDAO")
+public class FineStdManageDAO extends EgovAbstractMapper {
 	public List<ComnCdVO> selectComboBoxList() {
 		// TODO Auto-generated method stub
-		return selectList("PenaltyStdManageDAO.selectComboBoxList");
+		return selectList("FineStdManageDAO.selectComboBoxList");
 	}
 
-	public List<PenaltyStdManageVO> selectPenaltyStdManageList(PenaltyStdManageVO penaltyStdManageVO) {
+	public List<FineStdManageVO> selectFineStdManageList(FineStdManageVO FineStdManageVO) {
 		// TODO Auto-generated method stub
-		return selectList("PenaltyStdManageDAO.selectPenaltyStdManageList", penaltyStdManageVO);
+		return selectList("FineStdManageDAO.selectFineStdManageList", FineStdManageVO);
 	}
 	
-	public List<PenaltyStdManageVO> selectNtcdocSendPlcList(Map<String, Object> paramMap) {
+	public List<FineStdManageVO> selectNtcdocSendPlcList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return selectList("PenaltyStdManageDAO.selectNtcdocSendPlcNmList", paramMap);
+		return selectList("FineStdManageDAO.selectNtcdocSendPlcNmList", paramMap);
 	}
 	
 	public Map<String, Object> selectMaxSendPlcCd() {
 		// TODO Auto-generated method stub
-		return selectOne("PenaltyStdManageDAO.selectMaxSendPlcCd");
+		return selectOne("FineStdManageDAO.selectMaxSendPlcCd");
 	}
 	
 	public Map<String, Object> selectMaxSendPlcSeq(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return selectOne("PenaltyStdManageDAO.selectMaxSendPlcSeq", paramMap);
+		return selectOne("FineStdManageDAO.selectMaxSendPlcSeq", paramMap);
 	}
 	
 	public int insertSendPlcData(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return insert("PenaltyStdManageDAO.insertSendPlcData", paramMap);
+		return insert("FineStdManageDAO.insertSendPlcData", paramMap);
 	}
 	
 	public int updateSendPlcData(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return update("PenaltyStdManageDAO.updateSendPlcData", paramMap);
+		return update("FineStdManageDAO.updateSendPlcData", paramMap);
 	}
 	
 	public int deleteSendPlcData(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return delete("PenaltyStdManageDAO.deleteSendPlcData", paramMap);
+		return delete("FineStdManageDAO.deleteSendPlcData", paramMap);
 	}
 }
