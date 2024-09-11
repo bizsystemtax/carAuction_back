@@ -84,6 +84,7 @@ public class OcrUtil {
         if (fullText.contains("동구")) return "대전광역시 동구";
         if (fullText.contains("동작구")) return "서울시 동작구";
         if (fullText.contains("성남시")) return "경기도 성남시";
+        if (fullText.contains("수원시")) return "경기도 수원시";
         return "unknown";
     }
 
@@ -195,12 +196,67 @@ public class OcrUtil {
                 extractedData.put("납부은행", accountInfo.get("은행명"));
                 extractedData.put("납부계좌", accountInfo.get("계좌번호"));
                 break;
-            default:
-                // 기본 추출 로직
+            case "경기도 수원시":
+                boolean isAfterPaymentDeadline = checkAfterPaymentDeadline(responseData);
+                
+                if (isAfterPaymentDeadline) {
+                    extractedData.put("차량번호", responseData.getOrDefault("field122", ""));
+                    extractedData.put("범칙금", responseData.getOrDefault("field284", ""));
+                    extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field137", "") + " " + 
+                                                               responseData.getOrDefault("field138", "") + " " + 
+                                                               responseData.getOrDefault("field139", "")));
+                    extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field140", "") + " " + 
+                                                               responseData.getOrDefault("field141", "")));
+                    extractedData.put("위반내용", (responseData.getOrDefault("field169", "") + " " + 
+                                                responseData.getOrDefault("field170", "") + " " + 
+                                                responseData.getOrDefault("field171", "")).trim());
+                    extractedData.put("위반장소", (responseData.getOrDefault("field151", "") + " " + 
+                                                                responseData.getOrDefault("field152", "") + " " + 
+                                                                responseData.getOrDefault("field154", "") + " " + 
+                                                                responseData.getOrDefault("field155", "") + " " + 
+                                                                responseData.getOrDefault("field162", "")));
+                    extractedData.put("고지서번호", responseData.getOrDefault("field251", ""));
+                    extractedData.put("발급관청", responseData.getOrDefault("field247", ""));
+                    extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field279", "") + " " + 
+                                                                  responseData.getOrDefault("field280", "") + " " + 
+                                                                  responseData.getOrDefault("field281", "")));
+                } else {
+                    // 기존의 필드 매핑 로직
+                    String rawViolationDate = (responseData.getOrDefault("field136", "") + 
+                            responseData.getOrDefault("field137", "") + 
+                            responseData.getOrDefault("field138", "")).trim();
+                    extractedData.put("위반일자", standardizeDate(rawViolationDate));
+                    extractedData.put("위반장소", (responseData.getOrDefault("field149", "") + " " + 
+                                                responseData.getOrDefault("field150", "") + " " + 
+                                                responseData.getOrDefault("field151", "") + " " + 
+                                                responseData.getOrDefault("field152", "") + " " + 
+                                                responseData.getOrDefault("field153", "") + " " + 
+                                                responseData.getOrDefault("field154", "") + " " + 
+                                                responseData.getOrDefault("field161", "")).trim());
+                    extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field139", "") + " " + 
+                                                               responseData.getOrDefault("field140", "")).trim());
+                    extractedData.put("차량번호", responseData.getOrDefault("field127", ""));
+                    extractedData.put("범칙금", responseData.getOrDefault("field134", ""));
+                    extractedData.put("위반내용", responseData.getOrDefault("field167", ""));
+                    extractedData.put("고지서번호", responseData.getOrDefault("field244", ""));
+                    extractedData.put("발급관청", responseData.getOrDefault("field240", ""));
+                    extractedData.put("납부기한일자", standardizeDate(responseData.getOrDefault("field117", "")));
+                }
                 break;
         }
-
+        for (Map.Entry<String, String> entry : responseData.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
         return extractedData;
+    }
+    
+    private static boolean checkAfterPaymentDeadline(Map<String, String> responseData) {
+        for (String value : responseData.values()) {
+            if (value.contains("사전납부기한")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -213,6 +269,13 @@ public class OcrUtil {
         String 계좌번호 = "";
         String 은행명 = "";
 
+     // 은행명과 계좌번호 패턴 (새로운 형식 포함)
+        Pattern bankAccountPattern = Pattern.compile("(\\p{IsHangul}+)(\\d{3}-\\d{3}-\\d{8}|\\d{6}-\\d{2}-\\d{6}|\\d{3}-\\d{4}-\\d{4}-\\d{2}|\\d{14})");
+        Matcher bankAccountMatcher = bankAccountPattern.matcher(accountString);
+        if (bankAccountMatcher.find()) {
+            은행명 = bankAccountMatcher.group(1);
+            계좌번호 = bankAccountMatcher.group(2);
+        } else {
         // 계좌번호 패턴
         Pattern accountPattern = Pattern.compile("(:?\\d{6}-\\d{2}-\\d{6}|:?\\d{3}-\\d{4}-\\d{4}-\\d{2}|:\\d{14})");
         Matcher matcher = accountPattern.matcher(accountString);
@@ -261,9 +324,9 @@ public class OcrUtil {
             Matcher bankMatcher = bankPattern.matcher(accountString);
             if (bankMatcher.find()) {
                 은행명 = bankMatcher.group(1);
-            }
-        }
-
+	            }
+	        }
+	     }
         result.put("계좌번호", 계좌번호);
         result.put("은행명", 은행명);
         return result;
