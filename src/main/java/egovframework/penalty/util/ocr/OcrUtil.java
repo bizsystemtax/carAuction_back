@@ -408,27 +408,46 @@ public class OcrUtil {
      * @return 표준화된 시간 문자열
      */
     private static String standardizeTime(String timeString) {
-        // HH:MM:SS 형식 처리
-        Pattern pattern = Pattern.compile("(\\d{2}):(\\d{2}):(\\d{2})");
-        Matcher matcher = pattern.matcher(timeString);
-        if (matcher.find()) {
-            return timeString;
-        }
+    	
+    	  String cleanedTimeString = timeString.replaceAll("[^0-9시분:]", "");
+    	  
+    	  // HH:MM:SS 형식 처리
+    	    Pattern pattern = Pattern.compile("(\\d{2}):(\\d{2}):(\\d{2})");
+    	    Matcher matcher = pattern.matcher(cleanedTimeString);
+    	    if (matcher.find()) {
+    	        return cleanedTimeString;
+    	    }
 
-        // HHMMSS 형식 처리
-        pattern = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
-        matcher = pattern.matcher(timeString);
-        if (matcher.find()) {
-            return String.format("%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
-        }
+    	    // HHMMSS 형식 처리
+    	    pattern = Pattern.compile("(\\d{2})(\\d{2})(\\d{2})");
+    	    matcher = pattern.matcher(cleanedTimeString);
+    	    if (matcher.find()) {
+    	        return String.format("%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
+    	    }
+
+    	    // HH:MM 형식 처리
+    	    pattern = Pattern.compile("(\\d{2}):(\\d{2})");
+    	    matcher = pattern.matcher(cleanedTimeString);
+    	    if (matcher.find()) {
+    	        return String.format("%s:%s:00", matcher.group(1), matcher.group(2));
+    	    }
+
+    	    // HHMM 형식 처리
+    	    pattern = Pattern.compile("(\\d{2})(\\d{2})");
+    	    matcher = pattern.matcher(cleanedTimeString);
+    	    if (matcher.find()) {
+    	        return String.format("%s:%s:00", matcher.group(1), matcher.group(2));
+    	    }
+
+    	    // HH시 MM분 형식 처리 (개선됨)
+    	    pattern = Pattern.compile("(\\d{1,2})시(\\d{1,2})분");
+    	    matcher = pattern.matcher(cleanedTimeString);
+    	    if (matcher.find()) {
+    	        String hour = String.format("%02d", Integer.parseInt(matcher.group(1)));
+    	        String minute = String.format("%02d", Integer.parseInt(matcher.group(2)));
+    	        return String.format("%s:%s:00", hour, minute);
+    	    }
         
-        // HH MM SS 형식 처리 (공백으로 구분된 경우)
-        pattern = Pattern.compile("(\\d{2})\\s+(\\d{2})\\s+(\\d{2})");
-        matcher = pattern.matcher(timeString);
-        if (matcher.find()) {
-            return String.format("%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3));
-        }
-
         // 원본 반환 (변환할 수 없는 경우)
         return timeString;
     }
