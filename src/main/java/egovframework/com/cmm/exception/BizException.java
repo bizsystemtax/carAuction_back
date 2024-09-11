@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * @Class Name : BizException
  * @Description : BizException 오류 처리
- * @ 수정일      수정자  수정내용
+ * @ 수정일     수정자  수정내용
  * @ -------- ---- ---------------------------
  * @ 20240807 이인하  최초 생성
  */

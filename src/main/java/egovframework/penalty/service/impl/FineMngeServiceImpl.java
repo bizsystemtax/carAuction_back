@@ -314,7 +314,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 			//'중구' -> '서울중구'
 			sendPlcCdKey = "서울중구";
 		}
-		
+
 		//선가공 키 VO 세팅
 		fineMngeVO.setSendPlcCdKey(sendPlcCdKey);
 		
@@ -354,6 +354,9 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 			} else if(sendPlcNm.contains("강원도")) {
 				//'O강원도O' -> 'O강원O'
 				sendPlcCdKey = sendPlcNm.replace("강원도", "강원");
+			} else if(sendPlcNm.endsWith("군수")) {
+				//'OO군수' -> 'OO군'
+				sendPlcCdKey = sendPlcNm.substring(0, sendPlcNm.length()-2) + "군";
 			} else {
 				//가공할게 없으면 결과는 동일하므로 기존 값 반환
 				return result;
