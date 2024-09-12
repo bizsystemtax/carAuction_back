@@ -133,7 +133,7 @@ public class OcrUtil {
 				(responseData.getOrDefault("field70", "") + " " + responseData.getOrDefault("field71", "")).trim());
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field155", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field151", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field174", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field174", "")));
 		extractedData.put("위반내용",
 				(responseData.getOrDefault("field76", "") + " " + responseData.getOrDefault("field77", "")).trim());
 		extractedData.put("고지서번호", responseData.getOrDefault("field128", ""));
@@ -147,7 +147,7 @@ public class OcrUtil {
 		extractedData.put("위반장소", responseData.getOrDefault("field162", ""));
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field157", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field75", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field169", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field169", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field84", ""));
 		extractedData.put("고지서번호", responseData.getOrDefault("field130", ""));
 		extractedData.put("발급관청", (responseData.getOrDefault("field12", "") + " "
@@ -161,7 +161,7 @@ public class OcrUtil {
 		extractedData.put("위반장소", responseData.getOrDefault("field30", ""));
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field66", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field158", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field60", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field60", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field2", ""));
 		extractedData.put("고지서번호", responseData.getOrDefault("field138", ""));
 		extractedData.put("발급관청", responseData.getOrDefault("field6", ""));
@@ -175,7 +175,7 @@ public class OcrUtil {
 				(responseData.getOrDefault("field214", "") + " " + responseData.getOrDefault("field215", "")).trim());
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field80", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field124", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field91", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field91", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field165", ""));
 		extractedData.put("고지서번호", "");
 		extractedData.put("발급관청", responseData.getOrDefault("field18", ""));
@@ -188,7 +188,7 @@ public class OcrUtil {
 		extractedData.put("위반장소", responseData.getOrDefault("field80", ""));
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("위반시각", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field167", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field56", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field56", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field75", ""));
 		extractedData.put("고지서번호", responseData.getOrDefault("field151", ""));
 		extractedData.put("발급관청", responseData.getOrDefault("field1", ""));
@@ -201,7 +201,7 @@ public class OcrUtil {
 		extractedData.put("위반장소", "");
 		extractedData.put("위반시각", standardizeTime(responseData.getOrDefault("field184", "")));
 		extractedData.put("차량번호", responseData.getOrDefault("field178", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field186", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field186", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field50", ""));
 		extractedData.put("고지서번호", responseData.getOrDefault("field128", ""));
 		extractedData.put("발급관청", responseData.getOrDefault("field6", ""));
@@ -215,7 +215,7 @@ public class OcrUtil {
 		extractedData.put("위반장소", removePattern(responseData.getOrDefault("field130", "")));
 		extractedData.put("위반시각", standardizeTime(dateTime.get("time")));
 		extractedData.put("차량번호", responseData.getOrDefault("field128", ""));
-		extractedData.put("범칙금", responseData.getOrDefault("field197", ""));
+		extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field197", "")));
 		extractedData.put("위반내용", responseData.getOrDefault("field59", ""));
 		extractedData.put("고지서번호", "");
 		extractedData.put("발급관청", responseData.getOrDefault("field3", ""));
@@ -228,7 +228,7 @@ public class OcrUtil {
 
 		if (isAfterPaymentDeadline) {
 			extractedData.put("차량번호", responseData.getOrDefault("field122", ""));
-			extractedData.put("범칙금", responseData.getOrDefault("field284", ""));
+			extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field284", "")));
 			extractedData.put("위반일자", standardizeDate(responseData.getOrDefault("field137", "") + " "
 					+ responseData.getOrDefault("field138", "") + " " + responseData.getOrDefault("field139", "")));
 			extractedData.put("위반시각", standardizeTime(
@@ -257,7 +257,7 @@ public class OcrUtil {
 							responseData.getOrDefault("field139", "") + " " + responseData.getOrDefault("field140", ""))
 							.trim());
 			extractedData.put("차량번호", responseData.getOrDefault("field127", ""));
-			extractedData.put("범칙금", responseData.getOrDefault("field134", ""));
+			extractedData.put("범칙금", standardizeFine(responseData.getOrDefault("field134", "")));
 			extractedData.put("위반내용", responseData.getOrDefault("field167", ""));
 			extractedData.put("고지서번호", responseData.getOrDefault("field244", ""));
 			extractedData.put("발급관청", responseData.getOrDefault("field240", ""));
@@ -268,6 +268,11 @@ public class OcrUtil {
 	// 문자열에서 특정 패턴 제거
 	private static String removePattern(String str) {
 		return str.replaceAll("\\([-\\)]+\\)", "").trim();
+	}
+	
+	//범칙금 금액 숫자만 추출
+	private static String standardizeFine(String fineString) {
+	    return fineString.replace("원", "").trim();
 	}
 
 	// 날짜와 시간을 동시에 추출
@@ -515,7 +520,7 @@ public class OcrUtil {
 				int amount = Integer.parseInt(amountWithoutCommas);
 				NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
 				String formattedAmount = numberFormat.format(amount);
-				data.put("범칙금", formattedAmount);
+				data.put("범칙금", standardizeFine(formattedAmount));
 			}
 		}
 	}
