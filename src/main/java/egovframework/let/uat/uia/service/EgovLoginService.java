@@ -31,6 +31,15 @@ public interface EgovLoginService {
 	public LoginVO actionLogin(LoginVO vo) throws Exception;
 
 	/**
+	 * 사용자를 등록한다
+	 * @return 
+	 *
+	 * @param vo    LoginVO
+	 * @exception Exception Exception
+	 */
+	public void insertUser(LoginVO vo) throws Exception;
+
+	/**
 	 * 아이디를 찾는다.
 	 * @return LoginVO
 	 *

@@ -47,8 +47,8 @@
 		<result property="vltKindCdKey1" column="VLT_KIND_CD_KEY1"/>
 		<result property="vltKindCdKey2" column="VLT_KIND_CD_KEY2"/>
 		<result property="sendPlcCdKey" column="SEND_PLC_CD_KEY"/>
-		<result property="userId" column="USER_ID"/>
-		<result property="userIp" column="USER_IP"/>
+		<result property="sessionId" column="SESSION_ID"/>
+		<result property="sessionIp" column="SESSION_IP"/>
 	</resultMap>
 	
 	<!-- Retrieve : 범칙금관리 검색조건 콤보박스 조회 -->
@@ -198,8 +198,8 @@
 		<![CDATA[
 		UPDATE	BIZ_FINE_MAS /*BIZ_범칙금기본*/
 		SET		CFMT_DT = #{cfmtDt} /*확정일자*/
-				, LAST_CHNGMN_ID = #{userId} /*최종변경자ID*/
-				, LAST_CHGE_IP_ADDR = #{userIp} /*최종변경IP주소*/
+				, LAST_CHNGMN_ID = #{sessionId} /*최종변경자ID*/
+				, LAST_CHGE_IP_ADDR = #{sessionIp} /*최종변경IP주소*/
 		WHERE	VLT_DT = #{vltDt}
 		AND		VLT_ATIME = #{vltAtime}
 		AND		VHCL_NO = #{vhclNo}
@@ -285,10 +285,10 @@
 			,CAST(IFNULL(#{docFineNo3}, '') AS VARCHAR(50))
 			,CAST(IFNULL(#{docFineNo4}, '') AS VARCHAR(50))
 			,CAST(IFNULL(#{pnltStatNm}, '') AS VARCHAR(10))
-			,CAST(#{userId} AS VARCHAR(18))
-			,CAST(#{userIp} AS VARCHAR(18))
-			,CAST(#{userId} AS VARCHAR(18))
-			,CAST(#{userIp} AS VARCHAR(18))
+			,CAST(#{sessionId} AS VARCHAR(18))
+			,CAST(#{sessionIp} AS VARCHAR(18))
+			,CAST(#{sessionId} AS VARCHAR(18))
+			,CAST(#{sessionIp} AS VARCHAR(18))
 		)
 		]]>
 	</insert>
@@ -305,8 +305,8 @@
 				, VLT_PNT = #{vltPnt} /*위반장소*/
 				, RCPT_DT = #{rcptDt} /*접수일자*/
 				, PYMT_DDAY_DT = #{pymtDdayDt} /*납부기한일자*/
-				, LAST_CHNGMN_ID = #{userId} /*최종변경자ID*/
-				, LAST_CHGE_IP_ADDR = #{userIp} /*최종변경IP주소*/
+				, LAST_CHNGMN_ID = #{sessionId} /*최종변경자ID*/
+				, LAST_CHGE_IP_ADDR = #{sessionIp} /*최종변경IP주소*/
 		WHERE	VLT_DT = #{vltDt}
 		AND		VLT_ATIME = #{vltAtime}
 		AND		VHCL_NO = #{vhclNo}

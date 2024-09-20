@@ -30,7 +30,7 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
         vltKindCdKeywordMap.put("소방", "소방");
         vltKindCdKeywordMap.put("속도위반", "속도위반");
         vltKindCdKeywordMap.put("친환경", "친환경");
-        vltKindCdKeywordMap.put("특별", "특별");
+//        vltKindCdKeywordMap.put("특별", "특별");
         vltKindCdKeywordMap.put("주정차", "주정차");
         vltKindCdKeywordMap.put("신호", "신호");
         vltKindCdKeywordMap.put("버스", "버스");

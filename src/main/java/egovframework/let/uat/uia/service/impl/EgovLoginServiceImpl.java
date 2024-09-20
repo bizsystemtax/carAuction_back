@@ -60,6 +60,23 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
 
 		return loginVO;
 	}
+	
+	/**
+	 * 사용자를 등록한다
+	 * @param vo LoginVO
+	 * @return 
+	 * @exception Exception
+	 */
+	@Override
+	public void insertUser(LoginVO vo) throws Exception {
+		
+		// 1. 입력한 비밀번호를 암호화한다.
+		String enpassword = EgovFileScrty.encryptPassword(vo.getPassword(), vo.getId());
+		vo.setPassword(enpassword);
+		
+		// 2. 사용자를 등록한다.
+		loginDAO.insertUser(vo);
+	}
 
 	/**
 	 * 아이디를 찾는다.

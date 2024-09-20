@@ -37,6 +37,16 @@ public class LoginDAO extends EgovAbstractMapper {
 	}
 
 	/**
+	 * 사용자를 등록한다
+	 * @param vo LoginVO
+	 * @return 
+	 * @exception Exception
+	 */
+	public void insertUser(LoginVO vo) throws Exception {
+		insert("loginDAO.insertUser", vo);
+	}
+
+	/**
 	 * 아이디를 찾는다.
 	 * @param vo LoginVO
 	 * @return LoginVO

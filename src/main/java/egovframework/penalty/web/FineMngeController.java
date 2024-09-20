@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.ResponseEntity;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,7 @@ import egovframework.com.cmm.service.ResultVO;
 import egovframework.penalty.ComnCdVO;
 import egovframework.penalty.FineMngeVO;
 import egovframework.penalty.service.FineMngeService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -37,11 +40,14 @@ public class FineMngeController {
 	@Resource(name = "FineMngeService")
 	private FineMngeService fineMngeService;
 	
+//	//테스트용 사용자 등록 서비스
+//	@Resource(name = "loginService")
+//	private EgovLoginService loginService;
+	
 	/**
-	 * @author 범칙금관리 검색조건 콤보박스 조회 컨트롤러
-	 * @param paramVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 공통코드 조회 컨트롤러
+	 * @return resultVO - VLT_KIND_CD, FINE_UPLOAD_CD, SEND_PLC_CD
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -62,10 +68,10 @@ public class FineMngeController {
 	}
 
 	/**
-	 * @author 범칙금관리 조회 컨트롤러
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 조회 컨트롤러
+	 * @param  requestParams - inVltDtStrt, inVltDtEnd, inVltKindCd, inSendPlcCd, inFineUploadCd, inCfmtYn, inGdCd, inCsNm, inVhclNo
+	 * @return resultVO - 조회 조건에 부합하는 범칙금 목록
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -108,35 +114,49 @@ public class FineMngeController {
 	}
 
 	/**
-	 * @author 범칙금관리 확정 상태 업데이트 컨트롤러
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 확정 상태 업데이트 컨트롤러
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @security {@SecurityRequirement(name = "Authorization")}
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/cfmt")
-	public ResponseEntity<ResultVO> updateCfmtStat(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO updateCfmtStat(
+			@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
+		
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
+//		//테스트용 사용자 등록
+//		LoginVO loginVO = new LoginVO();
+//		loginVO.setId("inha1208");
+//		loginVO.setName("이인하");
+//		loginVO.setPassword("dldlsgk1!");
+//		loginVO.setUserSe("USR");
+//		loginVO.setSessionId("test");
+//		loginVO.setSessionIp("116.124.144.140");
+//		loginService.insertUser(loginVO);
+
+		String userId = user.getId();
+		String userIp = user.getIp();
 
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
-
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			
@@ -175,14 +195,14 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 발송처부서명 조회 컨트롤러
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 발송처부서명 조회 컨트롤러
+	 * @param  requestParams - sendPlcCd
+	 * @return resultVO - 발송처부서
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -210,34 +230,35 @@ public class FineMngeController {
 	}
 	
 	/**
-	 * @author 범칙금관리 수정 컨트롤러
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 수정 컨트롤러
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq, sendPlcCd, sendPlcSeq, vltKindCd, fineAmt, vltCts, vltPnt, rcptDt, pymtDdayDt
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/updateFine")
-	public ResponseEntity<ResultVO> updateFine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO updateFine(@RequestBody List<Map<String, String>> requestParams,
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
+		String userId = user.getId();
+		String userIp = user.getIp();
 
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
 
 		Map<String, String> list = requestParams.get(0);
 		
@@ -288,38 +309,34 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 삭제 컨트롤러
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 삭제 컨트롤러
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/deleteFine")
-	public ResponseEntity<ResultVO> deleteFine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO deleteFine(@RequestBody List<Map<String, String>> requestParams,
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
+		String userId = user.getId();
 
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(StringUtils.defaultString(userId).isEmpty()) {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
 
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -357,38 +374,41 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 업로드(이파인)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 업로드(이파인)
+	 * @param  requestParams - docFineNo1, docFineNo2, docFineNo3, vltDt, vltAtime, vltPnt, vltCts, vhclNo, sendPlcNm, pnltStatNm,
+	 * 						   fineAmt, docFineNo4, actBankNm1, actNo1, actBankNm2, actNo2, actBankNm3, actNo3, actBankNm4, actNo4, pymtDdayDt
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/uploadEfine")
-	public ResponseEntity<ResultVO> uploadEfine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO uploadEfine(@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
+		String userId = user.getId();
+		String userIp = user.getIp();
 
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			//화면에서 넘어온 데이터 VO 세팅
@@ -470,38 +490,40 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 
 	/**
-	 * @author 범칙금관리 업로드(한도공)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 업로드(한도공)
+	 * @param  requestParams - docFineNo1, vltDt, vltAtime, vltPnt, vltCts, vhclNo, fineAmt
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/uploadEx")
-	public ResponseEntity<ResultVO> uploadEx(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO uploadEx(@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
-		
+		String userId = user.getId();
+		String userIp = user.getIp();
+
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			//화면에서 넘어온 데이터 VO 세팅
@@ -561,38 +583,40 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 
 	/**
-	 * @author 범칙금관리 업로드(위택스)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 업로드(위택스)
+	 * @param  requestParams - sendPlcNm, vltCts, docFineNo1, pymtDdayDt, fineAmt, vhclNo, vltDt, vltAtime, vltPnt
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/uploadWetax")
-	public ResponseEntity<ResultVO> uploadWetax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO uploadWetax(@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
-		
+		String userId = user.getId();
+		String userIp = user.getIp();
+
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			//화면에서 넘어온 데이터 VO 세팅
@@ -651,38 +675,40 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 업로드(OCR)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 업로드(OCR)
+	 * @param  requestParams - docFineNo1, vhclNo, fineAmt, vltDt, vltAtime, vltCts, vltPnt, docFineNo2, sendPlcNm, pymtDdayDt, actBankNm1, actNo1
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/uploadOCR")
-	public ResponseEntity<ResultVO> uploadOCR(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO uploadOCR(@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
-		
+		String userId = user.getId();
+		String userIp = user.getIp();
+
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			//화면에서 넘어온 데이터 VO 세팅
@@ -753,38 +779,41 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 업로드(카택스)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 업로드(카택스)
+	 * @param  requestParams - docFineNo1, sendPlcNm, vltCts, vhclNo, docFineNo2, docFineNo3,
+	 * 						   docFineNo4, vltDt, vltAtime, pymtDdayDt, fineAmt, vltPnt
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
+	 * @return resultVO - 성공한 서비스명
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/uploadCartax")
-	public ResponseEntity<ResultVO> uploadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO uploadCartax(@RequestBody List<Map<String, String>> requestParams, 
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		LoginVO loginVO = null;
-		
+		String userId = user.getId();
+		String userIp = user.getIp();
+
 		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			//사용자 정보 세팅
+			fineMngeVO.setSessionId(userId);
+			fineMngeVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
 			//화면에서 넘어온 데이터 VO 세팅
@@ -856,39 +885,25 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 
 	/**
-	 * @author 범칙금관리 다운로드(이파인)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 다운로드(이파인)
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @return resultVO - 엑셀 양식에 들어갈 다운로드 내용
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadEfine")
-	public ResponseEntity<ResultVO> downloadEfine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO downloadEfine(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		LoginVO loginVO = null;
-		
-		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
 		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -939,39 +954,25 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 
 	/**
-	 * @author 범칙금관리 다운로드(한국도로공사)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 다운로드(한국도로공사)
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @return resultVO - 엑셀 양식에 들어갈 다운로드 내용
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadEx")
-	public ResponseEntity<ResultVO> downloadEx(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO downloadEx(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		LoginVO loginVO = null;
-		
-		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
 		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -1019,41 +1020,27 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 다운로드(위택스)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 다운로드(위택스)
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @return resultVO - PDF 양식에 들어갈 다운로드 내용
+	 * @throws BizException
 	 */
 //	@ApiResponses(value = {
 //			@ApiResponse(responseCode = "200", description = "조회 성공"),
 //			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 //	})
 //	@PostMapping(value = "/downloadWetax")
-//	public ResponseEntity<ResultVO> downloadWetax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+//	public ResultVO downloadWetax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 //		FineMngeVO fineMngeVO = new FineMngeVO();
 //		ResultVO resultVO = new ResultVO();
 //		List<FineMngeVO> finalList = new ArrayList<>();
 //		Map<String, Object> resultMap = new HashMap<String, Object>();
 //		String ntcdocDocNo = null;
 //		
-//			LoginVO loginVO = null;
-//			
-//			//로그인 여부 확인
-////			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-////			
-////			if(isLogin) {
-////				//사용자 정보 세팅
-////				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-////				fineMngeVO.setUserId(loginVO.getId());
-////				fineMngeVO.setUserIp(loginVO.getIp());
-////			} else {
-////				throw new BizException(ErrorCode.ERR300, "");
-////			}
-//			
 //			//발송처코드, 발송처일련번호를 오름차순으로 정렬
 //			requestParams.sort(Comparator.comparing(vo -> {
 //			    FineMngeVO fmVO = (FineMngeVO) vo;
@@ -1146,39 +1133,26 @@ public class FineMngeController {
 //			
 //			//생성한 PDF를 압축하여 전달
 //			
+//		return resultVO;
 //			return new ResponseEntity<byte[]> (JasperExportManager.exportReportToPdf(jasperPrint), headers, HttpStatus.OK);
 //	}
 	
 	/**
-	 * @author 범칙금관리 다운로드(OCR)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 다운로드(OCR)
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @return resultVO - 엑셀 양식에 들어갈 다운로드 내용
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadOCR")
-	public ResponseEntity<ResultVO> downloadOCR(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO downloadOCR(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		LoginVO loginVO = null;
-		
-		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
 		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -1223,39 +1197,25 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 	
 	/**
-	 * @author 범칙금관리 다운로드(카택스)
-	 * @param  fineMngeVO
-	 * @return resultVO
-	 * @throws Exception
+	 * 범칙금관리 다운로드(카택스)
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @return resultVO - 엑셀 양식에 들어갈 다운로드 내용
+	 * @throws BizException
 	 */
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "조회 성공"),
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadCartax")
-	public ResponseEntity<ResultVO> downloadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO downloadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
 		ResultVO resultVO = new ResultVO();
 		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		LoginVO loginVO = null;
-		
-		//로그인 여부 확인
-//			Boolean isLogin = EgovUserDetailsHelper.isAuthenticated();
-//			
-//			if(isLogin) {
-//				//사용자 정보 세팅
-//				loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//				fineMngeVO.setUserId(loginVO.getId());
-//				fineMngeVO.setUserIp(loginVO.getIp());
-//			} else {
-//				throw new BizException(ErrorCode.ERR300, "");
-//			}
 		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -1303,6 +1263,6 @@ public class FineMngeController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
-		return ResponseEntity.ok(resultVO);
+		return resultVO;
 	}
 }

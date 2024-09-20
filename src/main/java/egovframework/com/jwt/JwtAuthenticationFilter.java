@@ -1,17 +1,21 @@
 package egovframework.com.jwt;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import egovframework.com.cmm.LoginVO;
 import egovframework.let.utl.fcc.service.EgovStringUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -76,13 +80,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (verificationFlag) {
+        	String ip = req.getHeader("X-Forwarded-For");
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("Proxy-Client-IP");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("WL-Proxy-Client-IP");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("HTTP_CLIENT_IP");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("HTTP_X_FORWARDED_FOR");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("X-Real-IP");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("X-RealIP");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getHeader("REMOTE_ADDR");
+        	}
+        	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        		ip = req.getRemoteAddr();
+        	}
+    		if(ip.equals("0:0:0:0:0:0:0:1") || ip.equals("127.0.0.1")) {
+	        	InetAddress address = InetAddress.getLocalHost();
+	        	ip = address.getHostAddress();
+        	}
+
             logger.debug("jwtToken validated");
             LoginVO loginVO = new LoginVO();
             loginVO.setId(id);
             loginVO.setUserSe(jwtTokenUtil.getUserSeFromToken(jwtToken));
-            loginVO.setUniqId(jwtTokenUtil.getInfoFromToken("uniqId", jwtToken));
             loginVO.setOrgnztId(jwtTokenUtil.getInfoFromToken("orgnztId", jwtToken));
             loginVO.setName(jwtTokenUtil.getInfoFromToken("name", jwtToken));
+            loginVO.setIp(ip != null ? ip : "unknown");
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginVO, null,
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));

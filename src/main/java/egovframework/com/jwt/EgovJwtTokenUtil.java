@@ -1,12 +1,9 @@
 package egovframework.com.jwt;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
@@ -77,6 +74,4 @@ public class EgovJwtTokenUtil implements Serializable{
             .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
             .signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
     }
-
-
 }

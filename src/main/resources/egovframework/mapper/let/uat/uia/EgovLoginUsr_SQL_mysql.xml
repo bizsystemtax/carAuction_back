@@ -28,23 +28,47 @@
 	-->
 	<!-- 일반 로그인 -->
 	<select id="actionLogin" resultMap="login">
-		<if test="userSe == &quot;USR&quot;">
-			
-            SELECT EMPLYR_ID AS id
-                 , USER_NM AS name
-                 , PASSWORD AS password
-                 , IHIDNUM AS ihidNum
-                 , EMAIL_ADRES AS email
-                 , 'USR' AS userSe
-                 , ORGNZT_ID AS orgnztId
-                 , ESNTL_ID AS uniqId
-              FROM LETTNEMPLYRINFO
-             WHERE EMPLYR_ID = #{id}
-               AND PASSWORD = #{password}
-               AND EMPLYR_STTUS_CODE = 'P'
-			
-		</if>
+	    SELECT USER_ID AS id
+	         , USER_NM AS name
+	         , USER_PWD AS password
+	         , AUTH_CD AS userSe
+	         , EMP_NO AS orgnztId
+	      FROM BIZ_USER_MAS
+	     WHERE USER_ID = #{id}
+	       AND USER_PWD = #{password}
 	</select>
+	
+	<!-- 사용자 등록 -->
+	<insert id="insertUser" parameterType="egovframework.com.cmm.LoginVO">
+		<![CDATA[
+		INSERT INTO BIZ_USER_MAS
+		(	
+			USER_ID
+			,USER_NM
+			,USER_PWD
+			,AUTH_CD
+			,EMP_NO
+			,USE_YN
+			,FIRST_REGR_ID
+			,FIRST_REG_IP_ADDR
+			,LAST_CHNGMN_ID
+			,LAST_CHGE_IP_ADDR
+		)
+		VALUE
+		(
+			CAST(#{id} AS VARCHAR(20))
+			,CAST(#{name} AS VARCHAR(60))
+			,CAST(#{password} AS VARCHAR(200))
+			,CAST(#{userSe} AS VARCHAR(4))
+			,CAST(IFNULL(#{orgnztId}, '') AS VARCHAR(20))
+			,'Y'
+			,CAST(#{sessionId} AS VARCHAR(18))
+			,CAST(#{sessionIp} AS VARCHAR(18))
+			,CAST(#{sessionId} AS VARCHAR(18))
+			,CAST(#{sessionIp} AS VARCHAR(18))
+		)
+		]]>
+	</insert>
 	
 	<!-- 인증서 로그인
 	<select id="actionCrtfctLogin" resultMap="login">

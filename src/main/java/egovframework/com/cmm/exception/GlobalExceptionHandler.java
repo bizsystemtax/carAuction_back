@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
 
 /**
@@ -28,6 +29,7 @@ public class GlobalExceptionHandler {
 
         ResultVO resultVO = new ResultVO();
         resultVO.setResult(resultMap);
+        resultVO.setResultCode(ResponseCode.ERROR.getCode());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultVO);
     }
@@ -40,6 +42,7 @@ public class GlobalExceptionHandler {
 
         ResultVO resultVO = new ResultVO();
         resultVO.setResult(resultMap);
+        resultVO.setResultCode(ResponseCode.ERROR.getCode());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultVO);
     }
@@ -52,6 +55,7 @@ public class GlobalExceptionHandler {
 
         ResultVO resultVO = new ResultVO();
         resultVO.setResult(resultMap);
+        resultVO.setResultCode(ResponseCode.ERROR.getCode());
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultVO);
     }

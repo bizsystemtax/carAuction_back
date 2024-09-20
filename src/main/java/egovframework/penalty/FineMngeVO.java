@@ -112,8 +112,8 @@ public class FineMngeVO implements Serializable {
 	private String col22 = "";
 
 	//필수
-	private String userId = "";	// 사용자ID
-	private String userIp = "";	// 사용자IP주소
+	private String sessionId = "";	// 세션ID
+	private String sessionIp = "";	// 세션IP
 
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
