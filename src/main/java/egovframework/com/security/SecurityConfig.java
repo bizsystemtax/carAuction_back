@@ -72,7 +72,8 @@ public class SecurityConfig {
         "/swagger-resources",
         "/swagger-resources/**",
         "/swagger-ui.html",
-        "/swagger-ui/**"
+        "/swagger-ui/**",
+        "/api/report-server/test"
     };
 
     @Bean
@@ -83,20 +84,20 @@ public class SecurityConfig {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(allowOrigin)); // 특정 도메인만 허용
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH")); // 허용할 HTTP 메서드
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 여기 확인
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH")); // 여기 확인
         configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 자격 증명 허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // 여기 확인
         return source;
     }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors().configurationSource(corsConfigurationSource()).and()
+        http.csrf(AbstractHttpConfigurer::disable)
+            .cors() // CORS 활성화
+            .and()
             .authorizeHttpRequests(authorize -> authorize
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.GET, AUTH_GET_WHITELIST).permitAll()
@@ -107,9 +108,11 @@ public class SecurityConfig {
             )
             .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exceptionHandlingConfigurer -> 
-                exceptionHandlingConfigurer
-                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-            )
-            .build();
+                exceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+            );
+        return http.build();
     }
+
+
+
 }
