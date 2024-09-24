@@ -90,7 +90,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    } 
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
