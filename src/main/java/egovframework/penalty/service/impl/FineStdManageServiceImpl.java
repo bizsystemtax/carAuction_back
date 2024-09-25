@@ -2,10 +2,10 @@ package egovframework.penalty.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.net.InetAddress;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -19,117 +19,75 @@ public class FineStdManageServiceImpl extends EgovAbstractServiceImpl implements
 	
 	// 범칙금 발송처 기준관리 콤보박스 값 조회
 	@Override
-	public Map<String, Object> selectComboBoxList() throws Exception {
+	public Map<String, Object> retrieveComboBoxList() throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", FineStdManageDAO.selectComboBoxList());
+		map.put("resultList", FineStdManageDAO.retrieveComboBoxList());
 		
 		return map;
 	}
 	
 	// 범칙금 발송처 기준관리 조회
 	@Override
-	public Map<String, Object> selectFineStdManageList(FineStdManageVO FineStdManageVO) throws Exception {
+	public Map<String, Object> retrieveFineStdManageList(FineStdManageVO FineStdManageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", FineStdManageDAO.selectFineStdManageList(FineStdManageVO));
+		map.put("resultList", FineStdManageDAO.retrieveFineStdManageList(FineStdManageVO));
 		
 		return map;
 	}
 	
 	// 고지서 발송처명 조회
 	@Override
-	public Map<String, Object> selectNtcdocSendPlcList(Map<String, Object> paramMap) throws Exception {
+	public Map<String, Object> retrieveNtcdocSendPlcList(Map<String, Object> paramMap) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("resultList", FineStdManageDAO.selectNtcdocSendPlcList(paramMap));
+		map.put("resultList", FineStdManageDAO.retrieveNtcdocSendPlcList(paramMap));
 		
 		return map;
 	}
 	
 	// 발송처 저장
 	@Override
-	public Map<String, Object> insertSendPlcData(Map<String, Object> paramMap) throws Exception {
+	public int insertSendPlcData(Map<String, Object> paramMap) throws Exception {
 		Map<String, Object> sendPlcCdMap;
-		String sendPlcCd = paramMap.containsKey("sendPlcCd") ? (String) paramMap.get("sendPlcCd") : "";
+		String sendPlcCd = (String) paramMap.get("sendPlcCd");
 		
-		String ipAddress = InetAddress.getLocalHost().getHostAddress();
-		
-		if (sendPlcCd.equals("")) {
-			sendPlcCdMap = FineStdManageDAO.selectMaxSendPlcCd();
+		if (StringUtils.defaultString(sendPlcCd).isEmpty()) {
+			// 발송처코드가 없을 경우 신규 채번
+			sendPlcCdMap = FineStdManageDAO.retrieveMaxSendPlcCd();
 			
 			paramMap.put("sendPlcCd", String.format("%03d", ((Long) sendPlcCdMap.get("SEND_PLC_CD")).intValue()));
 			paramMap.put("sendPlcSeq", "1");
 		} else {
 			sendPlcCdMap = new HashMap<String, Object>();
 			sendPlcCdMap.put("sendPlcCd", sendPlcCd);
-			
-			Map<String, Object> sendPlcSeqMap = FineStdManageDAO.selectMaxSendPlcSeq(sendPlcCdMap);
+
+			// 해당 발송처코드의 발송처일련번호 채번
+			Map<String, Object> sendPlcSeqMap = FineStdManageDAO.retrieveMaxSendPlcSeq(sendPlcCdMap);
 			
 			paramMap.put("sendPlcSeq", sendPlcSeqMap.get("SEND_PLC_SEQ"));
 		}
-		paramMap.put("firstRegrId", "admin");
-		paramMap.put("firstRegIpAddr", ipAddress);
-		paramMap.put("lastChngmnId", "admin");
-		paramMap.put("lastChgeIpAddr", ipAddress);
 
 		int cnt = FineStdManageDAO.insertSendPlcData(paramMap);
 		
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		String resultCd = cnt > 0 ? "000" : "999";
-		String resultMsg = cnt > 0 ? "성공적으로 저장되었습니다." : "저장에 실패했습니다.";
-		
-		map.put("resultCd", resultCd);
-		map.put("resultMsg", resultMsg);
-		
-		return map;
+		return cnt;
 	}
 	
 	// 발송처 수정
 	@Override
-	public Map<String, Object> updateSendPlcData(Map<String, Object> paramMap) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		if (!paramMap.containsKey("sendPlcCd") || paramMap.get("sendPlcCd").equals("") || !paramMap.containsKey("sendPlcSeq") || paramMap.get("sendPlcSeq").equals("")) {
-			map.put("resultCd", "-001");
-			map.put("resultMsg", "발송처 코드 또는 발송처 일련번호가 없습니다. 수정할 발송처를 선택한 후 다시 시도해주세요.");
-			
-			return map;
-		}
-		paramMap.put("lastChngmnId", "admin");
-		paramMap.put("lastChgeIpAddr", "116.124.144.140");
-
+	public int updateSendPlcData(Map<String, Object> paramMap) throws Exception {
 		int cnt = FineStdManageDAO.updateSendPlcData(paramMap);
 		
-		String resultCd = cnt > 0 ? "000" : "999";
-		String resultMsg = cnt > 0 ? "성공적으로 저장되었습니다." : "저장에 실패했습니다.";
-		
-		map.put("resultCd", resultCd);
-		map.put("resultMsg", resultMsg);
-		
-		return map;
+		return cnt;
 	}
 	
 	// 발송처 삭제
 	@Override
-	public Map<String, Object> deleteSendPlcData(Map<String, Object> paramMap) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		if (!paramMap.containsKey("sendPlcCd") || paramMap.get("sendPlcCd").equals("") || !paramMap.containsKey("sendPlcSeq") || paramMap.get("sendPlcSeq").equals("")) {
-			map.put("resultCd", "-001");
-			map.put("resultMsg", "발송처 코드 또는 발송처 일련번호가 없습니다. 삭제할 발송처를 선택한 후 다시 시도해주세요.");
-			
-			return map;
-		}
-
-		int cnt = FineStdManageDAO.deleteSendPlcData(paramMap);
+	public int deleteSendPlcData(FineStdManageVO fineStdManageVO) throws Exception {
+		//BIZ_범칙금발송처기준관리 삭제
+		int cnt = FineStdManageDAO.deleteSendPlcData(fineStdManageVO);
 		
-		String resultCd = cnt > 0 ? "000" : "999";
-		String resultMsg = cnt > 0 ? "성공적으로 삭제되었습니다." : "삭제에 실패했습니다.";
-		
-		map.put("resultCd", resultCd);
-		map.put("resultMsg", resultMsg);
-		
-		return map;
+		return cnt;
 	}
 }

@@ -1,9 +1,8 @@
 package egovframework.penalty.service.impl;
 
-import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Resource;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -15,13 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
 import egovframework.penalty.service.FineOcrService;
 import egovframework.penalty.util.ocr.OcrUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service("FineOcrService")
 public class FineOcrServiceImpl implements FineOcrService {

@@ -38,7 +38,7 @@
 		<result property="thrdDeptKeyWordCts" column="THRD_DEPT_KEY_WORD_CTS"/>
 	</resultMap>
 	
-	<select id="selectComboBoxList" resultMap="ComnCdVO">
+	<select id="retrieveComboBoxList" resultMap="ComnCdVO">
     SELECT COMN_CD_ENG_NM, CD_NM, CD_VAL
     FROM biz_comn_cd_dtl
     WHERE COMN_CD_ENG_NM IN ('DOC_TYP_CD', 'HDLG_TYP_CD', 'RCPT_TYP_CD', 'SEND_PLC_KIND_CD')
@@ -57,7 +57,7 @@
     )
 </select>
 	
-	<select id="selectFineStdManageList" parameterType="egovframework.penalty.FineStdManageVO" resultMap="FineStdManageVO">
+	<select id="retrieveFineStdManageList" parameterType="egovframework.penalty.FineStdManageVO" resultMap="FineStdManageVO">
 		select
 			(select CD_NM from biz_comn_cd_dtl where COMN_CD_ENG_NM = 'SEND_PLC_KIND_CD' AND CD_VAL = std.SEND_PLC_KIND_CD) as SEND_PLC_KIND_NM,
 			CONCAT(std.SEND_PLC_CD, '-', std.SEND_PLC_SEQ) as SEND_PLC_CD_SEQ,
@@ -82,7 +82,7 @@
 		</where>
 	</select>
 	
-	<select id="selectNtcdocSendPlcNmList" parameterType="java.util.Map" resultMap="FineStdManageVO">
+	<select id="retrieveNtcdocSendPlcNmList" parameterType="java.util.Map" resultMap="FineStdManageVO">
 		select SEND_PLC_CD, NTCDOC_SEND_PLC_NM from biz_fine_send_plc_std_mnge
 		<where>
 			<if test="ntcdocSendPlcNm != null and ntcdocSendPlcNm != ''">
@@ -92,11 +92,11 @@
 		group by SEND_PLC_CD
 	</select>
 	
-	<select id="selectMaxSendPlcCd" resultType="java.util.Map">
+	<select id="retrieveMaxSendPlcCd" resultType="java.util.Map">
 		select CAST(NVL(MAX(SEND_PLC_CD), 0) + 1 AS INT) as SEND_PLC_CD from biz_fine_send_plc_std_mnge
 	</select>
 	
-	<select id="selectMaxSendPlcSeq" parameterType="java.util.Map" resultType="java.util.Map">
+	<select id="retrieveMaxSendPlcSeq" parameterType="java.util.Map" resultType="java.util.Map">
 		select CAST(NVL(MAX(SEND_PLC_SEQ), 0) + 1 AS INT) as SEND_PLC_SEQ from biz_fine_send_plc_std_mnge where SEND_PLC_CD = #{sendPlcCd}
 	</select>
 	
@@ -112,10 +112,8 @@
 			RCPT_TYP_CD,
 			HDLG_TYP_CD,
 			FIRST_REGR_ID,
-			FIRST_REG_TSTMP,
 			FIRST_REG_IP_ADDR,
 			LAST_CHNGMN_ID,
-			LAST_CHGE_TSTMP,
 			LAST_CHGE_IP_ADDR
 			<if test="st1SendPlcOficNm != null">
 				, ST1_SEND_PLC_OFIC_NM
@@ -175,12 +173,10 @@
 			#{docTypCd},
 			#{rcptTypCd},
 			#{hdlgTypCd},
-			#{firstRegrId},
-			current_timestamp(),
-			#{firstRegIpAddr},
-			#{lastChngmnId},
-			current_timestamp(),
-			#{lastChgeIpAddr}
+			#{sessionId},
+			#{sessionIp},
+			#{sessionId},
+			#{sessionIp}
 			<if test="st1SendPlcOficNm != null">
 				, #{st1SendPlcOficNm}
 			</if>
@@ -234,9 +230,8 @@
 	
 	<update id="updateSendPlcData" parameterType="java.util.Map">
 		update biz_fine_send_plc_std_mnge set
-			LAST_CHNGMN_ID = #{lastChngmnId},
-			LAST_CHGE_TSTMP = current_timestamp(),
-			LAST_CHGE_IP_ADDR = #{lastChgeIpAddr}
+			LAST_CHNGMN_ID = #{sessionId},
+			LAST_CHGE_IP_ADDR = #{sessionIp}
 			<if test="sendPlcKindCd != null">
 				, SEND_PLC_KIND_CD = #{sendPlcKindCd}
 			</if>

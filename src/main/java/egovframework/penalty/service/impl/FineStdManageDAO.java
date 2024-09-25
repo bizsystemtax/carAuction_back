@@ -11,29 +11,29 @@ import egovframework.penalty.FineStdManageVO;
 
 @Repository("FineStdManageDAO")
 public class FineStdManageDAO extends EgovAbstractMapper {
-	public List<ComnCdVO> selectComboBoxList() {
+	public List<ComnCdVO> retrieveComboBoxList() {
 		// TODO Auto-generated method stub
-		return selectList("FineStdManageDAO.selectComboBoxList");
+		return selectList("FineStdManageDAO.retrieveComboBoxList");
 	}
 
-	public List<FineStdManageVO> selectFineStdManageList(FineStdManageVO FineStdManageVO) {
+	public List<FineStdManageVO> retrieveFineStdManageList(FineStdManageVO FineStdManageVO) {
 		// TODO Auto-generated method stub
-		return selectList("FineStdManageDAO.selectFineStdManageList", FineStdManageVO);
+		return selectList("FineStdManageDAO.retrieveFineStdManageList", FineStdManageVO);
 	}
 	
-	public List<FineStdManageVO> selectNtcdocSendPlcList(Map<String, Object> paramMap) {
+	public List<FineStdManageVO> retrieveNtcdocSendPlcList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return selectList("FineStdManageDAO.selectNtcdocSendPlcNmList", paramMap);
+		return selectList("FineStdManageDAO.retrieveNtcdocSendPlcNmList", paramMap);
 	}
 	
-	public Map<String, Object> selectMaxSendPlcCd() {
+	public Map<String, Object> retrieveMaxSendPlcCd() {
 		// TODO Auto-generated method stub
-		return selectOne("FineStdManageDAO.selectMaxSendPlcCd");
+		return selectOne("FineStdManageDAO.retrieveMaxSendPlcCd");
 	}
 	
-	public Map<String, Object> selectMaxSendPlcSeq(Map<String, Object> paramMap) {
+	public Map<String, Object> retrieveMaxSendPlcSeq(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return selectOne("FineStdManageDAO.selectMaxSendPlcSeq", paramMap);
+		return selectOne("FineStdManageDAO.retrieveMaxSendPlcSeq", paramMap);
 	}
 	
 	public int insertSendPlcData(Map<String, Object> paramMap) {
@@ -46,8 +46,8 @@ public class FineStdManageDAO extends EgovAbstractMapper {
 		return update("FineStdManageDAO.updateSendPlcData", paramMap);
 	}
 	
-	public int deleteSendPlcData(Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
-		return delete("FineStdManageDAO.deleteSendPlcData", paramMap);
+	public int deleteSendPlcData(FineStdManageVO fineStdManageVO) {
+		// 발송처 삭제 XML 호출
+		return delete("FineStdManageDAO.deleteSendPlcData", fineStdManageVO);
 	}
 }

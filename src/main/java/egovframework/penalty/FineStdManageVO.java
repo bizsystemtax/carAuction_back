@@ -45,6 +45,10 @@ public class FineStdManageVO implements Serializable {
 	private String lastChgeTstmp = "";			// 최종 변경일자
 	private String lastChgeIpAddr = "";			// 최종 변경 ip주소
 	
+	//필수
+	private String sessionId = "";	// 세션ID
+	private String sessionIp = "";	// 세션IP
+	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
