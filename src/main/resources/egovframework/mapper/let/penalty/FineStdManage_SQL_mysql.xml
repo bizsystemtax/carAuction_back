@@ -304,7 +304,43 @@
 		where SEND_PLC_CD = #{sendPlcCd} and SEND_PLC_SEQ = #{sendPlcSeq}
 	</update>
 	
-	<delete id="deleteSendPlcData" parameterType="java.util.Map">
-		delete from biz_fine_send_plc_std_mnge where SEND_PLC_CD = #{sendPlcCd} and SEND_PLC_SEQ = #{sendPlcSeq}
+	<delete id="deleteSendPlcData" parameterType="egovframework.penalty.FineStdManageVO">
+		DELETE FROM BIZ_FINE_SEND_PLC_STD_MNGE 
+		WHERE SEND_PLC_CD = #{sendPlcCd} 
+		AND SEND_PLC_SEQ = #{sendPlcSeq}
 	</delete>
+	
+	<!-- Retrieve : 다운로드 조회 -->
+	<select id="retrieveDownloadSendPlc" parameterType="java.util.Map" resultMap="FineStdManageVO">
+		<![CDATA[
+		SELECT 	SEND_PLC_CD AS col1 /*발송처코드*/
+				,NTCDOC_SEND_PLC_NM AS col2 /*고지서발송처명*/
+				,NTCDOC_SEND_PLC_DEPT_NM AS col3 /*고지서발송처부서명*/
+				,COMN_SEND_PLC_NM AS col4 /*공통발송처명*/
+				,SEND_PLC_KIND_CD AS col5 /*발송처종류코드*/
+				,DOC_TYP_CD AS col6 /*문서유형코드*/
+				,RCPT_TYP_CD AS col7 /*접수유형코드*/
+				,HDLG_TYP_CD AS col8 /*처리유형코드*/
+				,HPAGE_ADDR AS col9 /*홈페이지주소*/
+				,FAXNO AS col10 /*팩스번호*/
+				,ST1_SEND_PLC_OFIC_NM AS col11 /*1차발송처담당자명*/
+				,SCND_SEND_PLC_OFIC_NM AS col12 /*2차발송처담당자명*/
+				,OFIC_EMAIL_ADDR AS col13 /*담당자이메일주소*/
+				,ST1_SEND_PLC_TELNO AS col14 /*1차발송처전화번호*/
+				,SCND_SEND_PLC_TELNO AS col15 /*2차발송처전화번호*/
+				,THRD_SEND_PLC_TELNO AS col16 /*3차발송처전화번호*/
+				,ZIP_CD AS col17 /*우편번호*/
+				,SEND_PLC_ADDR AS col18 /*발송처주소*/
+				,SEND_PLC_SPCFC_ADDR AS col19 /*발송처상세주소*/
+				,ST1_DEPT_KEY_WORD_CTS AS col20 /*1차부서키워드내용*/
+				,SCND_DEPT_KEY_WORD_CTS AS col21 /*2차부서키워드내용*/
+				,THRD_DEPT_KEY_WORD_CTS AS col22 /*3차부서키워드내용*/
+				,SEND_PLC_REM AS col23 /*발송처비고*/
+				,PLCL_MTR AS col24 /*특이사항*/
+				,SEND_PLC_SEQ AS SEND_PLC_SEQ /*발송처일련번호*/
+		FROM 	BIZ_FINE_SEND_PLC_STD_MNGE /*BIZ_범칙금관공서기준관리*/
+		WHERE 	SEND_PLC_CD = #{sendPlcCd} /*발송처코드*/
+		AND		SEND_PLC_SEQ = #{sendPlcSeq} /*발송처일련번호*/
+		]]>
+	</select>
 </mapper>

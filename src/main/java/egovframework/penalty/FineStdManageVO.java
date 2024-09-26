@@ -45,9 +45,38 @@ public class FineStdManageVO implements Serializable {
 	private String lastChgeTstmp = "";			// 최종 변경일자
 	private String lastChgeIpAddr = "";			// 최종 변경 ip주소
 	
+	//파일 다운로드 공통
+	private String fileName = "";				//파일명
+	
+	//파일 다운로드
+	private String col1 = "";
+	private String col2 = "";
+	private String col3 = "";
+	private String col4 = "";
+	private String col5 = "";
+	private String col6 = "";
+	private String col7 = "";
+	private String col8 = "";
+	private String col9 = "";
+	private String col10 = "";
+	private String col11 = "";
+	private String col12 = "";
+	private String col13 = "";
+	private String col14 = "";
+	private String col15 = "";
+	private String col16 = "";
+	private String col17 = "";
+	private String col18 = "";
+	private String col19 = "";
+	private String col20 = "";
+	private String col21 = "";
+	private String col22 = "";
+	private String col23 = "";
+	private String col24 = "";
+	
 	//필수
-	private String sessionId = "";	// 세션ID
-	private String sessionIp = "";	// 세션IP
+	private String sessionId = "";				// 세션ID
+	private String sessionIp = "";				// 세션IP
 	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

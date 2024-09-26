@@ -1,6 +1,7 @@
 package egovframework.penalty.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -89,5 +90,11 @@ public class FineStdManageServiceImpl extends EgovAbstractServiceImpl implements
 		int cnt = FineStdManageDAO.deleteSendPlcData(fineStdManageVO);
 		
 		return cnt;
+	}
+	
+	//다운로드 조회
+	@Override
+	public List<FineStdManageVO> downloadSendPlc(Map<String, Object> paramMap) throws Exception {
+		return FineStdManageDAO.downloadSendPlc(paramMap);
 	}
 }

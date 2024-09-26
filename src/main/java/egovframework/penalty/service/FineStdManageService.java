@@ -1,5 +1,6 @@
 package egovframework.penalty.service;
 
+import java.util.List;
 import java.util.Map;
 
 import egovframework.penalty.FineStdManageVO;
@@ -22,4 +23,7 @@ public interface FineStdManageService {
 	
 	// 발송처 삭제
 	public int deleteSendPlcData(FineStdManageVO fineStdManageVO) throws Exception;
+	
+	//다운로드 조회
+	public List<FineStdManageVO> downloadSendPlc(Map<String, Object> paramMap) throws Exception;
 }
