@@ -395,4 +395,32 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 	public List<FineMngeVO> downloadCartax(FineMngeVO fineMngeVO) throws Exception {
 		return FineMngeDAO.downloadCartax(fineMngeVO);
 	}
+
+	//다운로드(PDF) 조회
+	@Override
+	public List<FineMngeVO> downloadPdf(FineMngeVO fineMngeVO) throws Exception {
+		return FineMngeDAO.downloadPdf(fineMngeVO);
+	}
+
+	//PDF 공문 문서번호 채번
+	@Override
+	public String retrieveNtcdocDocNo(FineMngeVO fineMngeVO) throws Exception {
+		List<FineMngeVO> ntcdocDocNo = FineMngeDAO.retrieveNtcdocDocNo(fineMngeVO);
+		String result = Objects.toString(ntcdocDocNo.get(0).getNtcdocDocNo(), "");
+		
+		//서버 오류로 인해 값을 조회 못했을 경우 오류
+		if(result.isEmpty()) {
+			throw new BizException(ErrorCode.ERR015, "");
+		}
+		
+		return result;
+	}
+	
+	//PDF 공문 문서번호 업데이트
+	@Override
+	public int updateNtcdocDocNo(FineMngeVO fineMngeVO) throws Exception {
+		int cnt = FineMngeDAO.updateNtcdocDocNo(fineMngeVO);
+		
+		return cnt;
+	}
 }
