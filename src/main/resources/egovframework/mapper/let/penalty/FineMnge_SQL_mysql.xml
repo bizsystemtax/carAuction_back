@@ -47,6 +47,25 @@
 		<result property="vltKindCdKey1" column="VLT_KIND_CD_KEY1"/>
 		<result property="vltKindCdKey2" column="VLT_KIND_CD_KEY2"/>
 		<result property="sendPlcCdKey" column="SEND_PLC_CD_KEY"/>
+		
+		<result property="csAddr" column="CS_ADDR"/>
+		<result property="csAddrDtl" column="CS_ADDR_DTL"/>
+		<result property="rnmNo" column="RNM_NO"/>
+		<result property="rnmNo2" column="RNM_NO2"/>
+		<result property="csBrno" column="CS_BRNO"/>
+		<result property="drvLicNo" column="DRV_LIC_NO"/>
+		<result property="vltTs" column="VLT_TS"/>
+		<result property="authDt" column="AUTH_DT"/>
+		<result property="telNo" column="TEL_NO"/>
+		<result property="loanTrm" column="LOAN_TRM"/>
+		<result property="vhclMdl" column="VHCL_MDL"/>
+		<result property="rem" column="REM"/>
+		<result property="bizNm" column="BIZ_NM"/>
+		<result property="bizBrno" column="BIZ_BRNO"/>
+		<result property="bizCrno" column="BIZ_CRNO"/>
+		<result property="bizAddr" column="BIZ_ADDR"/>
+		<result property="bizOfic" column="BIZ_OFIC"/>
+		
 		<result property="sessionId" column="SESSION_ID"/>
 		<result property="sessionIp" column="SESSION_IP"/>
 	</resultMap>
@@ -845,7 +864,7 @@
 	<select id="retrieveDownloadPdf" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
 		<![CDATA[
 		SELECT 	/*PDF 1페이지 담당자명은 해당 범칙금의 최종수정자 이름을 가져오지만.. 사용 환경에 따라 다를듯.. 일단 레포트에 고정함 (내선번호도 동일)*/
-				B.NTCDOC_SEND_PLC_NM /*발송처명*/
+				B.NTCDOC_SEND_PLC_NM AS SEND_PLC_NM /*발송처명*/
 				/*개인사업자: 대표자명
 				 *그 외: 법인명 또는 고객명
 				 *사용환경에 따라 다름 변경 필요*/

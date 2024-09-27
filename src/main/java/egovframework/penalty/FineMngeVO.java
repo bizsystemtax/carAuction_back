@@ -110,6 +110,25 @@ public class FineMngeVO implements Serializable {
 	private String col20 = "";
 	private String col21 = "";
 	private String col22 = "";
+	
+	//PDF 추가 컬럼
+	private String csAddr = "";
+	private String csAddrDtl = "";
+	private String rnmNo = "";
+	private String rnmNo2 = "";
+	private String csBrno = "";
+	private String drvLicNo = "";
+	private String vltTs = "";
+	private String authDt = "";
+	private String telNo = "";
+	private String loanTrm = "";
+	private String vhclMdl = "";
+	private String rem = "";
+	private String bizNm = "";
+	private String bizBrno = "";
+	private String bizCrno = "";
+	private String bizAddr = "";
+	private String bizOfic = "";
 
 	//필수
 	private String sessionId = "";	// 세션ID
