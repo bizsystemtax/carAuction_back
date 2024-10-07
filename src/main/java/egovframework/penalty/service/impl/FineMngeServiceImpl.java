@@ -1,5 +1,7 @@
 package egovframework.penalty.service.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -398,8 +401,79 @@ public class FineMngeServiceImpl extends EgovAbstractServiceImpl implements Fine
 
 	//다운로드(PDF) 조회
 	@Override
-	public List<FineMngeVO> downloadPdf(FineMngeVO fineMngeVO) throws Exception {
-		return FineMngeDAO.downloadPdf(fineMngeVO);
+	public List<FineMngeVO> downloadPdf(List<FineMngeVO> fineMngeVO) throws Exception {
+		List<FineMngeVO> resultList = new ArrayList<>();
+		
+		//발송처코드, 발송처일련번호를 오름차순으로 정렬
+		fineMngeVO.sort(Comparator.comparing(vo -> {
+		    FineMngeVO fmVO = (FineMngeVO) vo;
+		    return Integer.parseInt(fmVO.getSendPlcCd());
+		}).thenComparing(vo -> {
+		    FineMngeVO fmVO = (FineMngeVO) vo;
+		    return Integer.parseInt(fmVO.getSendPlcSeq());
+		}));
+		
+		String ntcdocDocNo = ""; //고지서문서번호
+		
+		//유효성 검사 및 발송처 부서별 문서번호 채번
+		for(int i=0; i<fineMngeVO.size(); i++) {
+			FineMngeVO param = fineMngeVO.get(i);
+			
+			//화면에서 넘어온 데이터
+			String vltDt = param.getVltDt();			//위반일자
+			String vltAtime = param.getVltAtime();		//위반시각
+			String vhclNo = param.getVhclNo();			//차량번호
+			String sendPlcCd = param.getSendPlcCd();	//발송처코드
+			String sendPlcSeq = param.getSendPlcSeq();	//발송처일련번호
+			
+			//유효한 데이터인지 확인용 VO 세팅
+			param.setInVltDtStrt(vltDt);
+			param.setInVltDtEnd(vltDt);
+			
+			String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
+			
+			//발송처 키 존재 여부 확인
+			if(StringUtils.defaultString(sendPlcCd).isEmpty()) {
+				throw new BizException(ErrorCode.ERR014, errKey);
+			}
+			
+			//인덱스 0번은 무조건 문서번호를 신규 채번한다.
+			//이전과 현재의 발송처코드, 발송처일련번호가 다를 경우 문서번호를 신규 채번한다.
+			//이전과 현재의 발송처코드, 발송처일련번호가 같은 경우 채번해둔 문서번호를 세팅한다.
+			if(i == 0) {
+				ntcdocDocNo = retrieveNtcdocDocNo(param);
+			} else if(!sendPlcCd.equals(fineMngeVO.get(i-1).getSendPlcCd()) || !sendPlcSeq.equals(fineMngeVO.get(i-1).getSendPlcSeq())) {
+				ntcdocDocNo = retrieveNtcdocDocNo(param);
+			}
+			
+			param.setNtcdocDocNo(ntcdocDocNo);
+
+			//문서번호를 DB에 업데이트 한다.
+			int cnt = updateNtcdocDocNo(param);
+			
+			//업데이트를 실패한 경우 오류
+			if(cnt <= 0) {
+				throw new BizException(ErrorCode.ERR015, errKey);
+			}
+			
+			//다운로드 데이터 조회
+			List<FineMngeVO> data = FineMngeDAO.downloadPdf(param);
+			
+			//범칙금 또는 고객정보가 조회되지 않으면 오류
+			if(data.size() == 0) {
+				throw new BizException(ErrorCode.ERR012, errKey);
+			}
+			
+			resultList.addAll(data);
+		}
+		
+		//범칙금일련번호를 이용하여 등록한 순서대로 오름차순으로 정렬
+		resultList.sort(Comparator.comparing(vo -> {
+			FineMngeVO fmVO = (FineMngeVO) vo;
+			return Integer.parseInt(fmVO.getFineSeq());
+		}));
+		
+		return resultList;
 	}
 
 	//PDF 공문 문서번호 채번

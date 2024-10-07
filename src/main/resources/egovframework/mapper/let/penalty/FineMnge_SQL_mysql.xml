@@ -958,6 +958,8 @@
 				,'000000-0000000' AS BIZ_CRNO /*차량소유자정보_법인번호*/
 				,'서울 영등포구 양평로 149 A동 505호(양평동5가, 선유도우림라이온스밸리 A)' AS BIZ_ADDR /*차량소유자정보_사업장주소*/
 				,'홍길동' AS BIZ_OFIC /*차량소유자정보_담당자*/
+				,#{ntcdocDocNo} AS NTCDOC_DOC_NO /*고지서문서번호*/
+				,A.FINE_SEQ /*범칙금일련번호*/
 		FROM 	BIZ_FINE_MAS A /*BIZ_범칙금기본*/
 				,BIZ_FINE_SEND_PLC_STD_MNGE B /*BIZ_범칙금관공서기준관리*/
 				,BIZ_LOAN_MAS C /*BIZ_대출기본*/
@@ -977,7 +979,7 @@
 	<select id="retrieveNtcdocDocNo" parameterType="egovframework.penalty.FineMngeVO" resultMap="FineMngeVO">
 		<![CDATA[
 		SELECT 	CONCAT('비즈시스템(IT팀)-'
-						, DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d')
+						, DATE_FORMAT(CURRENT_DATE, '%y%m%d')
 						, '-'
 						, '0'
 						, #{sendPlcCd}

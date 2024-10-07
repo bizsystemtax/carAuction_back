@@ -1025,7 +1025,8 @@ public class FineMngeController {
 	
 	/**
 	 * 범칙금관리 다운로드(위택스)
-	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq, sendPlcCd, sendPlcSeq
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
 	 * @return resultVO - PDF 양식에 들어갈 다운로드 내용
 	 * @throws BizException
 	 */
@@ -1034,85 +1035,46 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadWetax")
-	public ResultVO downloadWetax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
-		FineMngeVO fineMngeVO = new FineMngeVO();
+	public ResultVO downloadWetax(@RequestBody List<Map<String, String>> requestParams,
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
+		List<FineMngeVO> paramList = new ArrayList<>();
 		ResultVO resultVO = new ResultVO();
-		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		//발송처코드, 발송처일련번호를 오름차순으로 정렬
-		requestParams.sort(Comparator.comparing(vo -> {
-		    FineMngeVO fmVO = (FineMngeVO) vo;
-		    return Integer.parseInt(fmVO.getSendPlcCd());
-		}).thenComparing(vo -> {
-		    FineMngeVO fmVO = (FineMngeVO) vo;
-		    return Integer.parseInt(fmVO.getSendPlcSeq());
-		}));
-		
-		String ntcdocDocNo = ""; //고지서문서번호
-		
-		//유효성 검사 및 발송처 부서별 문서번호 채번
-		for(int i=0; i<requestParams.size(); i++) {
-			Map<String, String> list = requestParams.get(i);
-			//화면에서 넘어온 데이터 VO 세팅
-			String vltDt = list.get("vltDt");	   //위반일자
-			String vltAtime = list.get("vltAtime");//위반시각
-			String vhclNo = list.get("vhclNo");	   //차량번호
-			String fineSeq = list.get("fineSeq");  //범칙금일련번호
-			String sendPlcCd = list.get("sendPlcCd");  //발송처코드
-			String sendPlcSeq = list.get("sendPlcSeq");  //발송처일련번호
-			
-			//VO 세팅
-			fineMngeVO.setVltDt(vltDt);
-			fineMngeVO.setVltAtime(vltAtime);
-			fineMngeVO.setVhclNo(vhclNo);
-			fineMngeVO.setFineSeq(fineSeq);
-			fineMngeVO.setSendPlcCd(sendPlcCd);
-			fineMngeVO.setSendPlcSeq(sendPlcSeq);
-			
-			//유효한 데이터인지 확인용 VO 세팅
-			fineMngeVO.setInVltDtStrt(vltDt);
-			fineMngeVO.setInVltDtEnd(vltDt);
-			
-			String errKey = "\n(차량번호: " + vhclNo + " / 위반일자: " + vltDt + " / 위반시각: " + vltAtime + ")";
-			
-			//다운로드 데이터 조회
-			List<FineMngeVO> data = fineMngeService.downloadPdf(fineMngeVO);
-			
-			//범칙금 또는 고객정보가 조회되지 않으면 오류
-			if(data.size() == 0) {
-				throw new BizException(ErrorCode.ERR012, errKey);
-			}
-			
-			//인덱스 0번은 무조건 문서번호를 신규 채번한다.
-			//이전과 현재의 발송처코드, 발송처일련번호가 다를 경우 문서번호를 신규 채번한다.
-			//이전과 현재의 발송처코드, 발송처일련번호가 같은 경우 채번해둔 문서번호를 세팅한다.
-			if(i == 0) {
-				ntcdocDocNo = fineMngeService.retrieveNtcdocDocNo(fineMngeVO);
-			} else if(!sendPlcCd.equals(requestParams.get(i-1).get("sendPlcCd")) && !sendPlcSeq.equals(requestParams.get(i-1).get("sendPlcSeq"))) {
-				ntcdocDocNo = fineMngeService.retrieveNtcdocDocNo(fineMngeVO);
-			}
-			
-			fineMngeVO.setNtcdocDocNo(ntcdocDocNo);
+		String userId = user.getId();
+		String userIp = user.getIp();
 
-			//문서번호를 DB에 업데이트 한다.
-			int cnt = fineMngeService.updateNtcdocDocNo(fineMngeVO);
-			
-			//업데이트를 실패한 경우 오류
-			if(cnt <= 0) {
-				throw new BizException(ErrorCode.ERR009, errKey);
-			}
-			
-			finalList.addAll(data);
+		//로그인 여부 확인
+		if(StringUtils.defaultString(userId).isEmpty()) {
+			throw new BizException(ErrorCode.ERR300, "");
 		}
 		
-		//범칙금일련번호를 이용하여 등록한 순서대로 오름차순으로 정렬
-		finalList.sort(Comparator.comparing(vo -> {
-			FineMngeVO fmVO = (FineMngeVO) vo;
-			return Integer.parseInt(fmVO.getFineSeq());
-		}));
+		//List<Map>>을 FineMngeVO 객체로 변환
+		for (Map<String, String> param : requestParams) {
+			String vltDt = param.get("vltDt");			//위반일자
+			String vltAtime = param.get("vltAtime");	//위반시각
+			String vhclNo = param.get("vhclNo");		//차량번호
+			String fineSeq = param.get("fineSeq");		//범칙금일련번호
+			String sendPlcCd = param.get("sendPlcCd");	//발송처코드
+			String sendPlcSeq = param.get("sendPlcSeq");//발송처일련번호
+            
+			FineMngeVO vo = new FineMngeVO();
+			vo.setVltDt(vltDt);
+			vo.setVltAtime(vltAtime);
+			vo.setVhclNo(vhclNo);
+			vo.setFineSeq(fineSeq);
+			vo.setSendPlcCd(sendPlcCd);
+			vo.setSendPlcSeq(sendPlcSeq);
+			vo.setSessionId(userId);
+			vo.setSessionIp(userIp);
+			paramList.add(vo);
+        }
 		
-		resultMap.put("resultList", finalList);
+		//PDF 다운로드 데이터 처리
+		List<FineMngeVO> resultListPdf = fineMngeService.downloadPdf(paramList);
+		
+		resultMap.put("resultListPdf", resultListPdf);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -1185,7 +1147,8 @@ public class FineMngeController {
 	
 	/**
 	 * 범칙금관리 다운로드(카택스)
-	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq
+	 * @param  requestParams - vltDt, vltAtime, vhclNo, fineSeq, sendPlc, sendPlcSeq
+	 * @param  request - 토큰값으로 인증된 사용자를 확인하기 위한 HttpServletRequest
 	 * @return resultVO - 엑셀 양식에 들어갈 다운로드 내용
 	 * @throws BizException
 	 */
@@ -1194,11 +1157,22 @@ public class FineMngeController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	@PostMapping(value = "/downloadCartax")
-	public ResultVO downloadCartax(@RequestBody List<Map<String, String>> requestParams) throws Exception{
+	public ResultVO downloadCartax(@RequestBody List<Map<String, String>> requestParams,
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
 		FineMngeVO fineMngeVO = new FineMngeVO();
+		List<FineMngeVO> paramList = new ArrayList<>();
 		ResultVO resultVO = new ResultVO();
 		List<FineMngeVO> finalList = new ArrayList<>();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		String userId = user.getId();
+		String userIp = user.getIp();
+
+		//로그인 여부 확인
+		if(StringUtils.defaultString(userId).isEmpty()) {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
 		
 		for(int i=0; i<requestParams.size(); i++) {
 			Map<String, String> list = requestParams.get(i);
@@ -1241,7 +1215,31 @@ public class FineMngeController {
 			return Integer.parseInt(fmVO.getFineSeq());
 		}));
 		
+		//List<Map>>을 FineMngeVO 객체로 변환
+		for (Map<String, String> param : requestParams) {
+			String vltDt = param.get("vltDt");			//위반일자
+			String vltAtime = param.get("vltAtime");	//위반시각
+			String vhclNo = param.get("vhclNo");		//차량번호
+			String fineSeq = param.get("fineSeq");		//범칙금일련번호
+			String sendPlcCd = param.get("sendPlcCd");	//발송처코드
+			String sendPlcSeq = param.get("sendPlcSeq");//발송처일련번호
+            
+			FineMngeVO vo = new FineMngeVO();
+			vo.setVltDt(vltDt);
+			vo.setVltAtime(vltAtime);
+			vo.setVhclNo(vhclNo);
+			vo.setFineSeq(fineSeq);
+			vo.setSendPlcCd(sendPlcCd);
+			vo.setSendPlcSeq(sendPlcSeq);
+			vo.setSessionId(userId);
+			vo.setSessionIp(userIp);
+			paramList.add(vo);
+        }
+		
+		List<FineMngeVO> resultListPdf = fineMngeService.downloadPdf(paramList);
+		
 		resultMap.put("resultList", finalList);
+		resultMap.put("resultListPdf", resultListPdf);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

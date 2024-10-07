@@ -57,7 +57,7 @@ public interface FineMngeService {
 	public List<FineMngeVO> downloadCartax(FineMngeVO fineMngeVO) throws Exception;
 
 	//다운로드(PDF) 조회
-	public List<FineMngeVO> downloadPdf(FineMngeVO fineMngeVO) throws Exception;
+	public List<FineMngeVO> downloadPdf(List<FineMngeVO> fineMngeVO) throws Exception;
 	
 	//PDF 공문 문서번호 채번
 	public String retrieveNtcdocDocNo(FineMngeVO fineMngeVO) throws Exception;

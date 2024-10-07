@@ -133,7 +133,7 @@ public class FineMngeVO implements Serializable {
 	//필수
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP
-
+	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
