@@ -960,6 +960,8 @@
 				,'홍길동' AS BIZ_OFIC /*차량소유자정보_담당자*/
 				,#{ntcdocDocNo} AS NTCDOC_DOC_NO /*고지서문서번호*/
 				,A.FINE_SEQ /*범칙금일련번호*/
+				,A.SEND_PLC_CD /*발송처코드(jsp정렬용)*/
+				,A.SEND_PLC_SEQ /*발송처일련번호(jsp정렬용)*/
 		FROM 	BIZ_FINE_MAS A /*BIZ_범칙금기본*/
 				,BIZ_FINE_SEND_PLC_STD_MNGE B /*BIZ_범칙금관공서기준관리*/
 				,BIZ_LOAN_MAS C /*BIZ_대출기본*/
