@@ -3,9 +3,8 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="FineMngeDAO">
 	<resultMap id="ComnCdVO" type="egovframework.penalty.ComnCdVO">
-		<result property="comnCdEngNm" column="COMN_CD_ENG_NM"/>
-		<result property="cdNm" column="CD_NM"/>
-		<result property="cdVal" column="CD_VAL"/>
+		<result property="comnCdEngNm" column="CODE_FIRST"/>
+	
 	</resultMap>
 	
 	<resultMap id="FineMngeVO" type="egovframework.penalty.FineMngeVO">
@@ -74,29 +73,8 @@
 	<select id="retrieveComboBoxList" resultMap="ComnCdVO">
 		<![CDATA[
 		/*위반종류 코드명 오름차순 정렬 (20240829 박낙구 상무님 요청)*/
-		SELECT 	COMN_CD_ENG_NM
-				,CD_VAL
-				,CD_NM
-		FROM (SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
-						, CD_VAL /*코드값*/
-						, CD_NM /*코드명*/
-						,ROW_NUMBER() OVER (ORDER BY CD_NM) AS RANGE_COL
-				FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
-				WHERE	COMN_CD_ENG_NM = 'VLT_KIND_CD') AS VLT_KIND_CD
-		UNION ALL
-		SELECT	COMN_CD_ENG_NM /*공통코드영문명*/
-				, CD_VAL /*코드값*/
-				, CD_NM /*코드명*/
-		FROM	BIZ_COMN_CD_DTL /*BIZ_공통코드상세*/
-		WHERE	COMN_CD_ENG_NM = 'FINE_UPLOAD_CD'
-		UNION ALL
-		SELECT	'SEND_PLC_CD' AS COMN_CD_ENG_NM /*공통코드영문명(발송처코드)*/
-				, A.SEND_PLC_CD AS CD_VAL /*발송처코드*/
-				, A.NTCDOC_SEND_PLC_NM AS CD_NM /*고지서발송처명*/
-		FROM	BIZ_FINE_SEND_PLC_STD_MNGE A /*BIZ_범칙금발송처기준관리*/
-		WHERE 	A.SEND_PLC_SEQ = (SELECT MIN(SEND_PLC_SEQ)
-								  FROM BIZ_FINE_SEND_PLC_STD_MNGE X 
-								  WHERE A.SEND_PLC_CD = X.SEND_PLC_CD)
+		SELECT CODE_FIRST
+  FROM CA_CMM_CD;
 		]]>
 	</select>
 	

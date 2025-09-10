@@ -106,6 +106,8 @@ public class FineMngeController {
 		//범칙금관리 조회 서비스 호출
 		Map<String, Object> resultMap = fineMngeService.retrieveFineMnge(fineMngeVO);
 		
+		System.out.println("111111111111111111111 => ■■■■■■■■■■■■■■■" + resultMap);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
