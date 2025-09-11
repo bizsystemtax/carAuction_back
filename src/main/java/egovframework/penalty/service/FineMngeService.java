@@ -40,7 +40,7 @@ public interface FineMngeService {
 
 	//위반종류코드 매핑
 	public String retrieveVltKindCd(FineMngeVO fineMngeVO) throws Exception;
-	
+	   
 	//발송처코드 조회
 	public List<FineMngeVO> retrieveSendPlcCd(FineMngeVO fineMngeVO) throws Exception;
 
