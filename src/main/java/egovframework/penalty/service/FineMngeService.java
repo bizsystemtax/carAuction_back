@@ -8,7 +8,7 @@ import egovframework.penalty.FineMngeVO;
 
 
 public interface FineMngeService {
-	//범칙금관리 검색조건 콤보박스 조회 2025-09-11 danieru
+	//범칙금관리 검색조건 콤보박스 조회 2025-09-16 silverStar
 	public Map<String, Object> retrieveComboBoxList(ComnCdVO comnCdVO) throws Exception;
 
 	//범칙금관리 목록 조회
