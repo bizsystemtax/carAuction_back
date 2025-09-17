@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import egovframework.carauction.myPageVO;
 import egovframework.carauction.service.MyPageservice;
-import egovframework.penalty.service.impl.FineMngeDAO;
 
 
 @Service("MyPageservice")
