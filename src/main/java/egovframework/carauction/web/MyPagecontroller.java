@@ -54,11 +54,11 @@ public class MyPagecontroller {
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
 		
-		logger.debug("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", myPageVO);
+		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", myPageVO);
 		
 		Map<String, Object> resultMap = myPageService.myPageList(myPageVO);
 		
-		logger.debug("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", resultMap);
+		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
