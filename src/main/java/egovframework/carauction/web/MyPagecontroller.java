@@ -41,7 +41,7 @@ public class MyPagecontroller {
 	})
 	
 	//마이페이지 - 내 판매차량 입찰 상세 현황
-	@PostMapping(value = "/list")
+	@PostMapping(value = "/list")  ///carAuction_back/src/main/java/egovframework/com/security/SecurityConfig.java 해당 경로에 추기 후 Mapping 주소 추가 해줘야 함
 	public ResultVO myPageList(@RequestBody Map<String, String> requestParams) throws Exception{
 		myPageVO myPageVO = new myPageVO();
 		ResultVO resultVO = new ResultVO();
