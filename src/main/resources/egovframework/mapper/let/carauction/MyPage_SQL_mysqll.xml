@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MyPageDAO">
+	<resultMap id="myPageVO" type="egovframework.carauction.myPageVO">
+	  	<result property = "codeFirst"		    column = "CODE_FIRST"/>
+	  	<result property = "codeSecond"		    column = "CODE_SECOND"/>
+	  	<result property = "codeNo"		        column = "CODE_NO"/>
+	  	<result property = "codeHname"		    column = "CODE_HNAME"/>
+	  	<result property = "codeKita1"		    column = "CODE_KITA1"/>
+	  	<result property = "codeKita2"		    column = "CODE_KITA2"/>
+	  	<result property = "codeKita3"		    column = "CODE_KITA3"/>
+	  	<result property = "codeKita4"		    column = "CODE_KITA4"/>
+	  	<result property = "codeKita5"		    column = "CODE_KITA5"/>
+	  	<result property = "codeUseyn"		    column = "CODE_USEYN"/>
+	  	<result property = "sortOrder"		    column = "SORT_ORDER"/>
+	  	<result property = "mkrCd"		        column = "MKR_CD"/>
+	  	<result property = "carModelCd"		    column = "CAR_MODEL_CD"/>
+	  	<result property = "carModelNm"		    column = "CAR_MODEL_NM"/>
+	  	<result property = "repCarYn"		    column = "REP_CAR_YN"/>
+	  	<result property = "carLevelCd"		    column = "CAR_LEVEL_CD"/>
+	  	<result property = "carLevelNm"		    column = "CAR_LEVEL_NM"/>
+	 	<result property = "carDtLevelCd"	    column = "CAR_DT_LEVEL_CD"/>
+	  	<result property = "carDtLevelName"	  	column = "CAR_DT_LEVEL_NAME"/>
+	  	<result property = "carKindCd"		    column = "CAR_KIND_CD"/>
+	  	<result property = "makeStrtYrMn"		column = "MAKE_STRT_YR_MN"/>
+		<result property = "makeEndYrMn"		column = "MAKE_END_YR_MN"/>
+		<result property = "carCc"		        column = "CAR_CC"/>
+		<result property = "useYn"		        column = "USE_YN"/>
+		<result property = "aucCarCc"		    column = "AUC_CAR_CC"/>
+		<result property = "aucCarSeat"		    column = "AUC_CAR_SEAT"/>
+		<result property = "carNo"		        column = "CAR_NO"/>
+		<result property = "aucCarCmnt"		    column = "AUC_CAR_CMNT"/>
+		<result property = "aucCarMakeYr"		column = "AUC_CAR_MAKE_YR"/>
+		<result property = "aucCarDrvDis"		column = "AUC_CAR_DRV_DIS"/>
+		<result property = "bidPlnPrice"		column = "BID_PLN_PRICE"/>
+		<result property = "bidExpDt"		    column = "BID_EXP_DT"/>
+		<result property = "eomYn"		        column = "EOM_YN"/>
+		<result property = "eomPrice"		    column = "EOM_PRICE"/>
+		<result property = "bidCnt"		        column = "BID_CNT"/>
+		<result property = "aucProgYn"		    column = "AUC_PROG_YN"/>
+		<result property = "sbidmnNm"		    column = "SBIDMN_NM"/>
+		<result property = "aucRegSeq"		    column = "AUC_REG_SEQ"/>
+		<result property = "bidmnNm"		    column = "BIDMN_NM"/>
+		<result property = "bidmnCellno"		column = "BIDMN_CELLNO"/>
+		<result property = "bidmnEmailAddr"	  	column = "BIDMN_EMAIL_ADDR"/>
+		<result property = "bidPrice"		    column = "BID_PRICE"/>
+		<result property = "bidEntryDate"		column = "BID_ENTRY_DATE"/>
+		<result property = "depBankNm"		    column = "DEP_BANK_NM"/>
+		<result property = "depAcc"		        column = "DEP_ACC"/>
+		<result property = "depmnNm"		    column = "DEPMN_NM"/>
+		<result property = "aucProgStatCd"		column = "AUC_PROG_STAT_CD"/>
+		<result property = "sbidYn"		        column = "SBID_YN"/>
+		<result property = "pomPayYn"		    column = "POM_PAY_YN"/>
+		<result property = "carPrice"		    column = "CAR_PRICE"/>
+		<result property = "carMainNo"		    column = "CAR_MAIN_NO"/>
+		<result property = "locImpGb"		    column = "LOC_IMP_GB"/>
+		<result property = "carEngCd"		    column = "CAR_ENG_CD"/>
+		<result property = "carTransGb"		    column = "CAR_TRANS_GB"/>
+		<result property = "aucRegNo"		    column = "AUC_REG_NO"/>
+		<result property = "bidSdepPrice"		column = "BID_SDEP_PRICE"/>
+		<result property = "sbidPrice"	     	column = "SBID_PRICE"/>
+		<result property = "sbidDate"		    column = "SBID_DATE"/>
+		<result property = "entryDate"		    column = "ENTRY_DATE"/>
+		<result property = "entryIdno"		    column = "ENTRY_IDNO"/>
+		<result property = "updatDate"		    column = "UPDAT_DATE"/>
+		<result property = "updatIdno"		    column = "UPDAT_IDNO"/>
+		<result property = "regStrDt"		    column = "REG_STR_DT"/>
+		<result property = "regEndDt"		    column = "REG_END_DT"/>
+		<result property = "proState"		    column = "PRO_STATE"/>
+	</resultMap>
+	
+	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황 -->
+	<select id="myPageList" parameterType="egovframework.carauction.myPageVO" resultMap="myPageVO">
+	<![CDATA[
+		/*여기에 조회 쿼리*/
+	]]>
+	<!-- 여기에 조건 쿼리 -->
+	</select>
+</mapper>
