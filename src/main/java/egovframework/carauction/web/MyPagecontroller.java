@@ -4,6 +4,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,6 @@ import egovframework.carauction.service.MyPageservice;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.service.ResultVO;
-import egovframework.penalty.FineMngeVO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -23,6 +24,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Transactional
 @RequestMapping("/myPage")
 public class MyPagecontroller {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MyPagecontroller.class);
 	
 	@Resource(name = "MyPageservice")
 	private MyPageservice myPageService;
@@ -51,7 +54,11 @@ public class MyPagecontroller {
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
 		
+		logger.debug("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", myPageVO);
+		
 		Map<String, Object> resultMap = myPageService.myPageList(myPageVO);
+		
+		logger.debug("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
