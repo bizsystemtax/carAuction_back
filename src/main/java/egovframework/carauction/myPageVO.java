@@ -87,9 +87,9 @@ public class myPageVO implements Serializable {
 	private String     regEndDt = "";							//등록종료일자 추가
 	private String     proState = "";							//진행상태 추가
 	
-	private String fromDt;
-	private String toDt;
-	private String RNUM;
+	private String 	   fromDt;                                  //시작일자
+	private String     toDt;									//종료일자
+	private String     RNUM;									//순번
 	  
 	private String	   fuelType = "";                           //연료
 	private String     carTransNm = "";                         //변속기명                          
