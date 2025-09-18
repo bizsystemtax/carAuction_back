@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MyPageDAO">
+	
 	<resultMap id="myPageVO" type="egovframework.carauction.myPageVO">
 	  	<result property = "codeFirst"		    column = "CODE_FIRST"/>
 	  	<result property = "codeSecond"		    column = "CODE_SECOND"/>
@@ -67,13 +68,57 @@
 		<result property = "regStrDt"		    column = "REG_STR_DT"/>
 		<result property = "regEndDt"		    column = "REG_END_DT"/>
 		<result property = "proState"		    column = "PRO_STATE"/>
+		<result property = "fuelType"			column = "FUEL_TYPE"/>
+		<result property = "carTransNm"			column = "CAR_TRANS_NM"/>
+		<result property = "aucProgStatNm"		column = "AUC_PROG_STAT_NM"/>
+		<result property = "fromDt"				column = "fromDt"/>
+		<result property = "toDt"				column = "toDt"/>
+		<result property = "RNUM"				column = "RNUM"/>
+		
 	</resultMap>
+	
+	<!-- 콤보박스 진행상태 조회 -->
+	<select id="comboBoxList" parameterType="egovframework.carauction.myPageVO" resultMap="myPageVO">
+		<![CDATA[
+			SELECT CODE_NO    /*코드번호*/
+			     , CODE_HNAME /*코드명*/
+			  FROM CA_CMM_CD 
+		 	WHERE CODE_USEYN = 'Y'
+		  	 AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01'
+		]]>
+
+	</select>
 	
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황 -->
 	<select id="myPageList" parameterType="egovframework.carauction.myPageVO" resultMap="myPageVO">
 	<![CDATA[
-		/*여기에 조회 쿼리*/
+		SELECT ROW_NUMBER() OVER (ORDER BY CCAI.ENTRY_DATE DESC) AS RNUM
+		     , CCAI.AUC_REG_NO  /*경매등록번호*/
+		     , CCAI.CAR_MAIN_NO /*차량관리번호*/
+		     , CCAI.CAR_NO      /*차량번호*/
+		     , CONCAT((SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCI.MKR_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C01'), ' ', CCI.CAR_MODEL_NM) AS CAR_MODEL_NM /*차량명*/
+		     , CCAI.AUC_CAR_MAKE_YR /*연식*/
+		     , (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCI.CAR_ENG_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C04') AS FUEL_TYPE /*연료*/
+		     , FORMAT(CCAI.AUC_CAR_DRV_DIS, 0) AS AUC_CAR_DRV_DIS /*주행거리*/
+		     , CCI.CAR_TRANS_GB     /*변속기 구분*/
+		     , CASE WHEN CCI.CAR_TRANS_GB = 'A' THEN '오토'
+		       ELSE '수동'
+		        END AS CAR_TRANS_NM /*변속기명*/
+		     , FORMAT(CCAI.BID_PLN_PRICE, 0) AS BID_PLN_PRICE   /*입찰예정금액*/
+		     , CCAI.BID_CNT         /*입찰건수*/
+		     , DATE_FORMAT(CCAI.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE /*등록일*/
+		     , (SELECT CODE_NO FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_CD /*진행상태코드*/
+		     , (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_NM /*진행상태명*/
+		     , FORMAT(CCAI.SBID_PRICE, 0) AS SBID_PRICE /*낙찰금액*/
+		     , CCAI.SBID_DATE  /*낙찰일*/
+		     , CCAI.ENTRY_IDNO /*낙찰 회원사명*/
+		  FROM CA_CAR_AUC_INF CCAI 
+		 INNER JOIN CA_CAR_INF CCI 
+		    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
+		 WHERE CCAI.ENTRY_DATE BETWEEN #{regStrDt} AND #{regEndDt}  
 	]]>
-	<!-- 여기에 조건 쿼리 -->
+		<if test="proState != null and proState != ''">
+		   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
+		</if> 
 	</select>
 </mapper>

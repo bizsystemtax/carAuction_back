@@ -40,6 +40,21 @@ public class MyPagecontroller {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	
+	//콤보박스 진행상태 조회
+	@PostMapping(value = "/comboBoxList")
+	public ResultVO comboBoxList() throws Exception {
+		myPageVO myPageVO = new myPageVO();
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> resultMap = myPageService.comboBoxList(myPageVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
 	//마이페이지 - 내 판매차량 입찰 상세 현황
 	@PostMapping(value = "/list")  ///carAuction_back/src/main/java/egovframework/com/security/SecurityConfig.java 해당 경로에 추기 후 Mapping 주소 추가 해줘야 함
 	public ResultVO myPageList(@RequestBody Map<String, String> requestParams) throws Exception{
@@ -48,17 +63,20 @@ public class MyPagecontroller {
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
-		String proState = requestParams.get("proState");					//진행상태
+		String proState = requestParams.get("codeNo");					//진행상태
 		
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
 		
-		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", myPageVO);
+		logger.info("regStrDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regStrDt);
+		logger.info("regEndDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regEndDt);
+		logger.info("proState ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", proState);
+		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", myPageVO);
 		
 		Map<String, Object> resultMap = myPageService.myPageList(myPageVO);
 		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>>", resultMap);
+		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

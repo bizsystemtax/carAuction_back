@@ -71,6 +71,7 @@ public class SecurityConfig {
         //(↑ 추후에 삭제 처리)
         //여기부터 추가해주세요 Start
         "/myPage/list", //20250917 추가
+        "/myPage/comboBoxList", //20250917 추가
         //End
         "/v3/api-docs/**",
         "/swagger-resources",

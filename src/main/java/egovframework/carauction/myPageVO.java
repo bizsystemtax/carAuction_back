@@ -46,8 +46,8 @@ public class myPageVO implements Serializable {
 	private String     carNo = "";								//차량번호
 	private String     aucCarCmnt = "";							//경매차량비고
 	private String     aucCarMakeYr = "";						//경매차량생산년
-	private int        aucCarDrvDis = 0;						//경매차량주행거리
-	private BigDecimal bidPlnPrice = new BigDecimal(0);			//입찰예정금액
+	private String     aucCarDrvDis = "";						//경매차량주행거리
+	private String     bidPlnPrice = "";						//입찰예정금액
 	private String     bidExpDt = "";							//입찰유효일
 	private String     eomYn = "";								//근저당설정여부
 	private BigDecimal eomPrice = new BigDecimal(0);			//근저당설정금액
@@ -77,7 +77,7 @@ public class myPageVO implements Serializable {
 	private String     carTransGb = "";							//차량변속기구분
 	private String     aucRegNo = "";							//경매등록번호
 	private BigDecimal bidSdepPrice = new BigDecimal(0);		//입찰보증금액
-	private BigDecimal sbidPrice = new BigDecimal(0);			//낙찰금액
+	private String 	   sbidPrice = "";							//낙찰금액
 	private String     sbidDate = "";							//낙찰일시
 	private String     entryDate = "";							//등록일시
 	private String     entryIdno = "";							//등록자ID
@@ -86,6 +86,14 @@ public class myPageVO implements Serializable {
 	private String     regStrDt = "";							//등록시작일자 추가
 	private String     regEndDt = "";							//등록종료일자 추가
 	private String     proState = "";							//진행상태 추가
+	
+	private String fromDt;
+	private String toDt;
+	private String RNUM;
+	  
+	private String	   fuelType = "";                           //연료
+	private String     carTransNm = "";                         //변속기명                          
+	private String     aucProgStatNm = "";                      //진행상태명
 	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
