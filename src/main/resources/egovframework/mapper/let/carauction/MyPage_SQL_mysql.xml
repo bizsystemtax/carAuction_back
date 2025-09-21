@@ -121,6 +121,7 @@
 		     , FORMAT(CCAI.SBID_PRICE, 0) AS SBID_PRICE /*낙찰금액*/
 		     , CCAI.SBID_DATE  /*낙찰일*/
 		     , CCAI.ENTRY_IDNO /*낙찰 회원사명*/
+		     , CCAI.AUC_PROG_YN /*진행상태 여부*/
 		  FROM CA_CAR_AUC_INF CCAI 
 		 INNER JOIN CA_CAR_INF CCI 
 		    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
