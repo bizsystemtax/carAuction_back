@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class myPageVO implements Serializable {
+public class MyPageVO implements Serializable {
 
 	//공통코드
 	private String     codeFirst = "";							//코드대분류

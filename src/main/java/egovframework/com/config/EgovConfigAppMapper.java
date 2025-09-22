@@ -74,7 +74,7 @@ public class EgovConfigAppMapper {
 		try {
 			sqlSessionFactoryBean.setMapperLocations(
 				pathMatchingResourcePatternResolver
-					.getResources("classpath:/egovframework/mapper/let/**/*_" + dbType + ".xml"));
+					.getResources("classpath:/egovframework/mapper/let/*/*.xml"));
 		} catch (IOException e) {
 			// TODO Exception 처리 필요
 		}

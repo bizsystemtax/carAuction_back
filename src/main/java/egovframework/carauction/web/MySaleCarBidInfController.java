@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import egovframework.carauction.myPageVO;
+import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
@@ -23,9 +23,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @Transactional
 @RequestMapping("/myPage")
-public class MyPagecontroller {
+public class MySaleCarBidInfController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(MyPagecontroller.class);
+	private static final Logger logger = LoggerFactory.getLogger(MySaleCarBidInfController.class);
 	
 	@Resource(name = "MyPageservice")
 	private MyPageservice myPageService;
@@ -43,7 +43,7 @@ public class MyPagecontroller {
 	//콤보박스 진행상태 조회
 	@PostMapping(value = "/comboBoxList")
 	public ResultVO comboBoxList() throws Exception {
-		myPageVO myPageVO = new myPageVO();
+		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
 		Map<String, Object> resultMap = myPageService.comboBoxList(myPageVO);
@@ -56,9 +56,9 @@ public class MyPagecontroller {
 	}
 	
 	//마이페이지 - 내 판매차량 입찰 상세 현황
-	@PostMapping(value = "/list")  ///carAuction_back/src/main/java/egovframework/com/security/SecurityConfig.java 해당 경로에 추기 후 Mapping 주소 추가 해줘야 함
+	@PostMapping(value = "/list") 
 	public ResultVO myPageList(@RequestBody Map<String, String> requestParams) throws Exception{
-		myPageVO myPageVO = new myPageVO();
+		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
