@@ -41,7 +41,7 @@ public class CarInfoVO {
     // 입찰건수
     private Integer aucCarCc;
 
-    // 보관장소 구분코드
+    // 보관장소 구분코드 
     private String locImpGb;
 
     // 입찰등록일
