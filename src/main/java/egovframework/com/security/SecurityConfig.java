@@ -72,6 +72,14 @@ public class SecurityConfig {
         //여기부터 추가해주세요 Start
         "/myPage/list", //20250917 추가
         "/myPage/comboBoxList", //20250917 추가
+        
+        "/myPage/mySaleCarAuctionRegList", //내 판매차량 입찰 상세 현황 - 경매(공매)등록 내용
+        "/myPage/mySaleCarBidList",		   //내 판매차량 입찰 상세 현황 - 입찰현황
+        "/myPage/mySaleCarBidStatusList",  //내 판매차량 입찰 상세 현황 - 낙찰진행 및 여부 조회
+        "/myPage/faileBidUpdate",          //내 판매차량 입찰 상세 현황 - 유찰
+        "/myPage/successfulBidUpdate",     //내 판매차량 입찰 상세 현황 - 낙찰
+        
+        
         //End
         "/v3/api-docs/**",
         "/swagger-resources",
