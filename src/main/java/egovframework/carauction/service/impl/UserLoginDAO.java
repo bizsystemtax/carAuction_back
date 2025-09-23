@@ -6,7 +6,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 
-@Repository("UserLoginDAO")
+@Repository("userLoginDAO")
 public class UserLoginDAO extends EgovAbstractMapper {
 	
 

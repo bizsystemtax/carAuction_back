@@ -14,7 +14,7 @@ import egovframework.carauction.service.UserLoginService;
 /**
  * 차량 경매 정보 서비스 구현 클래스 
  */
-@Service("UserLoginService")
+@Service("userLoginService")
 public class UserLoginServiceImpl extends EgovAbstractServiceImpl implements UserLoginService {
 
     @Resource(name = "userLoginDAO")
