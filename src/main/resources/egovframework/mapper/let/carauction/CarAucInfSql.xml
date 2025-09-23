@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CarAucInfDAO">
+	
+	<resultMap id="CarInfoVO" type="egovframework.carauction.CarInfoVO">
+		<result property="rowNum" column="RNUM"/>
+		<result property="aucRegNo" column="AUC_REG_NO"/>
+		<result property="carModelNm" column="CAR_MODEL_NM"/>
+		<result property="carLevelNm" column="CAR_LEVEL_NM"/>
+		<result property="aucCarMakeYr" column="AUC_CAR_MAKE_YR"/>
+		<result property="fuelType" column="FUEL_TYPE"/>
+		<result property="aucCarDrvDis" column="AUC_CAR_DRV_DIS"/>
+		<result property="carTransGb" column="CAR_TRANS_GB"/>
+		<result property="bidPlnPrice" column="BID_PLN_PRICE"/>
+		<result property="aucCarCc" column="AUC_CAR_CC"/>
+		<result property="locImpGb" column="LOC_IMP_GB"/>
+		<result property="entryDate" column="ENTRY_DATE"/>
+		<result property="bidExpDt" column="BID_EXP_DT"/>
+		<result property="entryIdno" column="ENTRY_IDNO"/>
+	</resultMap>
+
+	<!-- 제조사 목록 조회 -->
+	<select id="findAllManufacturers" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT CODE_HNAME as brHname
+			FROM CA_CMM_CD
+			WHERE CONCAT(CODE_FIRST, code_second) = 'C01'
+			ORDER BY CODE_HNAME
+		]]>
+	</select>
+
+	<!-- 모델 목록 조회 -->
+	<select id="findAllModels" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT DISTINCT CAR_MODEL_NM as modelName
+			FROM CA_CAR_INF
+			WHERE CAR_MODEL_NM IS NOT NULL AND CAR_MODEL_NM != ''
+			ORDER BY CAR_MODEL_NM
+		]]>
+	</select>
+
+	<!-- 제조사별 모델 목록 조회 -->
+	<select id="findModelsByManufacturer" parameterType="String" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT DISTINCT car.CAR_MODEL_NM as modelName
+			FROM CA_CAR_INF car
+			INNER JOIN CA_CMM_CD cd ON car.MKR_CD = cd.CODE_NO
+			WHERE cd.CODE_HNAME = #{manufacturer}
+			AND CONCAT(cd.CODE_FIRST, cd.CODE_SECOND) = 'C01'
+			AND car.CAR_MODEL_NM IS NOT NULL AND car.CAR_MODEL_NM != ''
+			ORDER BY car.CAR_MODEL_NM
+		]]>
+	</select>
+
+	<!-- 세부모델 목록 조회 -->
+	<select id="findAllSubModels" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT DISTINCT CAR_LEVEL_NM as subModelName
+			FROM CA_CAR_INF
+			WHERE CAR_LEVEL_NM IS NOT NULL AND CAR_LEVEL_NM != ''
+			ORDER BY CAR_LEVEL_NM
+		]]>
+	</select>
+
+	<!-- 연료타입 목록 조회 -->
+	<select id="findAllFuelTypes" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT DISTINCT CODE_HNAME as fuelTypeName
+			FROM CA_CMM_CD
+			WHERE CONCAT(CODE_FIRST, code_second) = 'C04'
+			ORDER BY CODE_HNAME
+		]]>
+	</select>
+
+	<!-- 등록회원사 목록 조회 -->
+	<select id="findAllRegistrationCompanies" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT DISTINCT CODE_HNAME as registrationCompanyName
+			FROM CA_CMM_CD
+			WHERE CONCAT(CODE_FIRST, CODE_SECOND) = 'U01'
+			AND CODE_NO IS NOT NULL
+			ORDER BY CODE_NO
+		]]>
+	</select>
+
+	<!-- 차량 조회 쿼리 -->
+	<select id="findCarsWithConditions" parameterType="egovframework.carauction.CarSearchCriteriaVO" resultType="egovframework.carauction.CarInfoVO">
+		<![CDATA[
+			SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
+			       auc.AUC_REG_NO,
+			       CONCAT(
+			           (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01'),
+			           ' ',
+			           car.CAR_MODEL_NM
+			       ) AS CAR_MODEL_NM,
+			       car.CAR_LEVEL_NM,
+			       auc.AUC_CAR_MAKE_YR,
+			       (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.CAR_ENG_CD AND CONCAT(CODE_FIRST, code_second) = 'C04') AS FUEL_TYPE,
+			       auc.AUC_CAR_DRV_DIS,
+			       car.CAR_TRANS_GB,
+			       auc.BID_PLN_PRICE,
+			       auc.AUC_CAR_CC,
+			       auc.LOC_IMP_GB,
+			       auc.ENTRY_DATE,
+			       auc.BID_EXP_DT,
+			       (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = auc.ENTRY_IDNO AND CONCAT(CODE_FIRST, CODE_SECOND) = 'U01') AS ENTRY_IDNO
+			FROM CA_CAR_AUC_INF auc
+			LEFT JOIN CA_CAR_INF car ON auc.CAR_MAIN_NO = car.CAR_MAIN_NO
+			WHERE 1=1
+		]]>
+		
+		<!-- 제조사 조건 -->
+		<if test="manufacturer != null and manufacturer != '' and manufacturer != '전체'">
+			AND (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01') = #{manufacturer}
+		</if>
+
+		<!-- 모델 조건 -->
+		<if test="model != null and model != '' and model != '전체'">
+			AND car.CAR_MODEL_NM = #{model}
+		</if>
+
+		<!-- 세부모델 조건 -->
+		<if test="subModel != null and subModel != '' and subModel != '전체'">
+			AND car.CAR_LEVEL_NM = #{subModel}
+		</if>
+
+		<!-- 연료 조건 -->
+		<if test="fuelType != null and fuelType != '' and fuelType != '전체'">
+			AND (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.CAR_ENG_CD AND CONCAT(CODE_FIRST, code_second) = 'C04') = #{fuelType}
+		</if>
+
+		<!-- 등록회원사 조건 -->
+		<if test="registrationCompany != null and registrationCompany != '' and registrationCompany != '전체'">
+			AND (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = auc.ENTRY_IDNO AND CONCAT(CODE_FIRST, CODE_SECOND) = 'U01') = #{registrationCompany}
+		</if>
+
+		<!-- 연식 조건 -->
+		<if test="startYear != null and startYear != ''">
+			AND auc.AUC_CAR_MAKE_YR &gt;= #{startYear}
+		</if>
+		<if test="endYear != null and endYear != ''">
+			AND auc.AUC_CAR_MAKE_YR &lt;= #{endYear}
+		</if>
+
+		<!-- 등록일 조건 -->
+		<if test="startDate != null and startDate != ''">
+			AND auc.ENTRY_DATE &gt;= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND auc.ENTRY_DATE &lt;= #{endDate}
+		</if>
+
+		<!-- 주행거리 조건 -->
+		<if test="mileageStart != null and mileageStart != ''">
+			AND auc.AUC_CAR_DRV_DIS &gt;= #{mileageStart}
+		</if>
+		<if test="mileageEnd != null and mileageEnd != ''">
+			AND auc.AUC_CAR_DRV_DIS &lt;= #{mileageEnd}
+		</if>
+
+		ORDER BY auc.ENTRY_DATE DESC
+	</select>
+</mapper>
