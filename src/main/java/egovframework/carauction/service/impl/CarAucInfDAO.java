@@ -14,6 +14,10 @@ import egovframework.carauction.CarSearchCriteriaVO;
 @Repository("carAucInfDAO")
 public class CarAucInfDAO extends EgovAbstractMapper {
 
+	/************************************************************************************************************************
+	 차량 경매 정보
+	************************************************************************************************************************/
+	
     @SuppressWarnings("unchecked")
     public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {
         return (List<CarInfoVO>) list("CarAucInfDAO.findCarsWithConditions", criteria);
@@ -56,4 +60,13 @@ public class CarAucInfDAO extends EgovAbstractMapper {
     public List<Map<String, Object>> findAllRegistrationCompanies() throws Exception {
         return (List<Map<String, Object>>) list("CarAucInfDAO.findAllRegistrationCompanies", null);
     }
+    
+    /************************************************************************************************************************
+	 차량 판매 정보
+	************************************************************************************************************************/
+    
+//    public List<CarSaleComboVO> manufacturList(CarSaleVO carSaleVO) {
+//		return selectList("CarSaleDAO.manufacturList",carSaleVO);
+//	}
+	
 }

@@ -4,13 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
 /**
- * 차량 경매 정보 서비스 인터페이스
+ * 차량 경매 정보 / 차량 판매 정보 서비스 인터페이스
  */
 public interface CarAucInfService {
 
+	/************************************************************************************************************************
+	 차량 경매 정보
+	************************************************************************************************************************/
+	
     /**
      * 검색 조건에 따른 차량 목록 조회
      * @param criteria 검색 조건
@@ -70,4 +75,12 @@ public interface CarAucInfService {
      * @throws Exception
      */
     List<Map<String, Object>> findAllRegistrationCompanies() throws Exception;
+    
+    /************************************************************************************************************************
+	 차량 판매 정보
+	************************************************************************************************************************/
+    
+    // 제조사코드, 제조사 조회
+	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception;
+	
 }

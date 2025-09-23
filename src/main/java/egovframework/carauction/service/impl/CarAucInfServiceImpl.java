@@ -9,6 +9,7 @@ import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
 
@@ -21,6 +22,10 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
     @Resource(name = "carAucInfDAO")
     private CarAucInfDAO carAucInfDAO;
 
+	/************************************************************************************************************************
+	 차량 경매 정보
+	************************************************************************************************************************/
+    
     @Override
     public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {
         // 검색 조건 전처리
@@ -111,4 +116,14 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
             criteria.setRegistrationCompany(null);
         }
     }
+    
+    /************************************************************************************************************************
+	 차량 판매 정보
+	************************************************************************************************************************/
+    
+	@Override
+	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
