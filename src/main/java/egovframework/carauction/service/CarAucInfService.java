@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import egovframework.carauction.CarInfoVO;
-import egovframework.carauction.CarSaleDetailVO;
-import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
 /**

@@ -9,8 +9,6 @@ import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
 import egovframework.carauction.CarInfoVO;
-import egovframework.carauction.CarSaleDetailVO;
-import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
 
