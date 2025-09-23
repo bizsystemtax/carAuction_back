@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractDAO;
+import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
 @Repository("carAucInfDAO")
-public class CarAucInfDAO extends EgovAbstractDAO {
+public class CarAucInfDAO extends EgovAbstractMapper {
 
     @SuppressWarnings("unchecked")
     public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {

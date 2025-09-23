@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
 import egovframework.carauction.CarInfoVO;
@@ -15,7 +16,7 @@ import egovframework.carauction.service.CarAucInfService;
  * 차량 경매 정보 서비스 구현 클래스 
  */
 @Service("carAucInfService")
-public class CarAucInfServiceImpl implements CarAucInfService {
+public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements CarAucInfService {
 
     @Resource(name = "carAucInfDAO")
     private CarAucInfDAO carAucInfDAO;
