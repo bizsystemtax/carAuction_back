@@ -9,6 +9,7 @@ import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
@@ -121,9 +122,5 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	 차량 판매 정보
 	************************************************************************************************************************/
     
-	@Override
-	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
@@ -80,7 +81,4 @@ public interface CarAucInfService {
 	 차량 판매 정보
 	************************************************************************************************************************/
     
-    // 제조사코드, 제조사 조회
-	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception;
-	
 }
