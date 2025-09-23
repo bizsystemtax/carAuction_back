@@ -13,7 +13,7 @@ import egovframework.carauction.service.MyPageservice;
 
 
 @Service("MyPageservice")
-public class MySaleCarBidInfServiceImpl extends EgovAbstractServiceImpl implements MyPageservice {
+public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPageservice {
 	@Resource(name = "MyPageDAO")
 	private MyPageDAO MyPageDAO;
 	
@@ -34,5 +34,15 @@ public class MySaleCarBidInfServiceImpl extends EgovAbstractServiceImpl implemen
 		
 		return map;
 	}
+	
+	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용)
+	@Override
+	public Map<String, Object> mySaleCarAuctionRegList(MyPageVO myPageVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", MyPageDAO.mySaleCarAuctionRegList(myPageVO));
+		
+		return map;
+	}
+
 
 }
