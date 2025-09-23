@@ -12,7 +12,7 @@ import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
 
 /**
- * 차량 경매 정보 서비스 구현 클래스
+ * 차량 경매 정보 서비스 구현 클래스 
  */
 @Service("carAucInfService")
 public class CarAucInfServiceImpl implements CarAucInfService {
