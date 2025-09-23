@@ -21,7 +21,7 @@ public class MyPageDAO extends EgovAbstractMapper {
 	}
 
 	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용)
-	public Object mySaleCarAuctionRegList(MyPageVO myPageVO) {
+	public List<MyPageVO> mySaleCarAuctionRegList(MyPageVO myPageVO) {
 		return selectList("MyPageDAO.mySaleCarAuctionRegList", myPageVO);
 	}
 }
