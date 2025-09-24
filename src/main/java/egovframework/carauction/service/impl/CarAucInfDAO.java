@@ -13,34 +13,34 @@ import egovframework.carauction.CarSearchCriteriaVO;
 public class CarAucInfDAO extends EgovAbstractMapper {
 
     public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) {
-        return selectList("CarAucInfDAO.findCarsWithConditions", criteria);
+        return selectList("carAucInfDAO.findCarsWithConditions", criteria);
     }
 
     public List<Map<String, Object>> findAllManufacturers() {
-        return selectList("CarAucInfDAO.findAllManufacturers");
+        return selectList("carAucInfDAO.findAllManufacturers");
     }
 
     public List<Map<String, Object>> findAllModels() {
-        return selectList("CarAucInfDAO.findAllModels");
+        return selectList("carAucInfDAO.findAllModels");
     }
 
     public List<Map<String, Object>> findModelsByManufacturer(String manufacturer) {
-        return selectList("CarAucInfDAO.findModelsByManufacturer", manufacturer);
+        return selectList("carAucInfDAO.findModelsByManufacturer", manufacturer);
     }
 
     public List<Map<String, Object>> findAllSubModels() {
-        return selectList("CarAucInfDAO.findAllSubModels");
+        return selectList("carAucInfDAO.findAllSubModels");
     }
 
     public List<Map<String, Object>> findSubModelsByManufacturerAndModel(CarSearchCriteriaVO criteria) {
-        return selectList("CarAucInfDAO.findSubModelsByManufacturerAndModel", criteria);
+        return selectList("carAucInfDAO.findSubModelsByManufacturerAndModel", criteria);
     }
 
     public List<Map<String, Object>> findAllFuelTypes() {
-        return selectList("CarAucInfDAO.findAllFuelTypes");
+        return selectList("carAucInfDAO.findAllFuelTypes");
     }
 
     public List<Map<String, Object>> findAllRegistrationCompanies() {
-        return selectList("CarAucInfDAO.findAllRegistrationCompanies");
+        return selectList("carAucInfDAO.findAllRegistrationCompanies");
     }
 }
