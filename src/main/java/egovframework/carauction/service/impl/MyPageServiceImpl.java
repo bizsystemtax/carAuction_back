@@ -12,9 +12,9 @@ import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
 
 
-@Service("MyPageservice")
+@Service("myPageservice")
 public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPageservice {
-	@Resource(name = "MyPageDAO")
+	@Resource(name = "myPageDAO")
 	private MyPageDAO MyPageDAO;
 	
 	//콤보박스 진행상태 조회

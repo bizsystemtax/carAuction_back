@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import egovframework.carauction.MyPageVO;
 
-@Repository("MyPageDAO")
+@Repository("myPageDAO")
 public class MyPageDAO extends EgovAbstractMapper {
 	
 	//콤보박스 진행상태 조회

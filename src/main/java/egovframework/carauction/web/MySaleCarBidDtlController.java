@@ -27,7 +27,7 @@ public class MySaleCarBidDtlController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MySaleCarBidDtlController.class);
 	
-	@Resource(name = "MyPageservice")
+	@Resource(name = "myPageservice")
 	private MyPageservice myPageService;
 	
 	/**
