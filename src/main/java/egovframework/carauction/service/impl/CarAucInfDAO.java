@@ -1,10 +1,8 @@
 package egovframework.carauction.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egovframe.rte.psl.dataaccess.EgovAbstractDAO;
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
@@ -14,59 +12,35 @@ import egovframework.carauction.CarSearchCriteriaVO;
 @Repository("carAucInfDAO")
 public class CarAucInfDAO extends EgovAbstractMapper {
 
-	/************************************************************************************************************************
-	 차량 경매 정보
-	************************************************************************************************************************/
-	
-    @SuppressWarnings("unchecked")
-    public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {
-        return (List<CarInfoVO>) list("CarAucInfDAO.findCarsWithConditions", criteria);
+    public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) {
+        return selectList("CarAucInfDAO.findCarsWithConditions", criteria);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findAllManufacturers() throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findAllManufacturers", null);
+    public List<Map<String, Object>> findAllManufacturers() {
+        return selectList("CarAucInfDAO.findAllManufacturers");
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findAllModels() throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findAllModels", null);
+    public List<Map<String, Object>> findAllModels() {
+        return selectList("CarAucInfDAO.findAllModels");
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findModelsByManufacturer(String manufacturer) throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findModelsByManufacturer", manufacturer);
+    public List<Map<String, Object>> findModelsByManufacturer(String manufacturer) {
+        return selectList("CarAucInfDAO.findModelsByManufacturer", manufacturer);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findAllSubModels() throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findAllSubModels", null);
+    public List<Map<String, Object>> findAllSubModels() {
+        return selectList("CarAucInfDAO.findAllSubModels");
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findSubModelsByManufacturerAndModel(String manufacturer, String model) throws Exception {
-        Map<String, String> paramMap = new HashMap<String, String>();
-        paramMap.put("manufacturer", manufacturer);
-        paramMap.put("model", model);
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findSubModelsByManufacturerAndModel", paramMap);
+    public List<Map<String, Object>> findSubModelsByManufacturerAndModel(CarSearchCriteriaVO criteria) {
+        return selectList("CarAucInfDAO.findSubModelsByManufacturerAndModel", criteria);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findAllFuelTypes() throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findAllFuelTypes", null);
+    public List<Map<String, Object>> findAllFuelTypes() {
+        return selectList("CarAucInfDAO.findAllFuelTypes");
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> findAllRegistrationCompanies() throws Exception {
-        return (List<Map<String, Object>>) list("CarAucInfDAO.findAllRegistrationCompanies", null);
+    public List<Map<String, Object>> findAllRegistrationCompanies() {
+        return selectList("CarAucInfDAO.findAllRegistrationCompanies");
     }
-    
-    /************************************************************************************************************************
-	 차량 판매 정보
-	************************************************************************************************************************/
-    
-//    public List<CarSaleComboVO> manufacturList(CarSaleVO carSaleVO) {
-//		return selectList("CarSaleDAO.manufacturList",carSaleVO);
-//	}
-	
 }

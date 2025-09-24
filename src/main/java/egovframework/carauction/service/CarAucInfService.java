@@ -14,13 +14,7 @@ public interface CarAucInfService {
 	/************************************************************************************************************************
 	 차량 경매 정보
 	************************************************************************************************************************/
-	
-    /**
-     * 검색 조건에 따른 차량 목록 조회
-     * @param criteria 검색 조건
-     * @return 차량 목록
-     * @throws Exception
-     */
+
     List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception;
 
     /**

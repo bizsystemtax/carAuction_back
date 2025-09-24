@@ -58,9 +58,13 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
     @Override
     public List<Map<String, Object>> findSubModelsByManufacturerAndModel(String manufacturer, String model) throws Exception {
-        if (manufacturer != null && !manufacturer.trim().isEmpty() && !"전체".equals(manufacturer) &&
-            model != null && !model.trim().isEmpty() && !"전체".equals(model)) {
-            return carAucInfDAO.findSubModelsByManufacturerAndModel(manufacturer, model);
+        CarSearchCriteriaVO criteria = new CarSearchCriteriaVO();
+        criteria.setManufacturer(manufacturer);
+        criteria.setModel(model);
+        
+        if ((manufacturer != null && !manufacturer.trim().isEmpty() && !"전체".equals(manufacturer)) ||
+            (model != null && !model.trim().isEmpty() && !"전체".equals(model))) {
+            return carAucInfDAO.findSubModelsByManufacturerAndModel(criteria);
         } else {
             return carAucInfDAO.findAllSubModels();
         }
@@ -98,8 +102,7 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
             criteria.setRegistrationCompany(null);
         }
 
-        // 빈 문자열을 null로 변환
-        if ("".equals(criteria.getManufacturer())) {
+         if ("".equals(criteria.getManufacturer())) {
             criteria.setManufacturer(null);
         }
         if ("".equals(criteria.getModel())) {

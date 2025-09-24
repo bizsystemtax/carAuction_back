@@ -3,7 +3,6 @@ package egovframework.carauction;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
 
 // 차량 경매 정보 VO
 @Data
@@ -41,30 +40,30 @@ public class CarInfoVO {
     // 입찰건수
     private Integer aucCarCc;
 
-    // 보관장소 구분코드 
+    // 보관장소 구분코드
     private String locImpGb;
 
     // 입찰등록일
-    private LocalDateTime entryDate;
+    private String entryDate;
 
     // 입찰마감일
     private String bidExpDt;
 
     // 등록 회원사명
     private String entryIdno;
-    
+
     // 브랜드명
     private String brHname;
-    
+
     // 모델명
     private String modelName;
-    
+
     // 세부모델명
     private String subModelName;
-    
+
     // 연료타입명
     private String fuelTypeName;
-    
+
     // 등록회원사명
     private String registrationCompanyName;
 }
