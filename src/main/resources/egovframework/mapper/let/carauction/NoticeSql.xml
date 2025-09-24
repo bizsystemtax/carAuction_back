@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NoticeDAO">
+	<resultMap id="NoticeVO" type="egovframework.carauction.NoticeVO">
+		<result property = "noticeId"		column = "NOTICE_ID" />
+		<result property = "noticeTit"		column = "NOTICE_TIT" />
+		<result property = "noticeCtnt"		column = "NOTICE_CTNT" />
+		<result property = "viewCnt"		column = "VIEW_CNT" />
+		<result property = "useYn" 			column = "USE_YN" />
+		<result property = "attFileId" 		column = "ATT_FILE_ID" />
+		<result property = "targetType" 	column = "TARGET_TYPE" />
+		<result property = "attFileNm" 		column = "ATT_FILE_NM" />
+		<result property = "entryDate"		column = "ENTRY_DATE" />
+		<result property = "entryIdno"		column = "ENTRY_IDNO" />
+		<result property = "updatDate"		column = "UPDAT_DATE" />
+		<result property = "updatIdno"		column = "UPDAT_IDNO" />
+		<result property = "startDt"		column = "START_DT" />
+		<result property = "endDt"			column = "END_DT" />
+	</resultMap>
+	
+	<resultMap id="fileList" type="egovframework.carauction.AttachFileVO">
+		<result property = "attFileId"		column = "ATT_FILE_ID" />
+		<result property = "targetType"		column = "TARGET_TYPE" />
+		<result property = "targetId"		column = "TARGET_ID" />
+		<result property = "attFileNm"		column = "ATT_FILE_NM" />
+		<result property = "attFileSize"	column = "ATT_FILE_SIZE" />
+		<result property = "attFilePath"	column = "ATT_FILE_PATH" />
+		<result property = "attFileType"	column = "ATT_FILE_TYPE" />
+		<result property = "entryDate"		column = "ENTRY_DATE" />
+		<result property = "entryIdno"		column = "ENTRY_IDNO" />
+		<result property = "updatDate"		column = "UPDAT_DATE" />
+		<result property = "updatIdno"		column = "UPDAT_IDNO" />
+	</resultMap>
+	
+	<!-- 공지사항 - 공지사항 목록 조회 -->
+	<select id="noticeList" parameterType="egovframework.carauction.NoticeVO" resultMap="NoticeVO">
+		SELECT NOTICE_ID	/*공지사항ID*/ 
+			 , NOTICE_TIT	/*공지사항제목*/
+			 , VIEW_CNT		/*조회수*/
+			 , DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
+			 , ENTRY_IDNO	/*등록자ID*/
+		  FROM CA_NOTICE
+		 WHERE DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
+		 <if test="noticeTit != null and noticeTit != ''">
+		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
+		 </if>
+		   AND USE_YN = 'Y'
+		 ORDER BY ENTRY_DATE
+	</select>
+	
+	<!-- 공지사항 클릭 시 조회수 + 1 -->
+	<update id="updateViewCnt" parameterType="egovframework.carauction.NoticeVO">
+		UPDATE CA_NOTICE
+		   SET VIEW_CNT = VIEW_CNT + 1	/*조회수*/
+		 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/	
+	</update>
+	
+	<!-- 공지사항 상세조회 -->
+	<select id="getNoticeDetail" parameterType="egovframework.carauction.NoticeVO" resultMap="NoticeVO">
+		SELECT CA.NOTICE_ID	/*공지사항ID*/ 
+			 , CA.NOTICE_TIT	/*공지사항제목*/
+			 , CA.NOTICE_CTNT	/*공지사항내용*/
+			 , CA.VIEW_CNT		/*조회수*/
+			 , DATE_FORMAT(CA.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
+			 , CA.ENTRY_IDNO	/*등록자ID*/
+			 , FILE.ATT_FILE_NM /*첨부파일명*/
+		  FROM CA_NOTICE CA
+		  LEFT OUTER JOIN CA_ATT_FILE FILE
+		  ON CA.NOTICE_ID = FILE.TARGET_ID
+	 	 WHERE CA.NOTICE_ID = #{noticeId}	/*공지사항ID*/
+	</select>
+	
+	<!-- 공지사항 등록 -->
+	<insert id="insNotice" parameterType="egovframework.carauction.NoticeVO">
+		<selectKey keyProperty="noticeId" resultType="java.lang.Long" order="BEFORE">
+			SELECT IFNULL(MAX(NOTICE_ID), 0) + 1 AS NOTICE_ID FROM CA_NOTICE
+			WHERE NOTICE_ID = #{noticeId}
+		</selectKey>
+		INSERT INTO CA_NOTICE
+		(
+			NOTICE_ID
+			, NOTICE_TIT
+			, NOTICE_CTNT
+			, VIEW_CNT
+			, USE_YN
+			, ENTRY_DATE
+			, ENTRY_IDNO
+			, UPDAT_DATE
+			, UPDAT_IDNO
+		)
+		VALUES
+		(
+			#{noticeId}
+			, #{noticeTit}
+			, #{noticeCtnt}
+			, #{viewCnt}
+			, 'Y'
+			, SYSDATE()
+			, #{entryIdno}
+			, SYSDATE()
+			, #{updatIdno}
+		)
+	</insert>
+	
+	<!-- 공지사항 수정 -->
+	<update id="updNotice" parameterType="egovframework.carauction.NoticeVO">
+		UPDATE CA_NOTICE
+		   SET NOTICE_TIT = #{noticeTit}
+			, NOTICE_CTNT = #{noticeCtnt}
+			, UPDAT_DATE = SYSDATE()
+			, UPDAT_IDNO = #{updatIdno}
+		WHERE NOTICE_ID = #{noticeId}
+	</update>
+	
+	<!-- 공지사항 삭제 -->
+	<update id="delNotice" parameterType="egovframework.carauction.NoticeVO">
+		UPDATE CA_NOTICE
+		   SET USE_YN = 'Y'	/*사용여부*/
+		 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/
+	</update>
+	
+	
+	<!-- 첨부파일 목록 조회 -->
+	<select id="getNotiFileList" parameterType="egovframework.carauction.AttachFileVO" resultMap="fileList">
+		SELECT ATT_FILE_ID /*첨부파일ID*/
+			, ATT_FILE_NM	/*첨부파일명*/
+		  FROM CA_ATT_FILE
+		 WHERE TARGET_ID = #{targetId}
+	</select>
+
+</mapper>

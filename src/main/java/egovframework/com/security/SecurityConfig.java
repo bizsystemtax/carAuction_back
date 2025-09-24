@@ -80,6 +80,8 @@ public class SecurityConfig {
         "/myPage/successfulBidUpdate",     //내 판매차량 입찰 상세 현황 - 낙찰
         
         "/carAucInf/**",   //경매차량
+        
+        "/notice/**",		// 공지사항
 
         //End
         "/v3/api-docs/**",
