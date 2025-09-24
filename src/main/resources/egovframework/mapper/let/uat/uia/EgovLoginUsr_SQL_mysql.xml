@@ -30,12 +30,11 @@
 	<select id="actionLogin" resultMap="login">
 	    SELECT USER_ID AS id
 	         , USER_NM AS name
-	         , USER_PWD AS password
-	         , AUTH_CD AS userSe
-	         , EMP_NO AS orgnztId
-	      FROM BIZ_USER_MAS
+	         , USER_PW AS password
+	         , USER_GB_CD AS userSe
+	      FROM CA_USER_INF
 	     WHERE USER_ID = #{id}
-	       AND USER_PWD = #{password}
+	       AND USER_PW = #{password}
 	</select>
 	
 	<!-- 사용자 등록 -->
