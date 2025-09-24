@@ -1,6 +1,8 @@
 package egovframework.com.config;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 
@@ -72,9 +75,23 @@ public class EgovConfigAppMapper {
 				.getResource("classpath:/egovframework/mapper/config/mapper-config.xml"));
 
 		try {
-			sqlSessionFactoryBean.setMapperLocations(
-				pathMatchingResourcePatternResolver
-					.getResources("classpath:/egovframework/mapper/let/*/*.xml"));
+			Resource[] commonResources = pathMatchingResourcePatternResolver.getResources(
+	                "classpath:/egovframework/mapper/let/*/*.xml"
+	            );
+
+	            // DB 타입별 Mapper 파일 로딩 (예: *_oracle.xml)
+	            Resource[] dbResources = pathMatchingResourcePatternResolver.getResources(
+	                "classpath:/egovframework/mapper/let/**/*_" + dbType + ".xml"
+	            );
+
+	            // 두 Mapper 배열을 합침
+	            Resource[] allResources = Stream.concat(
+	                Arrays.stream(commonResources),
+	                Arrays.stream(dbResources)
+	            ).toArray(Resource[]::new);
+
+	            sqlSessionFactoryBean.setMapperLocations(allResources);
+
 		} catch (IOException e) {
 			// TODO Exception 처리 필요
 		}

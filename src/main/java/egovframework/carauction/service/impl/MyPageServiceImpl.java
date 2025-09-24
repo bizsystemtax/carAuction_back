@@ -15,13 +15,13 @@ import egovframework.carauction.service.MyPageservice;
 @Service("myPageservice")
 public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPageservice {
 	@Resource(name = "myPageDAO")
-	private MyPageDAO MyPageDAO;
+	private MyPageDAO myPageDAO;
 	
 	//콤보박스 진행상태 조회
 	@Override
 	public Map<String, Object> comboBoxList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", MyPageDAO.comboBoxList(myPageVO));
+		map.put("resultList", myPageDAO.comboBoxList(myPageVO));
 		
 		return map;
 	}
@@ -30,7 +30,7 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	@Override
 	public Map<String, Object> myPageList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", MyPageDAO.myPageList(myPageVO));
+		map.put("resultList", myPageDAO.myPageList(myPageVO));
 		
 		return map;
 	}
@@ -39,10 +39,12 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	@Override
 	public Map<String, Object> mySaleCarAuctionRegList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultList", MyPageDAO.mySaleCarAuctionRegList(myPageVO));
+		map.put("resultList", myPageDAO.mySaleCarAuctionRegList(myPageVO));
 		
 		return map;
 	}
+	
+	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) - 유찰(update)
 
 
 }
