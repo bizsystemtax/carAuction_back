@@ -156,7 +156,7 @@
 			     , CCAI.AUC_PROG_YN
 			  FROM CA_CAR_AUC_INF CCAI
 			 INNER JOIN CA_CAR_INF CCI 
-			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO; 
+			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
 			 WHERE CCAI.AUC_REG_NO = #{aucRegNo}
 		]]>
 	</select>
