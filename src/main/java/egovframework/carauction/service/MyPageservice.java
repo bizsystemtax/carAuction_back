@@ -16,4 +16,7 @@ public interface MyPageservice {
 
 	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용)	
 	public Map<String, Object> mySaleCarAuctionRegList(MyPageVO myPageVO) throws Exception;
+
+	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) >>>> 유찰
+	public Map<String, Object> faileBidUpdate(MyPageVO myPageVO) throws Exception;
 }

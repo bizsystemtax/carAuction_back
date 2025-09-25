@@ -1,12 +1,15 @@
 package egovframework.carauction.web;
 
+
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
+import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.service.ResultVO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
 
 @RestController
 @Transactional
@@ -59,6 +64,35 @@ public class MySaleCarBidDtlController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
+	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) >>>> 유찰
+	@PostMapping(value = "/faileBidUpdate") 
+	public ResultVO faileBidUpdate(
+			MyPageVO myPageVO,
+			BindingResult bindingResult,
+			HttpServletRequest request,
+			@RequestBody Map<String, String> requestParams 
+			) throws Exception {
+		
+		ResultVO resultVO = new ResultVO();
+		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		
+		String aucRegNo = (String) requestParams.get("aucRegNo"); //경매등록번호
+
+		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
+		
+		myPageVO.setUpdatIdno(loginVO.getId());				//수정자
+
+		Map<String, Object> resultMap = myPageService.faileBidUpdate(myPageVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
 		
 		return resultVO;
 	}

@@ -76,7 +76,7 @@ public class MyPageVO implements Serializable {
 	private String     carEngCd = "";							//차량연료코드
 	private String     carTransGb = "";							//차량변속기구분
 	private String     aucRegNo = "";							//경매등록번호
-	private BigDecimal bidSdepPrice = new BigDecimal(0);		//입찰보증금액
+	private String	   bidSdepPrice = "";						//입찰보증금액
 	private String 	   sbidPrice = "";							//낙찰금액
 	private String     sbidDate = "";							//낙찰일시
 	private String     entryDate = "";							//등록일시

@@ -84,12 +84,4 @@ public class MySaleCarBidInfController {
 		
 		return resultVO;
 	}
-	
-	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) - 유찰(update)
-	@PostMapping(value = "/faileBidUpdate")
-	public void faileBidUpdate(@RequestBody Map<String, String> requestParams) throws Exception{
-		
-	}
-	
-
 }

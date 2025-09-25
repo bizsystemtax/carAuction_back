@@ -43,8 +43,24 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		
 		return map;
 	}
+
 	
 	//마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) - 유찰(update)
+	@Override
+	public Map<String, Object> faileBidUpdate(MyPageVO myPageVO) throws Exception {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+	
+		int cnt = myPageDAO.faileBidUpdate(myPageVO);
+		
+		if(cnt > 0) {
+			myPageDAO.failecaCarAucInfUpdate(myPageVO);  
+		}
+
+		return map;
+		
+		
+	}
 
 
 }
