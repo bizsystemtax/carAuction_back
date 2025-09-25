@@ -114,7 +114,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             LoginVO loginVO = new LoginVO();
             loginVO.setId(id);
             loginVO.setUserSe(jwtTokenUtil.getUserSeFromToken(jwtToken));
-            loginVO.setOrgnztId(jwtTokenUtil.getInfoFromToken("orgnztId", jwtToken));
+//            loginVO.setOrgnztId(jwtTokenUtil.getInfoFromToken("orgnztId", jwtToken)); // 부서명 필요없어서 제거 09.25 kdnl
             loginVO.setName(jwtTokenUtil.getInfoFromToken("name", jwtToken));
             loginVO.setIp(ip != null ? ip : "unknown");
 
