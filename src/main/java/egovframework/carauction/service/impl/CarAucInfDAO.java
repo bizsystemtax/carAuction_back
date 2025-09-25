@@ -6,6 +6,7 @@ import java.util.Map;
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
+import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
@@ -43,4 +44,17 @@ public class CarAucInfDAO extends EgovAbstractMapper {
     public List<Map<String, Object>> findAllRegistrationCompanies() {
         return selectList("carAucInfDAO.findAllRegistrationCompanies");
     }
+    
+    public List<String> findAllBanks() {
+        return selectList("carAucInfDAO.findAllBanks");
+    }
+
+    public List<String> findAccountsByBank(String bankName) {
+        return selectList("carAucInfDAO.findAccountsByBank", bankName);
+    }
+
+    public CarInfoVO findCarByAucRegNo(String aucRegNo) {
+        return selectOne("carAucInfDAO.findCarByAucRegNo", aucRegNo);
+    }
+
 }

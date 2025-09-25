@@ -1,5 +1,6 @@
 package egovframework.carauction.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import javax.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
+import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
@@ -78,6 +80,21 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
     @Override
     public List<Map<String, Object>> findAllRegistrationCompanies() throws Exception {
         return carAucInfDAO.findAllRegistrationCompanies();
+    }
+    
+    @Override
+    public List<String> getBanks() throws Exception {
+        return carAucInfDAO.findAllBanks();
+    }
+
+    @Override
+    public List<String> getAccountNumbers(String bankName) throws Exception {
+        return carAucInfDAO.findAccountsByBank(bankName);
+    }
+
+    @Override
+    public CarInfoVO getCarDetail(String aucRegNo) throws Exception {
+        return carAucInfDAO.findCarByAucRegNo(aucRegNo);
     }
 
     /**
