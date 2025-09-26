@@ -12,10 +12,10 @@ import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.NoticeService;
 
-@Service("NoticeService")
+@Service("noticeService")
 public class NoticeServiceImpl extends EgovAbstractServiceImpl implements NoticeService {
 	
-	@Resource(name = "NoticeDAO")
+	@Resource(name = "noticeDAO")
 	private NoticeDAO noticeDAO;
 	
 	// 공지사항 목록
@@ -28,15 +28,6 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		return map;
 	}
 	
-	// 공지사항 조회수 + 1
-	@Override
-	public int updateViewCnt(NoticeVO noticeVO) throws Exception {
-		
-		int result = noticeDAO.updateViewCnt(noticeVO);
-		
-		return result;
-	}
-	
 	// 공지사항 상세조회
 	@Override
 	public Map<String, Object> getNoticeDetail(NoticeVO noticeVO) throws Exception {
@@ -44,12 +35,34 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		// 상세조회시 조회수 + 1
 		int updCnt = noticeDAO.updateViewCnt(noticeVO);
 		
+		if(updCnt < 1) {
+			
+		}
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 //		map = noticeDAO.getNoticeDetail(noticeVO);
 		map.put("resultData", noticeDAO.getNoticeDetail(noticeVO));
 		
 		return map;
+	}
+	
+	// 공지사항 등록
+	@Override
+	public int insNotice(NoticeVO noticeVO) throws Exception {
+		
+		int result = noticeDAO.insNotice(noticeVO);
+		
+		return result;
+	}
+	
+	// 공지사항 수정
+	@Override
+	public int updNotice(Map<String, Object> paramMap) throws Exception {
+		
+		int result = noticeDAO.updNotice(paramMap);
+		
+		return result;
 	}
 	
 	// 공지사항 삭제

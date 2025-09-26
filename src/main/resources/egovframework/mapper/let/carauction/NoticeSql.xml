@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="NoticeDAO">
+<mapper namespace="noticeDAO">
 	<resultMap id="NoticeVO" type="egovframework.carauction.NoticeVO">
 		<result property = "noticeId"		column = "NOTICE_ID" />
 		<result property = "noticeTit"		column = "NOTICE_TIT" />
@@ -40,11 +40,13 @@
 			 , DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
 			 , ENTRY_IDNO	/*등록자ID*/
 		  FROM CA_NOTICE
-		 WHERE DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
+		 WHERE USE_YN = 'Y'
+		 <if test="startDt != null and startDt != ''">
+			 AND DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
+		 </if> 
 		 <if test="noticeTit != null and noticeTit != ''">
 		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
 		 </if>
-		   AND USE_YN = 'Y'
 		 ORDER BY ENTRY_DATE
 	</select>
 	
@@ -115,8 +117,11 @@
 	<!-- 공지사항 삭제 -->
 	<update id="delNotice" parameterType="egovframework.carauction.NoticeVO">
 		UPDATE CA_NOTICE
-		   SET USE_YN = 'Y'	/*사용여부*/
+		   SET USE_YN = 'N'	/*사용여부*/
+		    , UPDAT_DATE = SYSDATE()
+			, UPDAT_IDNO = #{updatIdno}
 		 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/
+		   AND USE_YN = 'Y'
 	</update>
 	
 	

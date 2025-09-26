@@ -12,10 +12,16 @@ public interface NoticeService {
 	public Map<String, Object> noticeList(NoticeVO noticeVO) throws Exception;
 	
 	// 공지사항 조회수 + 1
-	public int updateViewCnt(NoticeVO noticeVO) throws Exception;
+//	public int updateViewCnt(NoticeVO noticeVO) throws Exception;
 	
 	// 공지사항 상세조회
 	public Map<String, Object> getNoticeDetail(NoticeVO noticeVO) throws Exception;
+	
+	// 공지사항 등록
+	public int insNotice(NoticeVO noticeVO) throws Exception;
+	
+	// 공지사항 수정
+	public int updNotice(Map<String, Object> paramMap) throws Exception;
 	
 	// 공지사항 삭제
 	public int delNotice(NoticeVO noticeVO) throws Exception;

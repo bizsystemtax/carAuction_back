@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +23,7 @@ import egovframework.carauction.service.NoticeService;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
+import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.ResultVO;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,16 +35,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/notice")
 public class NoticeController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(NoticeController.class);
-	
-	@Resource(name = "NoticeService")
+	@Resource(name = "noticeService")
 	private NoticeService noticeService;
 	
 	@Resource(name = "EgovFileMngService")
 	private EgovFileMngService fileService;
 	
 	/**
-	 * 인터넷 차량경매(공매) 시스템 공지사항 조회 컨트롤러
+	 * 공지사항 목록 조회
 	 * @return resultVO
 	 * @throws BizException
 	 */
@@ -69,11 +66,7 @@ public class NoticeController {
 		noticeVO.setEndDt(endDt);
 		noticeVO.setNoticeTit(title);
 		
-		logger.info("noticeList noticeVO ■■■■■■■■■■■■■■■■■■ ", noticeVO);
-		
 		Map<String, Object> resultMap = noticeService.noticeList(noticeVO);
-		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■ ", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -98,11 +91,7 @@ public class NoticeController {
 		
 		noticeVO.setNoticeId(noticeId); 
 		
-		logger.info("getNoticeDetail noticeVO ■■■■■■■■■■■■■■■■■■ ", noticeVO);
-		
 		resultMap = noticeService.getNoticeDetail(noticeVO);
-		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■ ", resultMap);
 		
 		// 첨부파일
 		AttachFileVO fileVO = new AttachFileVO();
@@ -118,6 +107,63 @@ public class NoticeController {
 		return resultVO;
 	}
 	
+	/**
+	 * 공지사항 등록 
+	 * @return resultVO
+	 * @throws BizException
+	 */
+	@PostMapping(value = "/insert")
+	public ResultVO insNotice(@RequestBody Map<String, String> requestParams) throws Exception{
+		
+		NoticeVO noticeVO = new NoticeVO();
+		ResultVO resultVO = new ResultVO();
+		
+		int result = noticeService.insNotice(noticeVO);
+		
+		if(result < 1) {
+			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+			resultVO.setResultMessage(ResponseCode.SAVE_ERROR.getMessage());
+		}
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	
+	/**
+	 * 공지사항 수정
+	 * @param  requestParams - noticeId
+	 * @return resultVO
+	 * @throws BizException
+	 */
+	@PatchMapping(value = "/update/{noticeId}")
+	public ResultVO updNotice(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
+		
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+//		String userId = user.getId();
+		String userId = "bizsystem";
+		
+		param.put("updatIdno", userId);
+		
+		int result = noticeService.updNotice(param);
+		
+		if(result < 1) {
+			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
+		}
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	} 
 	
 	/**
 	 * 공지사항 삭제 
@@ -125,23 +171,27 @@ public class NoticeController {
 	 * @return resultVO
 	 * @throws BizException
 	 */
-//	@PatchMapping(value = "/delNotice/{noticeId}")
-//	public ResultVO delNotice(@PathVariable("noticeId") int noticeId) throws Exception {
-//		
-//		NoticeVO noticeVO = new NoticeVO();
-//		ResultVO resultVO = new ResultVO();
-//		
-//		noticeVO.setNoticeId(noticeId); 
-//		
-//		logger.info("delNotice noticeVO ■■■■■■■■■■■■■■■■■■ ", noticeVO);
-//		
-//		noticeService.delNotice(noticeVO);
-//		
-//		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
-//		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-//		
-//		return resultVO;
-//	}
+	@PatchMapping(value = "/delNotice")
+	public ResultVO delNotice(@RequestBody List<NoticeVO> noticeId, @AuthenticationPrincipal LoginVO user) throws Exception {
+		
+		NoticeVO noticeVO = new NoticeVO();
+		ResultVO resultVO = new ResultVO();
+		
+//		String userId = user.getId();
+		String userId = "bizsystem";
+		
+		for(NoticeVO notice : noticeId) {
+			
+			noticeVO.setUpdatIdno(userId);
+			noticeVO.setNoticeId(notice.getNoticeId());
+			noticeService.delNotice(noticeVO);
+		}
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
 	
 	
 }
