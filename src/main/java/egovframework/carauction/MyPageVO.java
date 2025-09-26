@@ -60,7 +60,7 @@ public class MyPageVO implements Serializable {
 	private String     bidmnNm = "";							//입찰자명
 	private String     bidmnCellno = "";						//입찰자휴대전화번호
 	private String     bidmnEmailAddr = "";						//입찰자이메일주소
-	private BigDecimal bidPrice = new BigDecimal(0);			//입찰금액
+	private String     bidPrice = "";							//입찰금액
 	private String     bidEntryDate = "";						//입찰등록일시
 	private String     depBankNm = "";							//입금은행명
 	private String     depAcc = "";								//입금계좌

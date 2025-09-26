@@ -96,5 +96,28 @@ public class MySaleCarBidDtlController {
 		
 		return resultVO;
 	}
+	
+	//마이페이지 - 내 판매차량 입찰 상세 현황(입찰현황)
+	@PostMapping(value = "/mySaleCarBidList") 
+	public ResultVO mySaleCarBidList(@RequestBody Map<String, String> requestParams) throws Exception{
+		MyPageVO myPageVO = new MyPageVO();
+		ResultVO resultVO = new ResultVO();
+		
+		String aucRegNo = requestParams.get("aucRegNo");	//경매등록번호
+		
+		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
+		
+		logger.info("aucRegNo ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegNo);
+		
+		Map<String, Object> resultMap = myPageService.mySaleCarBidList(myPageVO);
+		
+		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", resultMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
 
 }

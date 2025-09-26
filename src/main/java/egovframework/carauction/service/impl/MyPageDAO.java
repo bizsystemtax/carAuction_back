@@ -30,8 +30,13 @@ public class MyPageDAO extends EgovAbstractMapper {
 		return update("myPageDAO.faileBidUpdate", myPageVO);
 	}
 
-	public void failecaCarAucInfUpdate(MyPageVO myPageVO) {
+	public void failecaCarAucInfUpdate(MyPageVO myPageVO) throws Exception  {
 		update("myPageDAO.failecaCarAucInfUpdate", myPageVO);
 		
+	}
+
+	//마이페이지 - 내 판매차량 입찰 상세 현황(입찰현황)
+	public List<MyPageVO> mySaleCarBidList(MyPageVO myPageVO) throws Exception {
+		return selectList("myPageDAO.mySaleCarBidList", myPageVO);
 	}
 }

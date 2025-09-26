@@ -180,6 +180,22 @@
 		 WHERE AUC_REG_NO = #{aucRegNo}  /*경매등록번호*/
 	</update>
 	
+	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(입찰현황) -->
+	<select id="mySaleCarBidList" parameterType="egovframework.carauction.MyPageVO" resultType="egovframework.carauction.MyPageVO">
+		<![CDATA[
+			SELECT ROW_NUMBER() OVER (ORDER BY ENTRY_DATE DESC) AS RNUM /*순번*/
+			     , AUC_REG_NO /*경매등록번호*/
+			     , AUC_REG_SEQ /*경매등록순번*/
+			     , DATE_FORMAT(BID_ENTRY_DATE, '%Y-%m-%d') AS BID_ENTRY_DATE /*입찰등록일시*/
+			     , DEPMN_NM /*입찰자명(입급자명)*/
+			     , FORMAT(BID_PRICE, 0) AS BID_PRICE /*입찰금액*/
+			     , BIDMN_NM /*담당자명*/
+			     , BIDMN_CELLNO /*담당자 연락처*/
+			     , BIDMN_EMAIL_ADDR /*담당자 이메일*/
+			  FROM CA_CAR_AUC_DTL_BID_INF
+			 WHERE AUC_REG_NO = #{aucRegNo} 
+		]]>
+	</select>
 	
 	
 	
