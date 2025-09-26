@@ -70,5 +70,14 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		return map;
 	}
 
+	//내 판매차량 입찰 상세 현황 - 콤보박스 진행상태 조회
+	@Override
+	public Map<String, Object> statusComboBoxList(MyPageVO myPageVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", myPageDAO.statusComboBoxList(myPageVO));
+		
+		return map;
+	}
+
 
 }

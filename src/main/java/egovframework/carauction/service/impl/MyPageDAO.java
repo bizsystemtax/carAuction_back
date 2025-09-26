@@ -39,4 +39,9 @@ public class MyPageDAO extends EgovAbstractMapper {
 	public List<MyPageVO> mySaleCarBidList(MyPageVO myPageVO) throws Exception {
 		return selectList("myPageDAO.mySaleCarBidList", myPageVO);
 	}
+
+	//내 판매차량 입찰 상세 현황 - 콤보박스 진행상태 조회
+	public Object statusComboBoxList(MyPageVO myPageVO) throws Exception {
+		return selectList("myPageDAO.statusComboBoxList", myPageVO);
+	}
 }

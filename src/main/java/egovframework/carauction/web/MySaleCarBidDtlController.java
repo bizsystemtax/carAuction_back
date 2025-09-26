@@ -119,5 +119,21 @@ public class MySaleCarBidDtlController {
 		
 		return resultVO;
 	}
+	
+	
+	//내 판매차량 입찰 상세 현황 - 콤보박스 진행상태 조회
+	@PostMapping(value = "/statusComboBoxList")
+	public ResultVO statusComboBoxList() throws Exception {
+		MyPageVO myPageVO = new MyPageVO();
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> resultMap = myPageService.statusComboBoxList(myPageVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
 
 }

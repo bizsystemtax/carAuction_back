@@ -78,6 +78,7 @@ public class SecurityConfig {
         "/myPage/mySaleCarBidStatusList",  //내 판매차량 입찰 상세 현황 - 낙찰진행 및 여부 조회
         "/myPage/faileBidUpdate",          //내 판매차량 입찰 상세 현황 - 유찰
         "/myPage/successfulBidUpdate",     //내 판매차량 입찰 상세 현황 - 낙찰
+        "/myPage/statusComboBoxList", //20250917 추가
         
         "/carAucInf/**",   //경매차량
         "/carAucSaleReg/**",   //경매차량판매등록
