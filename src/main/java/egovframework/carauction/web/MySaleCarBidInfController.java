@@ -76,7 +76,7 @@ public class MySaleCarBidInfController {
 		
 		logger.info("regStrDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regStrDt);
 		logger.info("regEndDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regEndDt);
-		logger.info("getId ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());
+		logger.info("getId 	  ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());
 		logger.info("proState ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", proState);
 		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", myPageVO);
 		
