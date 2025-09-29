@@ -69,16 +69,8 @@ public class SecurityConfig {
         "/fineMnge/downloadOCR",
         "/fineMnge/downloadCartax",
         //(↑ 추후에 삭제 처리)
-        //여기부터 추가해주세요 Start
-        "/myPage/list", //20250917 추가
-        "/myPage/comboBoxList", //20250917 추가
-        
-        "/myPage/mySaleCarAuctionRegList", //내 판매차량 입찰 상세 현황 - 경매(공매)등록 내용
-        "/myPage/mySaleCarBidList",		   //내 판매차량 입찰 상세 현황 - 입찰현황
-        "/myPage/mySaleCarBidStatusList",  //내 판매차량 입찰 상세 현황 - 낙찰진행 및 여부 조회
-        "/myPage/faileBidUpdate",          //내 판매차량 입찰 상세 현황 - 유찰
-        "/myPage/successfulBidUpdate",     //내 판매차량 입찰 상세 현황 - 낙찰
-        "/myPage/statusComboBoxList", //20250917 추가
+        //여기부터 추가해주세요 Start        
+        "/myPage/**", //마이페이지(내 판매차량 입찰현황, 내 판매차량 입찰 상세 현황, 내 입찰 현황)
         
         "/carAucInf/**",   //경매차량
         "/carAucSaleReg/**",   //경매차량판매등록

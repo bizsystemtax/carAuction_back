@@ -25,4 +25,7 @@ public interface MyPageservice {
 
 	//내 판매차량 입찰 상세 현황 - 콤보박스 진행상태 조회
 	public Map<String, Object> statusComboBoxList(MyPageVO myPageVO) throws Exception;
+
+	//내 입찰 현황
+	public Map<String, Object> myBidList(MyPageVO myPageVO) throws Exception;
 }

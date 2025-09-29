@@ -93,7 +93,8 @@ public class MyPageVO implements Serializable {
 	  
 	private String	   fuelType = "";                           //연료
 	private String     carTransNm = "";                         //변속기명                          
-	private String     aucProgStatNm = "";                      //진행상태명
+	private String     aucProgStatNm = "";                      //진행상태명     
+	
 	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

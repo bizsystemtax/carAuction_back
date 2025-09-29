@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
+import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -61,16 +63,20 @@ public class MySaleCarBidInfController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  다른 페이지 개발 완료 후 주석 제거
+		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
 		String proState = requestParams.get("codeNo");					//진행상태
-		
+			
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
+		//myPageVO.setEntryIdno(loginVO.getId());  다른 페이지 개발 완료 후 주석 제거
 		
 		logger.info("regStrDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regStrDt);
 		logger.info("regEndDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regEndDt);
+		//logger.info("getId ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());   다른 페이지 개발 완료 후 주석 제거
 		logger.info("proState ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", proState);
 		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", myPageVO);
 		

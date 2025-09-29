@@ -79,5 +79,14 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		return map;
 	}
 
+	//내 입찰 현황
+	@Override
+	public Map<String, Object> myBidList(MyPageVO myPageVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", myPageDAO.myBidList(myPageVO));
+		
+		return map;
+	}
+
 
 }
