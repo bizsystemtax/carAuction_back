@@ -6,14 +6,20 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
+import egovframework.carauction.web.MySaleCarBidInfController;
 
 
 @Service("myPageservice")
 public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPageservice {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MyPageServiceImpl.class);
+	
 	@Resource(name = "myPageDAO")
 	private MyPageDAO myPageDAO;
 	
@@ -52,6 +58,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		Map<String, Object> map = new HashMap<String, Object>();
 	
 		int cnt = myPageDAO.faileBidUpdate(myPageVO);
+		
+		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", cnt);
 		
 		if(cnt > 0) {
 			myPageDAO.failecaCarAucInfUpdate(myPageVO);  
