@@ -74,9 +74,8 @@
 	
 	<!-- 공지사항 등록 -->
 	<insert id="insNotice" parameterType="egovframework.carauction.NoticeVO">
-		<selectKey keyProperty="noticeId" resultType="java.lang.Long" order="BEFORE">
+		<selectKey keyProperty="noticeId" resultType="java.lang.Integer" order="BEFORE">
 			SELECT IFNULL(MAX(NOTICE_ID), 0) + 1 AS NOTICE_ID FROM CA_NOTICE
-			WHERE NOTICE_ID = #{noticeId}
 		</selectKey>
 		INSERT INTO CA_NOTICE
 		(
@@ -95,11 +94,11 @@
 			#{noticeId}
 			, #{noticeTit}
 			, #{noticeCtnt}
-			, #{viewCnt}
+			, 0
 			, 'Y'
-			, SYSDATE()
+			, NOW()
 			, #{entryIdno}
-			, SYSDATE()
+			, NOW()
 			, #{updatIdno}
 		)
 	</insert>
@@ -109,7 +108,7 @@
 		UPDATE CA_NOTICE
 		   SET NOTICE_TIT = #{noticeTit}
 			, NOTICE_CTNT = #{noticeCtnt}
-			, UPDAT_DATE = SYSDATE()
+			, UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
 		WHERE NOTICE_ID = #{noticeId}
 	</update>
@@ -118,7 +117,7 @@
 	<update id="delNotice" parameterType="egovframework.carauction.NoticeVO">
 		UPDATE CA_NOTICE
 		   SET USE_YN = 'N'	/*사용여부*/
-		    , UPDAT_DATE = SYSDATE()
+		    , UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
 		 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/
 		   AND USE_YN = 'Y'

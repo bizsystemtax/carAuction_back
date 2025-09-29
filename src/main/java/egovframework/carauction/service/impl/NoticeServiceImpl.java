@@ -49,9 +49,9 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 	
 	// 공지사항 등록
 	@Override
-	public int insNotice(NoticeVO noticeVO) throws Exception {
+	public int insNotice(Map<String, Object> paramMap) throws Exception {
 		
-		int result = noticeDAO.insNotice(noticeVO);
+		int result = noticeDAO.insNotice(paramMap);
 		
 		return result;
 	}

@@ -113,18 +113,26 @@ public class NoticeController {
 	 * @throws BizException
 	 */
 	@PostMapping(value = "/insert")
-	public ResultVO insNotice(@RequestBody Map<String, String> requestParams) throws Exception{
+	public ResultVO insNotice(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
 		
-		NoticeVO noticeVO = new NoticeVO();
 		ResultVO resultVO = new ResultVO();
 		
-		int result = noticeService.insNotice(noticeVO);
+		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		String userId = "bizsystem";
+		
+		param.put("entryIdno", userId);
+		param.put("updatIdno", userId);
+		
+		int result = noticeService.insNotice(param);
 		
 		if(result < 1) {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
-			resultVO.setResultMessage(ResponseCode.SAVE_ERROR.getMessage());
+			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
 		}
 		
+		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		

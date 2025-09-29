@@ -28,8 +28,8 @@ public class NoticeDAO extends EgovAbstractMapper {
 	}
 	
 	// 공지사항 등록
-	public int insNotice(NoticeVO noticeVO) {
-		return insert("noticeDAO.insNotice", noticeVO);
+	public int insNotice(Map<String, Object> paramMap) {
+		return insert("noticeDAO.insNotice", paramMap);
 	}
 	
 	// 공지사항 수정

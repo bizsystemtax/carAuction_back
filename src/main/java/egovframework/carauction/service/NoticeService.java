@@ -18,7 +18,7 @@ public interface NoticeService {
 	public Map<String, Object> getNoticeDetail(NoticeVO noticeVO) throws Exception;
 	
 	// 공지사항 등록
-	public int insNotice(NoticeVO noticeVO) throws Exception;
+	public int insNotice(Map<String, Object> paramMap) throws Exception;
 	
 	// 공지사항 수정
 	public int updNotice(Map<String, Object> paramMap) throws Exception;
