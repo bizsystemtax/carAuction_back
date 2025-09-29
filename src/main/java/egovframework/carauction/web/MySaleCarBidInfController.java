@@ -63,7 +63,7 @@ public class MySaleCarBidInfController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
-		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  다른 페이지 개발 완료 후 주석 제거
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
@@ -72,11 +72,11 @@ public class MySaleCarBidInfController {
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
-		//myPageVO.setEntryIdno(loginVO.getId());  다른 페이지 개발 완료 후 주석 제거
+		myPageVO.setEntryIdno(loginVO.getId());
 		
 		logger.info("regStrDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regStrDt);
 		logger.info("regEndDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regEndDt);
-		//logger.info("getId ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());   다른 페이지 개발 완료 후 주석 제거
+		logger.info("getId ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());
 		logger.info("proState ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", proState);
 		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", myPageVO);
 		
