@@ -128,7 +128,7 @@
 		<if test="proState != null and proState != ''">
 		   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
-		   AND CCAI.ENTRY_IDNO = #{entryIdno}
+		   <!-- AND CCAI.ENTRY_IDNO = #{entryIdno} -->
 	</select>
 	
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) -->

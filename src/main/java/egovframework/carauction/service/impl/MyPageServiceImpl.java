@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
-import egovframework.carauction.web.MySaleCarBidInfController;
 
 
 @Service("myPageservice")
