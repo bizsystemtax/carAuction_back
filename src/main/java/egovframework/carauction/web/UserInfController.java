@@ -1,6 +1,9 @@
 package egovframework.carauction.web;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -14,7 +17,6 @@ import egovframework.carauction.UserInfVO;
 import egovframework.carauction.service.UserInfService;
 import egovframework.com.cmm.DateUtil;
 import egovframework.com.cmm.ResponseCode;
-import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.service.ResultVO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -51,12 +53,46 @@ public class UserInfController {
 		inStartDate = DateUtil.dateFormatYyyyMmDd(inStartDate);
 		inEndDate = DateUtil.dateFormatYyyyMmDd(inEndDate);
 		
+		// 회원구분코드 코드값 변경
+		String inUserGbCdFormat = "";
+		
+		if(inUserGbCd != null && !inUserGbCd.trim().isEmpty()) {
+			List<String> list = Arrays.stream(inUserGbCd.split(","))
+						            .map(String::trim)      	// 앞뒤 공백 제거
+						            .filter(s -> !s.isEmpty()) 	// 빈 문자열 제거
+						            .collect(Collectors.toList());
+			
+			for(int i=0; i<list.size(); i++) {
+				if(!"".equals(inUserGbCdFormat)) {
+					inUserGbCdFormat += ",";
+				}
+				
+				switch (list.get(i)) {
+					case "1":
+						inUserGbCdFormat += "'0020'";
+						break;
+					case "2":
+						inUserGbCdFormat += "'0030'";
+						break;
+					case "3":
+						inUserGbCdFormat += "'0040'";
+						break;
+					case "4":
+						inUserGbCdFormat += "'0050'";
+						break;
+					case "5":
+						inUserGbCdFormat += "'0060'";
+						break;
+				}
+			}
+		}
+		
 		/**
 		 * VO input 매핑
 		 */
 		userInfVO.setInStartDate(inStartDate);
 		userInfVO.setInEndDate(inEndDate);
-		userInfVO.setInUserGbCd(inUserGbCd);
+		userInfVO.setInUserGbCd(inUserGbCdFormat);
 		userInfVO.setInUserNm(inUserNm);
 
 		/**

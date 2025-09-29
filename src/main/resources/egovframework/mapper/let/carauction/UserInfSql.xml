@@ -81,7 +81,7 @@
 		</if>
 		<!-- 회원구분 -->
 		<if test="inUserGbCd != null and inUserGbCd != ''">
-		AND A.USER_GB_CD IN (#{inUserGbCd})
+		AND A.USER_GB_CD IN (${inUserGbCd})
 		</if>
 		<!-- 회원명 -->
 		<if test="inUserNm != null and inUserNm != ''">
