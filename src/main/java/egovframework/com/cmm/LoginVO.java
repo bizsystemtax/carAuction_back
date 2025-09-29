@@ -18,7 +18,7 @@ import lombok.Setter;
  * @ 2009.03.03    박지욱          최초 생성
  *
  *  @author 공통서비스 개발팀 박지욱
- *  @since 2009.03.03
+ *  @since 2009.03.03 ...
  *  @version 1.0
  *  @see
  *  
