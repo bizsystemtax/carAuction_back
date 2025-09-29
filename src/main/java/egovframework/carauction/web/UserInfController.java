@@ -59,11 +59,13 @@ public class UserInfController {
 		 */
 		Map<String, Object> resultMap = userInfService.userInfListSelect(userInfVO);
 		
-		System.out.println("### 회원관리 목록 조회 결과 => " + resultMap);
-		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
+		
+		System.out.println("\n\n");
+		System.out.println("[회원관리 목록 조회 결과]\n" + "ResultCode : " + resultVO.getResultCode());
+		System.out.println("\n\n");
 		
 		return resultVO;
 	}
