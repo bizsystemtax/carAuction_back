@@ -1,9 +1,6 @@
 package egovframework.carauction.web;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -54,18 +51,12 @@ public class UserInfController {
 		inStartDate = DateUtil.dateFormatYyyyMmDd(inStartDate);
 		inEndDate = DateUtil.dateFormatYyyyMmDd(inEndDate);
 		
-		// 회원구분 숫자 리스트로 변환
-		List<Integer> inUserGbCdList = Arrays.stream(inUserGbCd.split(","))
-                .map(String::trim)
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
-
 		/**
 		 * VO input 매핑
 		 */
 		userInfVO.setInStartDate(inStartDate);
 		userInfVO.setInEndDate(inEndDate);
-		userInfVO.setInUserGbCd(inUserGbCdList);
+		userInfVO.setInUserGbCd(inUserGbCd);
 		userInfVO.setInUserNm(inUserNm);
 
 		/**
