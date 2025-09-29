@@ -1,6 +1,9 @@
 package egovframework.carauction.web;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.UserInfVO;
 import egovframework.carauction.service.UserInfService;
+import egovframework.com.cmm.DateUtil;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.service.ResultVO;
@@ -41,17 +45,27 @@ public class UserInfController {
 		UserInfVO userInfVO = new UserInfVO();
 		ResultVO resultVO = new ResultVO();
 		
-		String inStartDate = requestParams.get("inStartDate").replaceAll("-", "");	// 가입일자시작
-		String inEndDate = requestParams.get("inEndDate").replaceAll("-", "");  	// 가입일자종료
-		String inUserGbCd = requestParams.get("inUserGbCd");					  	// 회원구분코드
-		String inUserNm = requestParams.get("inUserNm");					  		// 회원명
+		String inStartDate = requestParams.get("inStartDate");	// 가입일자시작
+		String inEndDate = requestParams.get("inEndDate");  	// 가입일자종료
+		String inUserGbCd = requestParams.get("inUserGbCd");	// 회원구분코드
+		String inUserNm = requestParams.get("inUserNm");		// 회원명
+		
+		// datepicker 날짜 형식 'YYYYMMDD'으로 변경
+		inStartDate = DateUtil.dateFormatYyyyMmDd(inStartDate);
+		inEndDate = DateUtil.dateFormatYyyyMmDd(inEndDate);
+		
+		// 회원구분 숫자 리스트로 변환
+		List<Integer> inUserGbCdList = Arrays.stream(inUserGbCd.split(","))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
 
 		/**
 		 * VO input 매핑
 		 */
 		userInfVO.setInStartDate(inStartDate);
 		userInfVO.setInEndDate(inEndDate);
-		userInfVO.setInUserGbCd(inUserGbCd);
+		userInfVO.setInUserGbCd(inUserGbCdList);
 		userInfVO.setInUserNm(inUserNm);
 
 		/**
