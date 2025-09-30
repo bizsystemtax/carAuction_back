@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleDetailVO;
+import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 import egovframework.carauction.service.CarAucInfService;
 
@@ -140,5 +142,83 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	 차량 판매 정보
 	************************************************************************************************************************/
     
+    // 차량정보_제조사코드, 제조사 조회
+	@Override
+	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("resultList", carAucInfDAO.manufacturList(carSaleVO));
+	
+		return map;
+	}
+
+	// 차량정보_모델코드, 모델명 조회
+	@Override
+	public Map<String, Object> modNmList(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("resultList", carAucInfDAO.modNmList(carSaleVO));
+	
+		return map;
+	}
+
+	// 차량정보_등급코드, 등급명 조회
+	@Override
+	public Map<String, Object> grdNmList(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("resultList", carAucInfDAO.grdNmList(carSaleVO));
+	
+		return map;
+	}
+
+	// 차량정보_세부등급코드, 등급명 조회
+	@Override
+	public Map<String, Object> dtlGrdNmList(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("resultList", carAucInfDAO.dtlGrdNmList(carSaleVO));
+	
+		return map;
+	}
+	
+	// 차량정보_기타 조회
+	@Override
+	public Map<String, Object> getCarAucInfo(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("result", carAucInfDAO.getCarAucInfo(carSaleVO));
+	
+		return map;
+	}
+	
+	// 차량정보_연료코드 조회
+	@Override
+	public Map<String, Object> getCarEngCd(CarSaleVO carSaleVO) throws Exception {
+    	Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("resultList", carAucInfDAO.getCarEngCd(carSaleVO));
+	
+		return map;
+	}
+	
+	// 경매 판매차량 등록
+	@Override
+	public void insertCarSale(CarSaleDetailVO carSaleDetailVO) {
+		// 경매등록번호 시퀀스
+		carSaleDetailVO.setAucRegNo(carAucInfDAO.getNextId());
+		
+		carAucInfDAO.insertCarSale(carSaleDetailVO);
+	}
+
+	// 경매 판매차량 상세 조회
+	@Override
+	public Map<String, Object> getCarSaleDetail(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();	
+		
+		map.put("result", carAucInfDAO.getCarSaleDetail(carSaleVO));
+	
+		return map;
+	}
 	
 }

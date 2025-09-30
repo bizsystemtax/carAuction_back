@@ -238,8 +238,186 @@
     ]]>
 </select>
 	
+
 	<!-- *******************************************************************************************************
 	 	차량 판매 정보
 	 ******************************************************************************************************* -->
+	 	
+	 <!-- 오늘 날짜 기준으로 다음 ID 조회 -->
+	 <select id="getNextId" resultType="string">
+     SELECT 
+            CONCAT(DATE_FORMAT(NOW(), '%y%m%d')
+          , LPAD(IFNULL(MAX(CAST(SUBSTRING(AUC_REG_NO, 7, 4) AS UNSIGNED)), 0) + 1, 4, '0')) AS new_id
+       FROM 
+            CA_CAR_AUC_INF
+      WHERE 
+            AUC_REG_NO LIKE CONCAT(DATE_FORMAT(NOW(), '%y%m%d'), '%')
+	 </select>
+	 	 
+	 <select id="manufacturList" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+		    CODE_NO as CODE_NO
+	      , CODE_HNAME as CODE_HNAME
+	   FROM 
+	        CA_CMM_CD
+	  WHERE 
+	        CODE_KITA5 = #{codeKita5} 
+	    AND CODE_USEYN = 'Y' -- 사용여부(Y/N)
+	    AND CODE_FIRST = #{codeFirst} 
+	    AND CODE_SECOND = #{codeSecond}  
+		
+	 </select>
+	
+	 <select id="modNmList" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+		    CAR_MODEL_CD as CODE_NO
+		  , CAR_MODEL_NM as CODE_HNAME
+	   FROM 
+	        CA_CAR_INF
+	  WHERE 
+	        MKR_CD = #{mkrCd} -- 제조사코드(메이커코드)
+			GROUP BY CAR_MODEL_CD -- 모델코드
+
+	 </select>
+	
+	 <select id="grdNmList" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+		    CAR_LEVEL_CD as CODE_NO
+		  , CAR_LEVEL_NM as CODE_HNAME
+	   FROM 
+	        CA_CAR_INF
+	  WHERE 
+	        MKR_CD = #{mkrCd} -- 제조사코드(메이커코드)
+	    AND CAR_MODEL_CD = #{carModelCd} -- 모델코드
+		AND REP_CAR_YN = 'Y' -- 대표차량
+   GROUP BY CAR_LEVEL_CD -- 모델코드
+	 </select>
+	
+	 <select id="dtlGrdNmList" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+		    CAR_DT_LEVEL_CD as CODE_NO
+		  , CAR_DT_LEVEL_NM as CODE_HNAME
+	   FROM 
+	        CA_CAR_INF
+	  WHERE 
+	        MKR_CD = #{mkrCd} -- 제조사코드(메이커코드)
+		AND CAR_MODEL_CD = #{carModelCd} -- 모델코드
+		AND CAR_LEVEL_CD = #{carLevelCd} -- 등급코드
+   GROUP BY CAR_DT_LEVEL_CD -- 세부등급코드
+	 </select>
+	
+	 <select id="getCarAucInfo" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+		    ca_cmm_cd.CODE_HNAME
+		  , ca_car_inf.CAR_MAIN_NO
+		  , ca_car_inf.CAR_CC
+		  , ca_car_inf.CAR_ENG_CD
+		  , ca_car_inf.CAR_PRICE
+		  , ca_car_inf.CAR_TRANS_GB
+	   FROM 
+		    ca_car_inf
+     LEFT OUTER JOIN ca_cmm_cd
+			      ON ca_cmm_cd.CODE_NO = ca_car_inf.CAR_ENG_CD 
+				 AND ca_cmm_cd.CODE_USEYN = 'Y'  
+				 AND ca_cmm_cd.CODE_FIRST = #{codeFirst}  
+				 AND ca_cmm_cd.CODE_SECOND = #{codeSecond}
+		       WHERE ca_car_inf.MKR_CD = #{mkrCd} -- 제조사코드(메이커코드)
+		        AND ca_car_inf.CAR_MODEL_CD = #{carModelCd} -- 모델코드
+		        AND ca_car_inf.CAR_LEVEL_CD = #{carLevelCd} -- 등급코드
+		        AND ca_car_inf.CAR_DT_LEVEL_CD = #{carDtLevelCd} -- 세부등급코드
+	 </select>
+	
+	 <select id="getCarEngCd" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
+	 SELECT 
+			CODE_NO as CODE_NO
+		  , CODE_HNAME as CODE_HNAME
+	   FROM 
+	        CA_CMM_CD
+	  WHERE 
+	        CODE_USEYN = 'Y' -- 사용여부(Y/N)
+	    AND CODE_FIRST = 'C'
+		AND CODE_SECOND = '04' 
+
+	 </select>
+	
+	 <insert id="insertCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+	 INSERT INTO CA_CAR_AUC_INF (
+								  AUC_REG_NO
+								, CAR_MAIN_NO
+								, LOC_IMP_GB
+								, CAR_ENG_CD
+								, AUC_CAR_CC
+								, CAR_TRANS_GB
+								, AUC_CAR_SEAT
+								, CAR_PRICE
+								, CAR_NO
+								, AUC_CAR_CMNT
+								, AUC_CAR_MAKE_YR
+								, AUC_CAR_DRV_DIS
+								, BID_PLN_PRICE
+								, BID_SDEP_PRICE
+								, BID_EXP_DT
+								, EOM_YN
+								, EOM_PRICE
+								, AUC_PROG_STAT_CD
+								, ENTRY_IDNO
+								, UPDAT_IDNO
+		               ) VALUES (
+								  #{aucRegNo}
+								, #{carMainNo}
+								, #{locImpGb}
+								, #{carEngCd}
+								, #{aucCarCc}
+								, #{carTransGb}
+								, #{aucCarSeat}
+								, #{carPrice}
+								, #{carNo}
+								, #{aucCarCmnt}
+								, #{aucCarMakeYr}
+								, #{aucCarDrvDis}
+								, #{bidPlnPrice}
+								, #{bidSdepPrice}
+								, #{bidExpDt}
+								, #{eomYn}
+								, #{eomPrice}
+								, #{aucProgStatCd}
+								, #{entryIdno}
+								, #{updatIdno}
+		)
+	 </insert>
 	 
+	 <select id="getCarSaleDetail" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleDetailVO">
+	 SELECT
+			AUC_REG_NO
+		  , CAR_MAIN_NO
+		  , LOC_IMP_GB
+		  , CAR_ENG_CD
+		  , AUC_CAR_CC
+		  , CAR_TRANS_GB
+		  , AUC_CAR_SEAT
+		  , CAR_PRICE
+		  , CAR_NO
+		  , AUC_CAR_CMNT
+		  , AUC_CAR_MAKE_YR
+		  , AUC_CAR_DRV_DIS
+		  , BID_PLN_PRICE
+		  , BID_SDEP_PRICE
+		  , BID_EXP_DT
+		  , EOM_YN
+		  , EOM_PRICE
+		  , BID_CNT
+		  , AUC_PROG_STAT_CD
+		  , AUC_PROG_YN
+		  , SBID_PRICE
+		  , SBID_DATE
+		  , SBIDMN_NM
+		  , ENTRY_DATE
+		  , ENTRY_IDNO
+		  , UPDAT_DATE
+		  , UPDAT_IDNO
+	   FROM
+		    CA_CAR_AUC_INF
+	  WHERE 
+            AUC_REG_NO = #{aucRegNo}
+	 </select>
 </mapper>

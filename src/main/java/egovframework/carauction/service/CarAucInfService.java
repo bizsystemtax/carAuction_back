@@ -5,6 +5,8 @@ import java.util.Map;
 
 import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
+import egovframework.carauction.CarSaleDetailVO;
+import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
 
 /**
@@ -79,4 +81,28 @@ public interface CarAucInfService {
 	 차량 판매 정보
 	************************************************************************************************************************/
     
+    // 차량정보_제조사코드, 제조사 조회
+ 	public Map<String, Object> manufacturList(CarSaleVO carSaleVO) throws Exception;
+ 	
+ 	// 차량정보_모델코드, 모델명 조회
+ 	public Map<String, Object> modNmList(CarSaleVO carSaleVO) throws Exception;
+ 	
+ 	// 차량정보_등급코드, 등급명 조회
+ 	public Map<String, Object> grdNmList(CarSaleVO carSaleVO) throws Exception;
+ 	
+ 	// 차량정보_세부등급코드, 등급명 조회
+ 	public Map<String, Object> dtlGrdNmList(CarSaleVO carSaleVO) throws Exception;
+
+ 	// 차량정보_기타 조회
+ 	public Map<String, Object> getCarAucInfo(CarSaleVO carSaleVO) throws Exception;
+ 	
+ 	// 차량정보_연료코드 조회
+ 	public Map<String, Object> getCarEngCd(CarSaleVO carSaleVO) throws Exception;
+ 		
+ 	// 경매 판매차량 등록
+ 	public void insertCarSale(CarSaleDetailVO carSaleDetailVO);
+ 		
+ 	// 경매 판매차량 상세 조회
+ 	public Map<String, Object> getCarSaleDetail(CarSaleVO carSaleVO) throws Exception;
+ 	
 }
