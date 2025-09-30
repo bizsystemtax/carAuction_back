@@ -12,13 +12,14 @@ import lombok.Setter;
 public class UserInfVO implements Serializable {
 	private static final long serialVersionUID = 5510782413086945776L;
 	
-	// 회원관리 목록 조회조건
+	// IN
 	private String inStartDate = "";	// 가입일자시작
 	private String inEndDate = "";		// 가입일자종료
-	private String inUserGbCd = "";		// 회원구분코드
-	private String inUserNm = "";		// 회원명
+	private String inUserGbCd = "";		// 사용자구분코드
+	private String inUserNm = "";		// 사용자명
+	private String inUserId = "";		// 사용자ID
 
-	// 회원관리 목록 조회결과
+	// OUT
 	private String num = "";			// 순번
 	private String userGbNm = "";		// 사용자구분명
 	private String userNm = "";			// 사용자명
@@ -32,6 +33,7 @@ public class UserInfVO implements Serializable {
 	private String bidEntryCnt = "";	// 입찰등록건수
 	private String bidSbidCnt = "";		// 입찰낙찰건수
 	private String regDate = "";		// 가입일자
+	private String userId = "";			// 사용자ID
 
 	// 필수
 	private String sessionId = "";	// 세션ID

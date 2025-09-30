@@ -24,4 +24,13 @@ public class UserInfServiceImpl extends EgovAbstractServiceImpl implements UserI
 		
 		return map;
 	}
+
+	// 회원 수정 모달 정보 조회
+	@Override
+	public Map<String, Object> userInfUpdateModalDataSelect(UserInfVO userInfVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", UserInfDAO.userInfUpdateModalDataSelect(userInfVO));
+		
+		return map;
+	}
 }

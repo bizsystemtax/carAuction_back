@@ -17,6 +17,8 @@ import egovframework.carauction.UserInfVO;
 import egovframework.carauction.service.UserInfService;
 import egovframework.com.cmm.DateUtil;
 import egovframework.com.cmm.ResponseCode;
+import egovframework.com.cmm.exception.BizException;
+import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.ResultVO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,7 +33,7 @@ public class UserInfController {
 	
 	/**
 	 * 회원관리 목록 조회
-	 * @param  requestParams - inVltDtStrt, inVltDtEnd, inVltKindCd, inSendPlcCd, inFineUploadCd, inCfmtYn, inGdCd, inCsNm, inVhclNo
+	 * @param  requestParams - inStartDate, inEndDate, inUserGbCd, inUserNm
 	 * @return resultVO - 회원관리 목록
 	 * @throws BizException
 	 */
@@ -103,11 +105,43 @@ public class UserInfController {
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
+		return resultVO;
+	}
+
+	/**
+	 * 회원 수정 모달 정보 조회
+	 * @param  requestParams - inUserId
+	 * @return resultVO - 회원정보
+	 * @throws BizException
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/updateModalData")
+	public ResultVO userInfUpdateModalDataSelect(@RequestBody Map<String, String> requestParams) throws Exception{
+		UserInfVO userInfVO = new UserInfVO();
+		ResultVO resultVO = new ResultVO();
 		
-		System.out.println("\n\n");
-		System.out.println("[회원관리 목록 조회 결과]\n" + "ResultCode : " + resultVO.getResultCode());
-		System.out.println("\n\n");
+		String inUserId = requestParams.get("inUserId"); // 사용자ID
 		
+		if(inUserId == null || "".equals(inUserId)) {
+			throw new BizException(ErrorCode.ERR001, "");
+		}
+		
+		/**
+		 * VO input 매핑
+		 */
+		userInfVO.setInUserId(inUserId);
+		
+		/**
+		 * 회원 수정 모달 정보 조회
+		 */
+		Map<String, Object> resultMap = userInfService.userInfUpdateModalDataSelect(userInfVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
 		return resultVO;
 	}
 }
