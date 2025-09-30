@@ -74,6 +74,7 @@
 		<result property = "fromDt"				column = "fromDt"/>
 		<result property = "toDt"				column = "toDt"/>
 		<result property = "RNUM"				column = "RNUM"/>
+		<result property = "realDepPrice"		column = "REAL_DEP_PRICE"/>
 		
 	</resultMap>
 	
@@ -128,7 +129,7 @@
 		<if test="proState != null and proState != ''">
 		   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
-		   <!-- AND CCAI.ENTRY_IDNO = #{entryIdno} -->
+		   AND CCAI.ENTRY_IDNO = #{entryIdno}
 	</select>
 	
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) -->
@@ -187,7 +188,19 @@
 			     , AUC_REG_SEQ /*경매등록순번*/
 			     , DATE_FORMAT(BID_ENTRY_DATE, '%Y-%m-%d') AS BID_ENTRY_DATE /*입찰등록일시*/
 			     , DEPMN_NM /*입찰자명(입급자명)*/
-			     , FORMAT(BID_PRICE, 0) AS BID_PRICE /*입찰금액*/
+			     , CONCAT(FORMAT(BID_PRICE, 0), '원') AS BID_PRICE /*입찰금액*/
+			     , CONCAT(FORMAT(BID_SDEP_PRICE, 0), '원') AS BID_SDEP_PRICE /*입찰보증금액*/
+			     , CONCAT(FORMAT(BID_PRICE - BID_SDEP_PRICE, 0), '원') AS REAL_DEP_PRICE /*실제입금예정액*/
+			     , POM_PAY_YN /*대금납부완납여부*/
+			     , DATE_FORMAT(SBID_DATE, '%Y-%m-%d') AS SBID_DATE /*낙찰일시*/
+			     , AUC_PROG_STAT_CD /*경매진행 상태*/
+			     , CASE WHEN AUC_PROG_STAT_CD = '0010' THEN '경매진행중'
+				    WHEN AUC_PROG_STAT_CD = '0020' THEN '낙찰'
+				    WHEN AUC_PROG_STAT_CD = '0030' THEN '낙찰금액완납'
+				    WHEN AUC_PROG_STAT_CD = '0040' THEN '명의이전완료'
+				    WHEN AUC_PROG_STAT_CD = '0050' THEN '유찰'
+			   		ELSE ''
+			    	 END AS AUC_PROG_STAT_NM /*진행상태명*/
 			     , BIDMN_NM /*담당자명*/
 			     , BIDMN_CELLNO /*담당자 연락처*/
 			     , BIDMN_EMAIL_ADDR /*담당자 이메일*/
