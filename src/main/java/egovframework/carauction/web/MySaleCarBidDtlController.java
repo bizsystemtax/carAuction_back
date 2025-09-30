@@ -135,5 +135,7 @@ public class MySaleCarBidDtlController {
 		
 		return resultVO;
 	}
+	
+	//내 판매차량 입찰 상세 현황 - 저장
 
 }

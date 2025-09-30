@@ -154,6 +154,14 @@
 			     , DATE_FORMAT(CCAI.BID_EXP_DT, '%Y-%m-%d') AS BID_EXP_DT /*입찰 유효일(마감일)*/
 			     , CCAI.ENTRY_IDNO /*낙찰 회원사명*/
 			     , CCAI.AUC_PROG_YN
+			     , (SELECT CODE_NO FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_CD /*진행상태코드*/
+				 , CASE WHEN CCAI.AUC_PROG_STAT_CD = '0010' THEN '경매진행중'
+				        WHEN CCAI.AUC_PROG_STAT_CD = '0020' THEN '낙찰'
+				        WHEN CCAI.AUC_PROG_STAT_CD = '0030' THEN '낙찰금액완납'
+				        WHEN CCAI.AUC_PROG_STAT_CD = '0040' THEN '명의이전완료'
+				        WHEN CCAI.AUC_PROG_STAT_CD = '0050' THEN '유찰'
+				        ELSE ''
+				         END AS AUC_PROG_STAT_NM /*진행상태명*/
 			  FROM CA_CAR_AUC_INF CCAI
 			 INNER JOIN CA_CAR_INF CCI 
 			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
