@@ -49,4 +49,13 @@ public class MyPageDAO extends EgovAbstractMapper {
 	public List<MyPageVO> myBidList(MyPageVO myPageVO) throws Exception {
 		return selectList("myPageDAO.myBidList", myPageVO);
 	}
+
+	//내 판매차량 입찰 상세 현황 - 저장
+	public int caCarAucDtlBidInfUpdate(MyPageVO myPageVO) throws Exception {
+		return update("myPageDAO.caCarAucDtlBidInfUpdate", myPageVO);
+	}
+
+	public void caCarAucInfUpdate(MyPageVO myPageVO) throws Exception {
+		update("myPageDAO.caCarAucInfUpdate", myPageVO);
+	}
 }

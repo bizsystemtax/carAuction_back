@@ -28,4 +28,7 @@ public interface MyPageservice {
 
 	//내 입찰 현황
 	public Map<String, Object> myBidList(MyPageVO myPageVO) throws Exception;
+
+	//내 판매차량 입찰 상세 현황 - 저장
+	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception;
 }

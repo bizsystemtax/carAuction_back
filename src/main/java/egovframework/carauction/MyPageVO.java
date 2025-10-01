@@ -95,6 +95,7 @@ public class MyPageVO implements Serializable {
 	private String     carTransNm = "";                         //변속기명                          
 	private String     aucProgStatNm = "";                      //진행상태명     
 	private String     realDepPrice = "";						//실제입금예정액
+	private String     entryIdnoNm = "";						//사용자명
 	
 	
 	public String toString() {

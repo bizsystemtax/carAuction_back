@@ -51,7 +51,10 @@ public class MySaleCarBidDtlController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		
 		String aucRegNo = requestParams.get("aucRegNo");	//경매등록번호
+		myPageVO.setEntryIdno(loginVO.getId());
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
@@ -137,5 +140,48 @@ public class MySaleCarBidDtlController {
 	}
 	
 	//내 판매차량 입찰 상세 현황 - 저장
+	@PostMapping(value = "/myBidInfoUpdate") 
+	public ResultVO myBidInfoUpdate(
+			MyPageVO myPageVO,
+			BindingResult bindingResult,
+			HttpServletRequest request,
+			@RequestBody Map<String, String> requestParams 
+			) throws Exception {
+		
+		ResultVO resultVO = new ResultVO();
+		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		
+		String aucRegNo 		= (String) requestParams.get("aucRegNo"); 	 	//경매등록번호
+		String aucRegSeq 		= (String) requestParams.get("aucRegSeq");  	//경매등록순번
+		String bidPrice 		= (String) requestParams.get("bidPrice").replace("원", "").replace(",", "");    //입찰금액
+		String depmnNm 			= (String) requestParams.get("depmnNm");      	//낙찰자명
+		String aucProgStatCd 	= (String) requestParams.get("aucProgStatCd");  //진행상태
+		String pomPayYn 		= (String) requestParams.get("pomPayYn");     	//대금납부완납여부
+		
+		logger.info("aucRegNo ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegNo);
+		logger.info("aucRegSeq ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegSeq);
+		logger.info("bidPrice ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", bidPrice);
+		logger.info("depmnNm ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", depmnNm);
+		logger.info("aucProgStatCd ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucProgStatCd);
+		logger.info("pomPayYn ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", pomPayYn);
+		
+		myPageVO.setAucRegNo(aucRegNo);   			//경매등록번호
+		myPageVO.setAucRegSeq(aucRegSeq); 			//경매등록순번
+		myPageVO.setBidPrice(bidPrice);         	//입찰금액
+		myPageVO.setDepmnNm(depmnNm);  				//낙찰자명
+		myPageVO.setAucProgStatCd(aucProgStatCd);  	//진행상태
+		myPageVO.setPomPayYn(pomPayYn);  			//대금납부완납여부
+		myPageVO.setUpdatIdno(loginVO.getId()); 	//수정자ID
+
+		Map<String, Object> resultMap = myPageService.myBidInfoUpdate(myPageVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		
+		return resultVO;
+	}
 
 }

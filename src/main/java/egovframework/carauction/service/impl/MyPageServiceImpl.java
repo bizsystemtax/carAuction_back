@@ -95,5 +95,33 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		return map;
 	}
 
+	//내 판매차량 입찰 상세 현황 - 저장
+	@Override
+	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		String aucProgStatCd = myPageVO.getAucProgStatCd();
+		String aucProgYn = myPageVO.getAucProgYn();		//낙찰여부
+		
+		if("0020".equals(aucProgStatCd)) {
+			aucProgYn = "Y";
+		}else {
+			aucProgYn = "N";
+		}
+		
+		myPageVO.setAucProgYn(aucProgYn);
+		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", aucProgYn);
+		
+		int cnt = myPageDAO.caCarAucDtlBidInfUpdate(myPageVO); 
+		
+		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", cnt);
+		
+		if(cnt > 0) {
+			myPageDAO.caCarAucInfUpdate(myPageVO);  
+		}
+
+		return map;
+	}
+
 
 }
