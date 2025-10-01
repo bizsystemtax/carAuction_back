@@ -135,6 +135,7 @@
 		   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
 		   AND CCAI.ENTRY_IDNO = #{entryIdno}
+		 ORDER BY CCAI.AUC_REG_NO ASC
 	</select>
 	
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) -->
@@ -281,7 +282,8 @@
 		]]>
 		<if test="proState != null and proState != ''">
 			   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
-			</if>
+		</if>
+		ORDER BY CCAI.AUC_REG_NO ASC
 	</select>
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 저장 -->
