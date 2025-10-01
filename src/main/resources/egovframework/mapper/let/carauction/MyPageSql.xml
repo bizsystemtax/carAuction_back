@@ -224,6 +224,7 @@
 			  FROM CA_CAR_AUC_DTL_BID_INF
 			 WHERE AUC_REG_NO = #{aucRegNo} 
 		]]>
+		ORDER BY AUC_REG_SEQ ASC
 	</select>
 	
 	
