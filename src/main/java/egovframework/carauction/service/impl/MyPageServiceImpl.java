@@ -101,9 +101,9 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		String aucProgStatCd = myPageVO.getAucProgStatCd();
-		String aucProgYn = myPageVO.getAucProgYn();		//낙찰여부
+		String aucProgYn;		//낙찰여부
 		
-		if("0020".equals(aucProgStatCd)) {
+		if("0020".equals(aucProgStatCd) || "0030".equals(aucProgStatCd) || "0040".equals(aucProgStatCd) ) {
 			aucProgYn = "Y";
 		}else {
 			aucProgYn = "N";
