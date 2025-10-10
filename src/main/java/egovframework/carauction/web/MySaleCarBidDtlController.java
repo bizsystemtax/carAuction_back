@@ -169,7 +169,7 @@ public class MySaleCarBidDtlController {
 			bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
 			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
-			bidVO.setPomPayYn(item.getPomPayYn());  			//대금납부완납여부
+			bidVO.setPomPayYn(item.getPomPayYn());  		//대금납부완납여부
 			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			
@@ -187,7 +187,7 @@ public class MySaleCarBidDtlController {
 			bidVO.setAucRegSeq(item.getAucRegSeq()); 		//경매등록순번
 			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
-			bidVO.setPomPayYn(item.getPomPayYn());  			//대금납부완납여부
+			bidVO.setPomPayYn(item.getPomPayYn());  		//대금납부완납여부
 			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			
