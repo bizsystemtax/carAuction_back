@@ -1,7 +1,6 @@
 package egovframework.carauction;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -11,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MyPageUnSeledctedVO implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String aucRegNo;
     private String aucRegSeq;
