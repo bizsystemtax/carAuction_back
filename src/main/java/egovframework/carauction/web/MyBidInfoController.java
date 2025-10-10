@@ -67,7 +67,7 @@ public class MyBidInfoController {
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
-		String proState = requestParams.get("codeNo");					//진행상태
+		String proState = requestParams.get("codeNo");						//진행상태
 		
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
@@ -75,16 +75,7 @@ public class MyBidInfoController {
 		
 		myPageVO.setProState(proState); //진행상태
 		
-		
-		logger.info("regStrDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regStrDt);
-		logger.info("regEndDt ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", regEndDt);
-		logger.info("getId ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", loginVO.getId());
-		logger.info("proState ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", proState);
-		logger.info("myPageVO ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", myPageVO);
-		
 		Map<String, Object> resultMap = myPageService.myBidList(myPageVO);
-		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

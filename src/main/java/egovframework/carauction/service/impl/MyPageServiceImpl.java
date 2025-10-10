@@ -58,8 +58,6 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	
 		int cnt = myPageDAO.faileBidUpdate(myPageVO);
 		
-		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", cnt);
-		
 		if(cnt > 0) {
 			myPageDAO.failecaCarAucInfUpdate(myPageVO);  
 		}
@@ -109,11 +107,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		}
 		
 		myPageVO.setAucProgYn(aucProgYn);
-		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", aucProgYn);
 		
 		int cnt = myPageDAO.caCarAucDtlBidInfUpdate(myPageVO); 
-		
-		logger.info("■■■■■■■■■■■■■■■■■ >>>>>>>>>>>>>>> {} ", cnt);
 		
 		if(cnt > 0) {
 			myPageDAO.caCarAucInfUpdate(myPageVO);  

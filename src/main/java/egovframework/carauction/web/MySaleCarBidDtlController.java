@@ -61,11 +61,7 @@ public class MySaleCarBidDtlController {
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
-		logger.info("aucRegNo ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegNo);
-		
 		Map<String, Object> resultMap = myPageService.mySaleCarAuctionRegList(myPageVO);
-		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -113,11 +109,7 @@ public class MySaleCarBidDtlController {
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
-		logger.info("aucRegNo ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegNo);
-		
 		Map<String, Object> resultMap = myPageService.mySaleCarBidList(myPageVO);
-		
-		logger.info("resultMap ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -162,7 +154,6 @@ public class MySaleCarBidDtlController {
 		for (int i = 0; i < selected.size(); i++) {
 			MyPageSelectedVO item = selected.get(i);
 			
-			logger.info("▶ [selected #{}] aucRegNo = {}", i, item.getAucRegNo());
 			MyPageVO bidVO = new MyPageVO();
 			
 			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
@@ -182,7 +173,6 @@ public class MySaleCarBidDtlController {
 		for (int i = 0; i < unselected.size(); i++) {
 			MyPageUnSeledctedVO item = unselected.get(i);
 			
-			logger.info("▶ [unselected #{}] aucRegNo = {}", i, item.getAucRegNo());
 			MyPageVO bidVO = new MyPageVO();
 			
 			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
