@@ -201,7 +201,7 @@
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(입찰현황) -->
 	<select id="mySaleCarBidList" parameterType="egovframework.carauction.MyPageVO" resultType="egovframework.carauction.MyPageVO">
 		<![CDATA[
-			SELECT ROW_NUMBER() OVER (ORDER BY ENTRY_DATE DESC) AS RNUM /*순번*/
+			SELECT ROW_NUMBER() OVER (ORDER BY BID_ENTRY_DATE DESC) AS RNUM /*순번*/
 			     , AUC_REG_NO /*경매등록번호*/
 			     , AUC_REG_SEQ /*경매등록순번*/
 			     , DATE_FORMAT(BID_ENTRY_DATE, '%Y-%m-%d') AS BID_ENTRY_DATE /*입찰등록일시*/
