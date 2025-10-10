@@ -313,4 +313,15 @@
 	</update>
 	
 	
+	<!-- 유찰 -->
+	<update id="myBidInfoUnSelectedUpdate"  parameterType="egovframework.carauction.MyPageVO">
+		UPDATE CA_CAR_AUC_DTL_BID_INF
+		   SET AUC_PROG_STAT_CD = '0050'  /*경매진행상태코드*/
+		     , SBID_YN = 'N'              /*낙찰여부*/
+		     , UPDAT_DATE = NOW()         /*수정일시*/
+		     , UPDAT_IDNO = #{updatIdno}  /*수정자ID*/
+		 WHERE AUC_REG_NO = #{aucRegNo}   /*경매등록번호*/
+		   AND AUC_REG_SEQ = #{aucRegSeq} /*경매등록순번*/
+	</update>
+	
 </mapper>

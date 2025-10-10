@@ -58,4 +58,9 @@ public class MyPageDAO extends EgovAbstractMapper {
 	public void caCarAucInfUpdate(MyPageVO myPageVO) throws Exception {
 		update("myPageDAO.caCarAucInfUpdate", myPageVO);
 	}
+
+	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) {
+		update("myPageDAO.myBidInfoUnSelectedUpdate", myPageVO);
+		
+	}
 }

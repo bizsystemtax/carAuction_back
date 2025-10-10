@@ -2,6 +2,7 @@ package egovframework.carauction;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -96,7 +97,10 @@ public class MyPageVO implements Serializable {
 	private String     aucProgStatNm = "";                      //진행상태명     
 	private String     realDepPrice = "";						//실제입금예정액
 	private String     entryIdnoNm = "";						//사용자명
+	private String 	   flag = "";
 	
+	private List<MyPageSelectedVO> selected;
+    private List<MyPageUnSeledctedVO> unselected;
 	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

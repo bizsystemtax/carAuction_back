@@ -96,9 +96,18 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	}
 
 	//내 판매차량 입찰 상세 현황 - 저장
+//	@Override
+//	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception {
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		
+//		
+//
+//		return map;
+//	}
+
+	//내 판매차량 입찰 상세 현황 - 저장(선택한 값)
 	@Override
-	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+	public void myBidInfoSelectedUpdate(MyPageVO myPageVO) throws Exception {
 		
 		String aucProgStatCd = myPageVO.getAucProgStatCd();
 		String aucProgYn;		//낙찰여부
@@ -119,9 +128,14 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		if(cnt > 0) {
 			myPageDAO.caCarAucInfUpdate(myPageVO);  
 		}
-
-		return map;
+		
 	}
 
-
+	//내 판매차량 입찰 상세 현황 - 저장(선택되지 않은 값)
+	@Override
+	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) throws Exception {
+		
+		myPageDAO.myBidInfoUnSelectedUpdate(myPageVO);
+		
+	}
 }

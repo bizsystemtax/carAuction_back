@@ -30,5 +30,11 @@ public interface MyPageservice {
 	public Map<String, Object> myBidList(MyPageVO myPageVO) throws Exception;
 
 	//내 판매차량 입찰 상세 현황 - 저장
-	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception;
+	//public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception;
+
+	//내 판매차량 입찰 상세 현황 - 저장(선택한 값)
+	public void myBidInfoSelectedUpdate(MyPageVO myPageVO) throws Exception;
+
+	//내 판매차량 입찰 상세 현황 - 저장(선택되지 않은 값)
+	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) throws Exception;
 }

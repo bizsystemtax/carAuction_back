@@ -1,6 +1,7 @@
 package egovframework.carauction.web;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import egovframework.carauction.MyPageSelectedVO;
+import egovframework.carauction.MyPageUnSeledctedVO;
 import egovframework.carauction.MyPageVO;
 import egovframework.carauction.service.MyPageservice;
 import egovframework.com.cmm.LoginVO;
@@ -145,38 +148,57 @@ public class MySaleCarBidDtlController {
 			MyPageVO myPageVO,
 			BindingResult bindingResult,
 			HttpServletRequest request,
-			@RequestBody Map<String, String> requestParams 
+			//@RequestBody Map<String, String> requestParams, 
+			@RequestBody MyPageVO requestBody
 			) throws Exception {
 		
 		ResultVO resultVO = new ResultVO();
 		
+		List<MyPageSelectedVO> selected = requestBody.getSelected();
+	    List<MyPageUnSeledctedVO> unselected = requestBody.getUnselected();
+		
 		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
-		String aucRegNo 		= (String) requestParams.get("aucRegNo"); 	 	//경매등록번호
-		String aucRegSeq 		= (String) requestParams.get("aucRegSeq");  	//경매등록순번
-		String bidPrice 		= (String) requestParams.get("bidPrice").replace("원", "").replace(",", "");    //입찰금액
-		String depmnNm 			= (String) requestParams.get("depmnNm");      	//낙찰자명
-		String aucProgStatCd 	= (String) requestParams.get("aucProgStatCd");  //진행상태
-		String pomPayYn 		= (String) requestParams.get("pomPayYn");     	//대금납부완납여부
-		
-		logger.info("aucRegNo ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegNo);
-		logger.info("aucRegSeq ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucRegSeq);
-		logger.info("bidPrice ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", bidPrice);
-		logger.info("depmnNm ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", depmnNm);
-		logger.info("aucProgStatCd ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", aucProgStatCd);
-		logger.info("pomPayYn ■■■■■■■■■■■■■■■■■■■■■■■■■>>>>>>>>> {} ", pomPayYn);
-		
-		myPageVO.setAucRegNo(aucRegNo);   			//경매등록번호
-		myPageVO.setAucRegSeq(aucRegSeq); 			//경매등록순번
-		myPageVO.setBidPrice(bidPrice);         	//입찰금액
-		myPageVO.setDepmnNm(depmnNm);  				//낙찰자명
-		myPageVO.setAucProgStatCd(aucProgStatCd);  	//진행상태
-		myPageVO.setPomPayYn(pomPayYn);  			//대금납부완납여부
-		myPageVO.setUpdatIdno(loginVO.getId()); 	//수정자ID
+		//입찰 현황에서 선택한 값
+		for (int i = 0; i < selected.size(); i++) {
+			MyPageSelectedVO item = selected.get(i);
+			
+			logger.info("▶ [selected #{}] aucRegNo = {}", i, item.getAucRegNo());
+			MyPageVO bidVO = new MyPageVO();
+			
+			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
+			bidVO.setAucRegSeq(item.getAucRegSeq()); 		//경매등록순번
+			bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
+			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
+			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
+			bidVO.setPomPayYn(item.getPomPayYn());  			//대금납부완납여부
+			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
+			bidVO.setFlag(item.getFlag());                   //구분
+			
+			myPageService.myBidInfoSelectedUpdate(bidVO);
 
-		Map<String, Object> resultMap = myPageService.myBidInfoUpdate(myPageVO);
+		}
 		
-		resultVO.setResult(resultMap);
+		//입찰 현황에서 선택되지 않은 값
+		for (int i = 0; i < unselected.size(); i++) {
+			MyPageUnSeledctedVO item = unselected.get(i);
+			
+			logger.info("▶ [unselected #{}] aucRegNo = {}", i, item.getAucRegNo());
+			MyPageVO bidVO = new MyPageVO();
+			
+			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
+			bidVO.setAucRegSeq(item.getAucRegSeq()); 		//경매등록순번
+			//bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
+			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
+			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
+			bidVO.setPomPayYn(item.getPomPayYn());  			//대금납부완납여부
+			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
+			bidVO.setFlag(item.getFlag());                   //구분
+			
+			myPageService.myBidInfoUnSelectedUpdate(bidVO);
+		}
+		
+		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		
