@@ -134,7 +134,7 @@
 		   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
 		   AND CCAI.ENTRY_IDNO = #{entryIdno}
-		 <!-- ORDER BY CCAI.AUC_REG_NO ASC -->
+		 ORDER BY RNUM ASC 
 	</select>
 	
 	<!-- 마이페이지 - 내 판매차량 입찰 상세 현황(경매(공매) 등록내용) -->
@@ -175,6 +175,7 @@
 			 INNER JOIN CA_CAR_INF CCI 
 			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
 			 WHERE CCAI.AUC_REG_NO = #{aucRegNo}
+			 ORDER BY RNUM ASC 
 		]]>
 	</select>
 	
@@ -223,8 +224,9 @@
 			     , BIDMN_EMAIL_ADDR /*담당자 이메일*/
 			  FROM CA_CAR_AUC_DTL_BID_INF
 			 WHERE AUC_REG_NO = #{aucRegNo} 
+			
 		]]>
-		<!-- ORDER BY AUC_REG_SEQ ASC -->
+		  ORDER BY RNUM ASC 
 	</select>
 	
 	
@@ -282,7 +284,7 @@
 		<if test="proState != null and proState != ''">
 			   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
-		<!-- ORDER BY CCAI.AUC_REG_NO ASC -->
+		  ORDER BY RNUM ASC 
 	</select>
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매상세입찰정보) -->
