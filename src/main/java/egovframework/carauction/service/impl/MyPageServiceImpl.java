@@ -28,6 +28,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.comboBoxList(myPageVO));
 		
+		logger.info("map ▶▶▶▶▶▶ {}", map);
+		
 		return map;
 	}
 
@@ -37,6 +39,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.myPageList(myPageVO));
 		
+		logger.info("map ▶▶▶▶▶▶ {}", map);
+		
 		return map;
 	}
 	
@@ -45,6 +49,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	public Map<String, Object> mySaleCarAuctionRegList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.mySaleCarAuctionRegList(myPageVO));
+		
+		logger.info("map ▶▶▶▶▶▶ {}", map);
 		
 		return map;
 	}
@@ -58,10 +64,14 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	
 		int cnt = myPageDAO.faileBidUpdate(myPageVO);
 		
+		logger.info("cnt ▶▶▶▶▶▶ {}", cnt);
+		
 		if(cnt > 0) {
 			myPageDAO.failecaCarAucInfUpdate(myPageVO);  
 		}
-
+		
+		logger.info("map ▶▶▶▶▶▶ {}", map);
+		
 		return map;
 		
 		
@@ -71,6 +81,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	public Map<String, Object> mySaleCarBidList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.mySaleCarBidList(myPageVO));
+
+		logger.info("map ▶▶▶▶▶▶ {}", map);
 		
 		return map;
 	}
@@ -80,6 +92,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	public Map<String, Object> statusComboBoxList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.statusComboBoxList(myPageVO));
+
+		logger.info("map ▶▶▶▶▶▶ {}", map);
 		
 		return map;
 	}
@@ -89,6 +103,8 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	public Map<String, Object> myBidList(MyPageVO myPageVO) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultList", myPageDAO.myBidList(myPageVO));
+
+		logger.info("map ▶▶▶▶▶▶ {}", map);
 		
 		return map;
 	}
@@ -109,11 +125,12 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		myPageVO.setAucProgYn(aucProgYn);
 		
 		int cnt = myPageDAO.caCarAucDtlBidInfUpdate(myPageVO); 
+
+		logger.info("cnt ▶▶▶▶▶▶ {}", cnt);
 		
 		if(cnt > 0) {
 			myPageDAO.caCarAucInfUpdate(myPageVO);  
-		}
-		
+		}		
 	}
 
 	//내 판매차량 입찰 상세 현황 - 저장(선택되지 않은 값)

@@ -50,6 +50,8 @@ public class MySaleCarBidInfController {
 		
 		Map<String, Object> resultMap = myPageService.comboBoxList(myPageVO);
 		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
@@ -75,6 +77,8 @@ public class MySaleCarBidInfController {
 		myPageVO.setEntryIdno(loginVO.getId());
 		
 		Map<String, Object> resultMap = myPageService.myPageList(myPageVO);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
 	
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

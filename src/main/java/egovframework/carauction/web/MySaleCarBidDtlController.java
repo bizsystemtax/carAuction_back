@@ -63,6 +63,8 @@ public class MySaleCarBidDtlController {
 		
 		Map<String, Object> resultMap = myPageService.mySaleCarAuctionRegList(myPageVO);
 		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
@@ -91,6 +93,8 @@ public class MySaleCarBidDtlController {
 
 		Map<String, Object> resultMap = myPageService.faileBidUpdate(myPageVO);
 		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -111,6 +115,8 @@ public class MySaleCarBidDtlController {
 		
 		Map<String, Object> resultMap = myPageService.mySaleCarBidList(myPageVO);
 		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
@@ -126,6 +132,8 @@ public class MySaleCarBidDtlController {
 		ResultVO resultVO = new ResultVO();
 		
 		Map<String, Object> resultMap = myPageService.statusComboBoxList(myPageVO);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

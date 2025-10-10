@@ -50,6 +50,8 @@ public class MyBidInfoController {
 		
 		Map<String, Object> resultMap = myPageService.comboBoxList(myPageVO);
 		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
@@ -76,6 +78,8 @@ public class MyBidInfoController {
 		myPageVO.setProState(proState); //진행상태
 		
 		Map<String, Object> resultMap = myPageService.myBidList(myPageVO);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
