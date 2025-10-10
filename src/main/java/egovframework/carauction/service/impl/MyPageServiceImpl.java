@@ -135,7 +135,7 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	@Override
 	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) throws Exception {
 		
-		myPageDAO.myBidInfoUnSelectedUpdate(myPageVO);
+		myPageDAO.myBidInfoUnSelectedUpdate(myPageVO);   
 		
 	}
 }
