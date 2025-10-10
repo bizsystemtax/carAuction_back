@@ -148,7 +148,6 @@ public class MySaleCarBidDtlController {
 			MyPageVO myPageVO,
 			BindingResult bindingResult,
 			HttpServletRequest request,
-			//@RequestBody Map<String, String> requestParams, 
 			@RequestBody MyPageVO requestBody
 			) throws Exception {
 		
@@ -188,7 +187,6 @@ public class MySaleCarBidDtlController {
 			
 			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
 			bidVO.setAucRegSeq(item.getAucRegSeq()); 		//경매등록순번
-			//bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
 			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
 			bidVO.setPomPayYn(item.getPomPayYn());  			//대금납부완납여부
@@ -198,7 +196,6 @@ public class MySaleCarBidDtlController {
 			myPageService.myBidInfoUnSelectedUpdate(bidVO);
 		}
 		
-		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		

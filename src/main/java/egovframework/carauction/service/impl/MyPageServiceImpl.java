@@ -95,16 +95,6 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		return map;
 	}
 
-	//내 판매차량 입찰 상세 현황 - 저장
-//	@Override
-//	public Map<String, Object> myBidInfoUpdate(MyPageVO myPageVO) throws Exception {
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		
-//		
-//
-//		return map;
-//	}
-
 	//내 판매차량 입찰 상세 현황 - 저장(선택한 값)
 	@Override
 	public void myBidInfoSelectedUpdate(MyPageVO myPageVO) throws Exception {

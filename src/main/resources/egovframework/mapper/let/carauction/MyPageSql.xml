@@ -110,7 +110,6 @@
 		     , CONCAT(CCAI.BID_CNT, '건') AS BID_CNT         /*입찰건수*/
 		     , DATE_FORMAT(CCAI.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE /*등록일*/
 		     , (SELECT CODE_NO FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_CD /*진행상태코드*/
-		     /*, (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_NM 진행상태명*/
 		     , CASE WHEN CCAI.AUC_PROG_STAT_CD = '0010' THEN '경매진행중'
 				    WHEN CCAI.AUC_PROG_STAT_CD = '0020' THEN '낙찰'
 				    WHEN CCAI.AUC_PROG_STAT_CD = '0030' THEN '낙찰금액완납'
@@ -286,7 +285,7 @@
 		<!-- ORDER BY CCAI.AUC_REG_NO ASC -->
 	</select>
 	
-	<!-- 내 판매차량 입찰 상세 현황 - 저장 -->
+	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매상세입찰정보) -->
 	<update id="caCarAucDtlBidInfUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_DTL_BID_INF
 		   SET AUC_PROG_STAT_CD = #{aucProgStatCd} /*경매진행상태코드*/
@@ -300,6 +299,7 @@
 		   AND AUC_REG_SEQ = #{aucRegSeq} /*경매등록순번*/
 	</update>
 	
+	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매정보관리) -->
 	<update id="caCarAucInfUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_INF
 		   SET AUC_PROG_STAT_CD = #{aucProgStatCd} /*경매진행상태코드*/
@@ -312,8 +312,7 @@
  		 WHERE AUC_REG_NO = #{aucRegNo} /*경매등록번호*/
 	</update>
 	
-	
-	<!-- 유찰 -->
+	<!-- 내 판매차량 입찰 상세 현황 - 선택되지 않은 행들 유찰 -->
 	<update id="myBidInfoUnSelectedUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_DTL_BID_INF
 		   SET AUC_PROG_STAT_CD = '0050'  /*경매진행상태코드*/

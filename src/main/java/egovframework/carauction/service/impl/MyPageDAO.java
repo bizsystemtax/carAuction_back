@@ -50,15 +50,17 @@ public class MyPageDAO extends EgovAbstractMapper {
 		return selectList("myPageDAO.myBidList", myPageVO);
 	}
 
-	//내 판매차량 입찰 상세 현황 - 저장
+	//내 판매차량 입찰 상세 현황 - 저장(차량경매상세입찰정보)
 	public int caCarAucDtlBidInfUpdate(MyPageVO myPageVO) throws Exception {
 		return update("myPageDAO.caCarAucDtlBidInfUpdate", myPageVO);
 	}
 
+	//내 판매차량 입찰 상세 현황 - 저장(차량경매정보관리)
 	public void caCarAucInfUpdate(MyPageVO myPageVO) throws Exception {
 		update("myPageDAO.caCarAucInfUpdate", myPageVO);
 	}
 
+	//내 판매차량 입찰 상세 현황 - 선택되지 않은 행들 유찰
 	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) {
 		update("myPageDAO.myBidInfoUnSelectedUpdate", myPageVO);
 		
