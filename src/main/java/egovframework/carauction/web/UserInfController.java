@@ -200,7 +200,7 @@ public class UserInfController {
 		 */
 		// 임시 비밀번호 발급
 		String tempPw = PasswordUtil.makeTempPassword();
-//		String tempPw = "bizsystem#99"; // 테스트용
+//		String tempPw = "test"; // 테스트용
 		
 		// 임시 비밀번호 암호화
 		String enPw = EgovFileScrty.encryptPassword(tempPw, inUserId);
