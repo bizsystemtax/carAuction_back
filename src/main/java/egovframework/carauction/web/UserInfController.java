@@ -1,12 +1,16 @@
 package egovframework.carauction.web;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,10 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.carauction.UserInfVO;
 import egovframework.carauction.service.UserInfService;
 import egovframework.com.cmm.DateUtil;
+import egovframework.com.cmm.LoginVO;
+import egovframework.com.cmm.PasswordUtil;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.let.utl.sim.service.EgovFileScrty;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -138,6 +146,82 @@ public class UserInfController {
 		 * 회원 수정 모달 정보 조회
 		 */
 		Map<String, Object> resultMap = userInfService.userInfUpdateModalDataSelect(userInfVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		return resultVO;
+	}
+
+	/**
+	 * 비밀번호 초기화
+	 * @param  requestParams - inUserId
+	 * @return resultVO - tempPw
+	 * @throws BizException
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/pwInit")
+	public ResultVO userInfPwInitUpdate(
+			@RequestBody Map<String, String> requestParams,
+			HttpServletRequest request,
+			@Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception{
+		
+		UserInfVO userInfVO = new UserInfVO();
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		/**
+		 * 사용자 로그인(세션) 확인
+		 */
+		String userId = user.getId();
+		String userIp = user.getIp();
+		
+		if(!StringUtils.defaultString(userId).isEmpty()) {
+			userInfVO.setSessionId(userId);
+			userInfVO.setSessionIp(userIp);
+		} else {
+			throw new BizException(ErrorCode.ERR300, "");
+		}
+		
+		/**
+		 * 필수 파라미터 확인
+		 */
+		String inUserId = requestParams.get("inUserId"); // 사용자ID
+		
+		if(inUserId == null || "".equals(inUserId)) {
+			throw new BizException(ErrorCode.ERR001, "");
+		}
+		
+		/**
+		 * 임시 비밀번호 생성
+		 */
+		// 임시 비밀번호 발급
+		String tempPw = PasswordUtil.makeTempPassword();
+//		String tempPw = "bizsystem#99"; // 테스트용
+		
+		// 임시 비밀번호 암호화
+		String enPw = EgovFileScrty.encryptPassword(tempPw, inUserId);
+		
+		/**
+		 * VO input 매핑
+		 */
+		userInfVO.setInUserId(inUserId);
+		userInfVO.setInUserPw(enPw);
+		
+		/**
+		 * 임시 비밀번호로 USER_PW 변경
+		 */
+		int resultCnt = userInfService.userInfPwInitUpdate(userInfVO);
+		
+		// 변경된 데이터가 없으면 사용자ID 값이 잘못됐거나 회원탈퇴 했을 수 있음.
+		if(resultCnt <= 0) {
+			throw new BizException(ErrorCode.ERR001, "");
+		}
+		
+		resultMap.put("tempPw", tempPw);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

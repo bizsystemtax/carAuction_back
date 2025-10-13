@@ -11,4 +11,7 @@ public interface UserInfService {
 
 	// 회원 수정 모달 정보 조회
 	public Map<String, Object> userInfUpdateModalDataSelect(UserInfVO userInfVO) throws Exception;
+
+	// 비밀번호 초기화
+	public int userInfPwInitUpdate(UserInfVO userInfVO) throws Exception;
 }

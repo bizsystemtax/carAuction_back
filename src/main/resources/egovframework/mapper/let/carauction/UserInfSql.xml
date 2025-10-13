@@ -9,6 +9,7 @@
 		<result property="inUserGbCd" column="IN_USER_GB_CD"/>
 		<result property="inUserNm" column="IN_USER_NM"/>
 		<result property="inUserId" column="IN_USER_ID"/>
+		<result property="inUserPw" column="IN_USER_PW"/>
 
 		<!-- OUT -->
 		<result property="num" column="NUM"/>
@@ -125,9 +126,20 @@
 		     , A.REFD_ACC AS REFD_ACC /* 환불계좌번호 */
 		     , A.REFD_ACC_AHDR_NM AS REFD_ACC_AHDR_NM /* 환불계좌예금주명 */
 		     , A.USER_ID AS USER_ID /* 사용자ID */
-		     , A.USER_PW AS USER_PW /* 사용자비밀번호 */
+		     /*, A.USER_PW AS USER_PW*/ /* 사용자비밀번호 */
 		from   CA_USER_INF A /* 회원관리 */
 		where  A.USER_ID = #{inUserId}
 		]]>
 	</select>
+	
+	<!-- Update : 사용자 비밀번호 초기화 -->
+	<update id="userInfPwInitUpdate" parameterType="egovframework.carauction.UserInfVO">
+		<![CDATA[
+		UPDATE	CA_USER_INF /* 회원관리 */
+		SET		USER_PW = #{inUserPw}
+			  , UPDAT_DATE = CURRENT_TIMESTAMP /* 수정일시 */
+			  , UPDAT_IDNO = #{sessionId} /* 수정자ID */
+		WHERE	USER_ID = #{inUserId}
+		]]>
+	</update>
 </mapper>

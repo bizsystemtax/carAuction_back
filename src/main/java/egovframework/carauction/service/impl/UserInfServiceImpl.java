@@ -33,4 +33,10 @@ public class UserInfServiceImpl extends EgovAbstractServiceImpl implements UserI
 		
 		return map;
 	}
+
+	// 비밀번호 초기화
+	@Override
+	public int userInfPwInitUpdate(UserInfVO userInfVO) throws Exception {
+		return UserInfDAO.userInfPwInitUpdate(userInfVO);
+	}
 }

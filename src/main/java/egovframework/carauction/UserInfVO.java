@@ -18,6 +18,7 @@ public class UserInfVO implements Serializable {
 	private String inUserGbCd = "";		// 사용자구분코드
 	private String inUserNm = "";		// 사용자명
 	private String inUserId = "";		// 사용자ID
+	private String inUserPw = "";		// 사용자PW
 
 	// OUT
 	private String num = "";			// 순번
@@ -25,8 +26,14 @@ public class UserInfVO implements Serializable {
 	private String userNm = "";			// 사용자명
 	private String contNm = "";			// 담당자명
 	private String contCellno = "";		// 담당자 휴대전화번호
+	private String contEmailAddr = "";	// 담당자 휴대전화번호
 	private String compAddr = "";		// 회사주소
 	private String compTelno = "";		// 회사전화번호
+	private String compFaxno = "";		// 회사팩스번호
+	private String compHmpgAddr = "";	// 회사홈페이지주소
+	private String refdBank = "";		// 환불은행
+	private String refdAcc = "";		// 환불계좌번호
+	private String refdAccAhdrNm = "";	// 환불계좌예금주명
 	private String aucEntryCnt = "";	// 경매등록건수
 	private String aucBidProgCnt = "";	// 경매입찰진행건수
 	private String aucSbidCnt = "";		// 경매낙찰건수
@@ -34,6 +41,7 @@ public class UserInfVO implements Serializable {
 	private String bidSbidCnt = "";		// 입찰낙찰건수
 	private String regDate = "";		// 가입일자
 	private String userId = "";			// 사용자ID
+	private String userPw = "";			// 사용자PW
 
 	// 필수
 	private String sessionId = "";	// 세션ID

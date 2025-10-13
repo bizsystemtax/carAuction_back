@@ -19,4 +19,10 @@ public class UserInfDAO extends EgovAbstractMapper {
 		// 회원 수정 모달 정보 조회 XML 호출
 		return selectList("UserInfDAO.userInfUpdateModalDataSelect", userInfVO);
 	}
+
+	// 비밀번호 초기화
+	public int userInfPwInitUpdate(UserInfVO userInfVO) {
+		// 비밀번호 초기화 XML 호출
+		return update("UserInfDAO.userInfPwInitUpdate", userInfVO);
+	}
 }
