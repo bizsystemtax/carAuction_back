@@ -19,6 +19,7 @@ public class QuestAnsrVO implements Serializable {
 	private String ansrCtnt = "";		// 답변내용
 	private String ansrEntryIdno  = ""; // 답변등록자ID
 	private String ansrEntryDate  = ""; // 답변등록일시
+	private String useYn = "";			// 사용여부
 	private String entryDate = "";		// 등록일시
 	private String entryIdno = "";		// 등록자ID
 	private String updatDate = "";		// 수정일시

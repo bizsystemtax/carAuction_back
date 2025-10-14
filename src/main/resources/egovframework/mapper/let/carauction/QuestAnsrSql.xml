@@ -10,6 +10,7 @@
 		<result property="ansrCtnt" 		column = "ANSR_CTNT"/>
 		<result property="ansrEntryIdno" 	column = "ANSR_ENTRY_IDNO"/>
 		<result property="ansrEntryDate" 	column = "ANSR_ENTRY_DATE"/>
+		<result property = "useYN" 		column = "USE_YN" />
 		<result property = "entryDate"		column = "ENTRY_DATE" />
 		<result property = "entryIdno"		column = "ENTRY_IDNO" />
 		<result property = "updatDate"		column = "UPDAT_DATE" />
@@ -33,6 +34,7 @@
 				, UPDAT_DATE
 				, UPDAT_IDNO
 		FROM CA_QUEST_ANSR
+		WHERE USE_YN = 'Y'
 		 <if test="startDt != null and startDt != ''">
 			 AND DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
 		 </if> 
@@ -82,6 +84,7 @@
 			, ANSR_CTNT
 			, ANSR_ENTRY_IDNO
 			, ANSR_ENTRY_DATE
+			, USE_YN
 			, ENTRY_DATE
 			, ENTRY_IDNO
 			, UPDAT_DATE
@@ -90,13 +93,14 @@
 		VALUES
 		(
 			#{questId}
-			, #{quesTit}
+			, #{questTit}
 			, #{questCtnt}
 			, 0
 			, 'N'
 			, ''
 			, ''
 			, ''
+			, 'Y'
 			, NOW()
 			, #{entryIdno}
 			, NOW()
@@ -107,7 +111,7 @@
 	<!-- Q&A 수정 -->
 	<update id="updquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
 		UPDATE CA_QUEST_ANSR
-		   SET QUEST_TIT = #{quesTit}
+		   SET QUEST_TIT = #{questTit}
 			, QUEST_CTNT = #{questCtnt}
 			, UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
@@ -115,7 +119,7 @@
 	</update>
 	
 	
-	<!-- Q&A 삭제 
+	<!-- Q&A 삭제 -->
 	<update id="delquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
 		UPDATE CA_QUEST_ANSR
 		   SET USE_YN = 'N'	/*사용여부*/
@@ -124,6 +128,6 @@
 		 WHERE QUEST_ID = #{questId}	/*질문ID*/
 		   AND USE_YN = 'Y'
 	</update>
-	-->
+
 	
 </mapper>

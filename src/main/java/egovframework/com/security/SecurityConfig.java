@@ -78,6 +78,8 @@ public class SecurityConfig {
         "/file/upload",
         "/fileDelete",
         
+        "/questAnsr/**",		//Q&A
+        
         "/userInf/list", 			// 회원관리 - 목록 조회
         "/userInf/updateModalData", // 회원관리 - 수정 모달 데이터 조회
         "/userInf/pwInit", 			// 회원관리 - 비밀번호 초기화
