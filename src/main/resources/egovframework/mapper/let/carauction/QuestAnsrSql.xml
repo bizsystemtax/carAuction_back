@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="questAnsrDAO">
+	<resultMap id="QuestAnsrVO" type="egovframework.carauction.QuestAnsrVO">
+		<result property = "questId"		column = "QUEST_ID" />
+		<result property = "questTit"		column = "QUEST_TIT" />
+		<result property = "questCtnt"		column = "QUEST_CTNT" />
+		<result property = "viewCnt"		column = "VIEW_CNT" />
+		<result property = "ansrYn" 		column = "ANSR_YN" />
+		<result property="ansrCtnt" 		column = "ANSR_CTNT"/>
+		<result property="ansrEntryIdno" 	column = "ANSR_ENTRY_IDNO"/>
+		<result property="ansrEntryDate" 	column = "ANSR_ENTRY_DATE"/>
+		<result property = "useYN" 		column = "USE_YN" />
+		<result property = "entryDate"		column = "ENTRY_DATE" />
+		<result property = "entryIdno"		column = "ENTRY_IDNO" />
+		<result property = "updatDate"		column = "UPDAT_DATE" />
+		<result property = "updatIdno"		column = "UPDAT_IDNO" />
+		<result property = "startDt"		column = "START_DT" />
+		<result property = "endDt"			column = "END_DT" />
+	</resultMap>
+	
+	<!-- Q&A - Q&A 목록 조회 -->
+	<select id="questAnsrList" parameterType="egovframework.carauction.QuestAnsrVO" resultMap="QuestAnsrVO">
+		SELECT QUEST_ID
+				, QUEST_TIT
+				, QUEST_CTNT
+				, VIEW_CNT
+				, ANSR_YN
+				, ANSR_CTNT
+				, ANSR_ENTRY_IDNO
+				, ANSR_ENTRY_DATE
+				, ENTRY_DATE
+				, ENTRY_IDNO
+				, UPDAT_DATE
+				, UPDAT_IDNO
+		FROM CA_QUEST_ANSR
+		WHERE USE_YN = 'Y'
+		 <if test="startDt != null and startDt != ''">
+			 AND DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
+		 </if> 
+		 <if test="questTit != null and questTit != ''">
+		   AND QUEST_TIT LIKE CONCAT('%', #{questTit},'%')
+		 </if>
+		 ORDER BY ENTRY_DATE
+	</select>
+	
+	<!-- Q&A 클릭 시 조회수 + 1 -->
+	<update id="updateViewCnt" parameterType="egovframework.carauction.QuestAnsrVO">
+		UPDATE CA_QUEST_ANSR
+		   SET VIEW_CNT = VIEW_CNT + 1	/*조회수*/
+		 WHERE QUEST_ID = #{questId}	/*질문 ID*/	
+	</update>
+	
+	<!-- Q&A 상세조회 -->
+	<select id="getquestAnsrDetail" parameterType="egovframework.carauction.QuestAnsrVO" resultMap="QuestAnsrVO">
+		SELECT QUEST_ID
+				, QUEST_TIT
+				, QUEST_CTNT
+				, VIEW_CNT
+				, ANSR_YN
+				, ANSR_CTNT
+				, ANSR_ENTRY_IDNO
+				, ANSR_ENTRY_DATE
+				, ENTRY_DATE
+				, ENTRY_IDNO
+				, UPDAT_DATE
+				, UPDAT_IDNO
+				FROM CA_QUEST_ANSR
+	 	 WHERE QUEST_ID = #{questId}	/*질문 ID*/
+	</select>
+	
+	<!-- Q&A 등록 -->
+	<insert id="insQuestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
+		<selectKey keyProperty="questId" resultType="java.lang.Integer" order="BEFORE">
+			SELECT IFNULL(MAX(QUEST_ID), 0) + 1 AS QUEST_ID FROM CA_QUEST_ANSR
+		</selectKey>
+		INSERT INTO CA_QUEST_ANSR
+		(
+			QUEST_ID
+			, QUEST_TIT
+			, QUEST_CTNT
+			, VIEW_CNT
+			, ANSR_YN
+			, ANSR_CTNT
+			, ANSR_ENTRY_IDNO
+			, ANSR_ENTRY_DATE
+			, USE_YN
+			, ENTRY_DATE
+			, ENTRY_IDNO
+			, UPDAT_DATE
+			, UPDAT_IDNO
+		)
+		VALUES
+		(
+			#{questId}
+			, #{questTit}
+			, #{questCtnt}
+			, 0
+			, 'N'
+			, ''
+			, ''
+			, ''
+			, 'Y'
+			, NOW()
+			, #{entryIdno}
+			, NOW()
+			, #{updatIdno}
+		)
+	</insert>
+	
+	<!-- Q&A 수정 -->
+	<update id="updquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
+		UPDATE CA_QUEST_ANSR
+		   SET QUEST_TIT = #{questTit}
+			, QUEST_CTNT = #{questCtnt}
+			, UPDAT_DATE = NOW()
+			, UPDAT_IDNO = #{updatIdno}
+		WHERE QUEST_ID = #{questId}
+	</update>
+	
+	
+	<!-- Q&A 삭제 -->
+	<update id="delquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
+		UPDATE CA_QUEST_ANSR
+		   SET USE_YN = 'N'	/*사용여부*/
+		    , UPDAT_DATE = NOW()
+			, UPDAT_IDNO = #{updatIdno}
+		 WHERE QUEST_ID = #{questId}	/*질문ID*/
+		   AND USE_YN = 'Y'
+	</update>
+
+	
+</mapper>
