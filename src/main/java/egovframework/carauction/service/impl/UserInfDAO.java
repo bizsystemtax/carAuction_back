@@ -25,4 +25,10 @@ public class UserInfDAO extends EgovAbstractMapper {
 		// 비밀번호 초기화 XML 호출
 		return update("UserInfDAO.userInfPwInitUpdate", userInfVO);
 	}
+	
+	// 회원관리 회원 현황 조회
+	public List<UserInfVO> userUseCntInfList(UserInfVO userInfVO) {
+		// 회원관리 회원 현황 조회 XML 호출
+		return selectList("UserInfDAO.userUseCntInfList", userInfVO);
+	}
 }

@@ -43,6 +43,26 @@ public class UserInfVO implements Serializable {
 	private String userId = "";			// 사용자ID
 	private String userPw = "";			// 사용자PW
 
+	// 회원관리 회원건수 현황 조회조건
+	private String inRegStartDate = "";	//등록일(시작)
+	private String inRegEndDate = "";	//등록일(종료)
+	private String inSearchCd = "";		//조회구분코드
+	
+	// 회원관리 회원건수 현황 조회결과
+	private String carListNo = "";		// 순번
+	private String carNo = "";			// 차량번호
+	private String carNm = "";			// 차량명
+	private String carOption = "";		// 옵션내용
+	private String carYear = "";		// 연식
+	private String carOil = "";			// 연료
+	private String mileage = "";		// 주행거리
+	private String gear = "";			// 변속기
+	private String estimatedCost = "";	// 예정가
+	private String bidCnt = "";			// 입찰건수
+	private String bidRegDate = "";		// 입찰등록일
+	private String bidClosDate = "";	// 입찰마감일
+	private String regMemNm = "";		// 경매(공매)등록 회원사명
+	
 	// 필수
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP

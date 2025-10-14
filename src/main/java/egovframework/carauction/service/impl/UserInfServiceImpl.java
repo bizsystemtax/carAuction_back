@@ -39,4 +39,13 @@ public class UserInfServiceImpl extends EgovAbstractServiceImpl implements UserI
 	public int userInfPwInitUpdate(UserInfVO userInfVO) throws Exception {
 		return UserInfDAO.userInfPwInitUpdate(userInfVO);
 	}
+	
+	// 회원관리 회원 현황 조회
+	@Override
+	public Map<String, Object> userUseCntInfList(UserInfVO userInfVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", UserInfDAO.userUseCntInfList(userInfVO));
+		
+		return map;
+	}
 }
