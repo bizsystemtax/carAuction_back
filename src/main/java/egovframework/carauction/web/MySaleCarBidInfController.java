@@ -67,8 +67,8 @@ public class MySaleCarBidInfController {
 		
 		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  
 		
-		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
-		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
+		String regStrDt = requestParams.get("fromDt").replaceAll("-", "") + "000000";	//등록시작일자
+		String regEndDt = requestParams.get("toDt").replaceAll("-", "") + "235959";	//등록종료일자
 		String proState = requestParams.get("codeNo");					//진행상태
 			
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
