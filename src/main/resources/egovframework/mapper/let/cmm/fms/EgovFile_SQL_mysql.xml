@@ -56,22 +56,31 @@
 	
 	<insert id="FileManageDAO.insertFileDetail" parameterType="FileVO">
 		
-			INSERT INTO LETTNFILEDETAIL
+			<!-- INSERT INTO LETTNFILEDETAIL
 			( ATCH_FILE_ID, FILE_SN, FILE_STRE_COURS, STRE_FILE_NM, 
 			  ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_CN )
 			VALUES
 			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
-			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn} )			
+			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn} )			 -->
+			  INSERT INTO CA_ATT_FILE
+			  (ATT_FILE_ID, TARGET_TYPE, TARGET_ID, ATT_FILE_NM, ATT_FILE_SIZE,
+			  ATT_FILE_PATH, ATT_FILE_TYPE, ENTRY_DATE, ENTRY_IDNO, UPDAT_DATE, UPDAT_IDNO)
+			  VALUES
+			  (#{attFileId}, #{targetType}, #{targetId}, #{attFileNm}, #{attFileSize},
+			  #{attFilePath}, #{attFileType}, now(), #{entryIdno}, now(), #{entryIdno})
 		
 	</insert>	
 	
 	<delete id="FileManageDAO.deleteFileDetail" parameterType="FileVO">
 		
-			DELETE FROM LETTNFILEDETAIL
+			<!-- DELETE FROM LETTNFILEDETAIL
 			WHERE
 				ATCH_FILE_ID = #{atchFileId}
 			AND	
-				FILE_SN = #{fileSn}			
+				FILE_SN = #{fileSn}		 -->	
+			DELETE FROM CA_ATT_FILE
+			WHERE
+				ATT_FILE_ID = #{atchFileId}
 			
 	</delete>
  	

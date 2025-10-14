@@ -16,6 +16,7 @@ public class NoticeVO implements Serializable {
 	private String noticeCtnt = "";		// 공지사항내용
 	private int viewCnt = 0;			// 조회수
 	private String useYn = "";			// 사용여부
+	private String attFileYn = "";		// 첨부파일여부
 	private String entryDate = "";		// 등록일시
 	private String entryIdno = "";		// 등록자ID
 	private String updatDate = "";		// 수정일시

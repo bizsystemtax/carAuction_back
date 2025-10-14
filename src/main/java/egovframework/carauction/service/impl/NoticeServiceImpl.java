@@ -35,14 +35,18 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		// 상세조회시 조회수 + 1
 		int updCnt = noticeDAO.updateViewCnt(noticeVO);
 		
-		if(updCnt < 1) {
-			
-		}
-		
 		Map<String, Object> map = new HashMap<String, Object>();
-		
-//		map = noticeDAO.getNoticeDetail(noticeVO);
+
+		// 상세조회 
 		map.put("resultData", noticeDAO.getNoticeDetail(noticeVO));
+		
+		// 첨부파일 목록 조회
+		AttachFileVO attachFileVO = new AttachFileVO();
+		
+		attachFileVO.setTargetId(noticeVO.getNoticeId());
+	    List<AttachFileVO> fileList = noticeDAO.getNotiFileList(attachFileVO); 
+
+		map.put("resultFiles", fileList);
 		
 		return map;
 	}

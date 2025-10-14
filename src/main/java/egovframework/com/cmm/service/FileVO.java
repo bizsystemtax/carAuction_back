@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *    수정일       수정자         수정내용
  *    -------        -------     -------------------
  *    2009. 3. 25.     이삼섭
+ *    2025.10.13.	고은별
  *
  * @author 공통 서비스 개발팀 이삼섭
  * @since 2009. 3. 25.
@@ -59,6 +60,37 @@ public class FileVO implements Serializable {
 	
 	@Schema(description = "저장파일명")
     public String streFileNm = "";
+	
+	
+	// 고은별 추가
+	@Schema(description = "첨부파일ID")
+	public int attFileId = 0;
+	
+	@Schema(description = "대상타입")
+	public String targetType = "";
+	
+	@Schema(description = "대상ID")
+	public int targetId = 0;
+	
+	@Schema(description = "첨부파일명")
+	public String attFileNm = "";
+	
+	@Schema(description = "첨부파일크기")
+	public int attFileSize = 0;
+	
+	@Schema(description = "첨부파일경로")
+	public String attFilePath = "";
+	
+	@Schema(description = "첨부파일타입")
+	public String attFileType = "";
+	
+	@Schema(description = "등록자ID")
+	public String entryIdno = "";
+	
+	@Schema(description = "수정자ID")
+	public String updatIdno = "";
+	
+	
 
     /**
      * toString 메소드를 대치한다.

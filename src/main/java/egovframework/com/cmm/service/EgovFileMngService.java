@@ -67,7 +67,8 @@ public interface EgovFileMngService {
      * @param fvo
      * @throws Exception
      */
-    public void deleteFileInf(FileVO fvo) throws Exception;
+//    public void deleteFileInf(FileVO fvo) throws Exception;
+    public int deleteFileInf(FileVO fvo) throws Exception;
 
     /**
      * 파일에 대한 상세정보를 조회한다.

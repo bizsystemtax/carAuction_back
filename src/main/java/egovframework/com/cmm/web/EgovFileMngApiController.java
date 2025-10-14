@@ -62,22 +62,31 @@ public class EgovFileMngApiController {
 			tags = {"EgovFileMngApiController"}
 	)
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "성공")
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "500", description = "실패")
 	})
-    @PostMapping(value ="/file")
+    @PostMapping(value ="/fileDelete")
     public ResultVO deleteFileInf(HttpServletRequest request, @RequestBody FileVO fileVO) throws Exception {
     	ResultVO resultVO = new ResultVO();
     	
     	// 암호화된 atchFileId 를 복호화 (2022.12.06 추가) - 파일아이디가 유추 불가능하도록 조치
+//    	String atchFileId = fileVO.getAtchFileId().replaceAll(" ", "+");
+//    	byte[] decodedBytes = Base64.getDecoder().decode(atchFileId);
+//    	String decodedFileId = new String(cryptoService.decrypt(decodedBytes,EgovFileDownloadController.ALGORITM_KEY));
     	String atchFileId = fileVO.getAtchFileId().replaceAll(" ", "+");
     	byte[] decodedBytes = Base64.getDecoder().decode(atchFileId);
     	String decodedFileId = new String(cryptoService.decrypt(decodedBytes,EgovFileDownloadController.ALGORITM_KEY));
     			
-    	fileVO.setAtchFileId(decodedFileId);
+    	fileVO.setAtchFileId(fileVO.getAtchFileId());
 
 		//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
-		fileService.deleteFileInf(fileVO);
+		int result = fileService.deleteFileInf(fileVO);
+		
+		if(result < 1) {
+			resultVO.setResultCode(500);
+			resultVO.setResultMessage("삭제 실패");
+		} 
 
 		resultVO.setResultCode(200);
 		resultVO.setResultMessage("삭제 성공");

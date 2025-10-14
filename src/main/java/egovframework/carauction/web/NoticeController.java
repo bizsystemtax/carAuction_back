@@ -1,5 +1,6 @@
 package egovframework.carauction.web;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +18,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.NoticeService;
+import egovframework.com.cmm.FileUploadService;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.let.utl.fcc.service.EgovFormBasedFileVo;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,6 +43,9 @@ public class NoticeController {
 	
 	@Resource(name = "noticeService")
 	private NoticeService noticeService;
+	
+	@Resource(name = "fileUploadService")
+	private FileUploadService fileUploadService;
 	
 	@Resource(name = "EgovFileMngService")
 	private EgovFileMngService fileService;
@@ -93,12 +102,12 @@ public class NoticeController {
 		
 		resultMap = noticeService.getNoticeDetail(noticeVO);
 		
-		// 첨부파일
-		AttachFileVO fileVO = new AttachFileVO();
-		fileVO.setTargetId(noticeId);
-		List<AttachFileVO> resultFiles = noticeService.getNotiFileList(fileVO);
-		
-		resultMap.put("resultFiles", resultFiles);
+//		// 첨부파일 조회
+//		AttachFileVO fileVO = new AttachFileVO();
+//		fileVO.setTargetId(noticeId);
+//		List<AttachFileVO> resultFiles = noticeService.getNotiFileList(fileVO);
+//		
+//		resultMap.put("resultFiles", resultFiles);
 		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
@@ -131,6 +140,9 @@ public class NoticeController {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
 			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
 		}
+		
+		///////////////////////////////////////////// 파일 업로드
+		
 		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

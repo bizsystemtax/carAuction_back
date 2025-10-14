@@ -42,8 +42,6 @@ public class SecurityConfig {
         "/login/**",
         "/auth/login-jwt",
         "/auth/login",
-        "/file",
-        "/file/upload",
         "/ocr/process",
         "/ocr/save",
         "/excel/upload",
@@ -76,6 +74,9 @@ public class SecurityConfig {
         "/carAucSaleReg/**",   //경매차량판매등록
         
         "/notice/**",		// 공지사항
+        "/file",
+        "/file/upload",
+        "/fileDelete",
         
         "/userInf/list", 			// 회원관리 - 목록 조회
         "/userInf/updateModalData", // 회원관리 - 수정 모달 데이터 조회

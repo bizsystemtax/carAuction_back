@@ -7,6 +7,7 @@
 		<result property = "noticeCtnt"		column = "NOTICE_CTNT" />
 		<result property = "viewCnt"		column = "VIEW_CNT" />
 		<result property = "useYn" 			column = "USE_YN" />
+		<result property = "attFileYn" 		column = "ATT_FILE_YN" />
 		<result property = "attFileId" 		column = "ATT_FILE_ID" />
 		<result property = "targetType" 	column = "TARGET_TYPE" />
 		<result property = "attFileNm" 		column = "ATT_FILE_NM" />
@@ -38,6 +39,7 @@
 			 , NOTICE_TIT	/*공지사항제목*/
 			 , VIEW_CNT		/*조회수*/
 			 , DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
+			 , ATT_FILE_YN	/*첨부파일여부*/
 			 , ENTRY_IDNO	/*등록자ID*/
 		  FROM CA_NOTICE
 		 WHERE USE_YN = 'Y'
@@ -59,17 +61,14 @@
 	
 	<!-- 공지사항 상세조회 -->
 	<select id="getNoticeDetail" parameterType="egovframework.carauction.NoticeVO" resultMap="NoticeVO">
-		SELECT CA.NOTICE_ID	/*공지사항ID*/ 
-			 , CA.NOTICE_TIT	/*공지사항제목*/
-			 , CA.NOTICE_CTNT	/*공지사항내용*/
-			 , CA.VIEW_CNT		/*조회수*/
-			 , DATE_FORMAT(CA.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
-			 , CA.ENTRY_IDNO	/*등록자ID*/
-			 , FILE.ATT_FILE_NM /*첨부파일명*/
-		  FROM CA_NOTICE CA
-		  LEFT OUTER JOIN CA_ATT_FILE FILE
-		  ON CA.NOTICE_ID = FILE.TARGET_ID
-	 	 WHERE CA.NOTICE_ID = #{noticeId}	/*공지사항ID*/
+		SELECT NOTICE_ID	/*공지사항ID*/ 
+			 , NOTICE_TIT	/*공지사항제목*/
+			 , NOTICE_CTNT	/*공지사항내용*/
+			 , VIEW_CNT		/*조회수*/
+			 , DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
+			 , ENTRY_IDNO	/*등록자ID*/
+		  FROM CA_NOTICE
+	 	 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/
 	</select>
 	
 	<!-- 공지사항 등록 -->
@@ -128,6 +127,8 @@
 	<select id="getNotiFileList" parameterType="egovframework.carauction.AttachFileVO" resultMap="fileList">
 		SELECT ATT_FILE_ID /*첨부파일ID*/
 			, ATT_FILE_NM	/*첨부파일명*/
+			, ATT_FILE_TYPE	/*첨부파일타입*/
+			, ATT_FILE_SIZE	/*첨부파일크기*/
 		  FROM CA_ATT_FILE
 		 WHERE TARGET_ID = #{targetId}
 	</select>

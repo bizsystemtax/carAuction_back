@@ -103,8 +103,8 @@ public class EgovFileMngServiceImpl extends EgovAbstractServiceImpl implements E
      * @see egovframework.com.cmm.service.EgovFileMngService#deleteFileInf(egovframework.com.cmm.service.FileVO)
      */
     @Override
-	public void deleteFileInf(FileVO fvo) throws Exception {
-	fileMngDAO.deleteFileInf(fvo);
+	public int deleteFileInf(FileVO fvo) throws Exception {
+    	return fileMngDAO.deleteFileInf(fvo);
     }
 
     /**

@@ -97,8 +97,8 @@ public class FileManageDAO extends EgovComAbstractDAO {
 	 * @param fvo
 	 * @throws Exception
 	 */
-	public void deleteFileInf(FileVO fvo) throws Exception {
-		delete("FileManageDAO.deleteFileDetail", fvo);
+	public int deleteFileInf(FileVO fvo) throws Exception {
+		return delete("FileManageDAO.deleteFileDetail", fvo);
 	}
 
 	/**
