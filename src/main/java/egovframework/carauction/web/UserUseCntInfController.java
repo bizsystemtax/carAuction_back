@@ -27,7 +27,7 @@ public class UserUseCntInfController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserUseCntInfController.class);
 	
-	@Resource(name = "UserInfservice")
+	@Resource(name = "UserInfService")
 	private UserInfService userInfService;
 	
 	/**
