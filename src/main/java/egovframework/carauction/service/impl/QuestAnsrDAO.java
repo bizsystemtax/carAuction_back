@@ -16,10 +16,10 @@ public class QuestAnsrDAO extends EgovAbstractMapper {
 		return selectList("questAnsrDAO.questAnsrList", questAnsrVO);
 	}
 	
-//	// Q&A 조회수 + 1
-//	public int updateViewCnt(QuestAnsrVO questAnsrVO) {
-//		return update("questAnsrDAO.updateViewCnt", questAnsrVO);
-//	}
+	// Q&A 조회수 + 1
+	public int updateViewCnt(QuestAnsrVO questAnsrVO) {
+		return update("questAnsrDAO.updateViewCnt", questAnsrVO);
+	}
 	
 	// Q&A 상세조회
 	public QuestAnsrVO getQuestAnsrDetail(QuestAnsrVO questAnsrVO) {
@@ -31,14 +31,14 @@ public class QuestAnsrDAO extends EgovAbstractMapper {
 		return insert("questAnsrDAO.insQuestAnsr", paramMap);
 	}
 	
-//	// Q&A 수정
-//	public int updNotice(Map<String, Object> paramMap) {
-//		return update("noticeDAO.updNotice", paramMap);
-//	}
-//
-//	// Q&A 삭제
-//	public int delNotice(NoticeVO noticeVO) {
-//		return update("noticeDAO.delNotice", noticeVO);
-//	}
+	// Q&A 수정
+	public int updQuestAnsr(Map<String, Object> paramMap) {
+		return update("questAnsrDAO.updQuestAnsr", paramMap);
+	}
+
+	// Q&A 삭제
+	public int delQuestAnsr(QuestAnsrVO questAnsrVO) {
+		return update("questAnsrDAO.delQuestAnsr", questAnsrVO);
+	}
 	
 }

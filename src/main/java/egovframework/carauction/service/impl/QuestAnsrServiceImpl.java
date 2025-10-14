@@ -1,6 +1,7 @@
 package egovframework.carauction.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -31,6 +32,9 @@ public class QuestAnsrServiceImpl  extends EgovAbstractServiceImpl implements Qu
 	@Override
 	public Map<String, Object> getQuestAnsrDetail(QuestAnsrVO questAnsrVO) throws Exception{
 		
+		// 상세조회시 조회수 + 1
+		int updCnt = questAnsrDAO.updateViewCnt(questAnsrVO);
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultData", questAnsrDAO.getQuestAnsrDetail(questAnsrVO));
 		
@@ -45,6 +49,18 @@ public class QuestAnsrServiceImpl  extends EgovAbstractServiceImpl implements Qu
 		return result;
 	}
 	
+	// Q&A 수정
+	@Override
+	public int updQuestAnsr(Map<String, Object> paramMap) throws Exception{
+		int result = questAnsrDAO.updQuestAnsr(paramMap);
+		return result;
+	}
 	
+	// Q&A 삭제
+	@Override
+	public int delQuestAnsr(QuestAnsrVO questAnsrVO) throws Exception{
+		int result = questAnsrDAO.delQuestAnsr(questAnsrVO);
+		return result;
+	}
 	
 }

@@ -34,9 +34,6 @@ public class QuestAnsrController {
 	@Resource(name = "questAnsrService")
 	private QuestAnsrService questAnsrService;
 	
-//	@Resource(name = "EgovFileMngService")
-//	private EgovFileMngService fileService;
-	
 	/**
 	 * Q&A 목록 조회
 	 * @return resultVO
@@ -47,7 +44,7 @@ public class QuestAnsrController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
 	})
 	
-	@PostMapping(value = "/questAnsrlist")
+	@PostMapping(value = "/list")
 	public ResultVO questAnsrlist(@RequestBody Map<String, String> requestParams) throws Exception{
 		
 		QuestAnsrVO questAnsrVO = new QuestAnsrVO();
@@ -89,13 +86,6 @@ public class QuestAnsrController {
 		
 		resultMap = questAnsrService.getQuestAnsrDetail(questAnsrVO);
 		
-//		// 첨부파일
-//		AttachFileVO fileVO = new AttachFileVO();
-//		fileVO.setTargetId(noticeId);
-//		List<AttachFileVO> resultFiles = noticeService.getNotiFileList(fileVO);
-//		
-//		resultMap.put("resultFiles", resultFiles);
-		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -108,7 +98,7 @@ public class QuestAnsrController {
 	 * @return resultVO
 	 * @throws BizException
 	 */
-	@PostMapping(value = "/questInsert")
+	@PostMapping(value = "/insert")
 	public ResultVO insQuestAnsr(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
 		
 		ResultVO resultVO = new ResultVO();
@@ -141,9 +131,9 @@ public class QuestAnsrController {
 	 * @param  requestParams - questId
 	 * @return resultVO
 	 * @throws BizException
-	 
-	@PatchMapping(value = "/questAnsrUpdate/{questId}")
-	public ResultVO updNotice(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
+	 */
+	@PatchMapping(value = "/update/{questId}")
+	public ResultVO updQuestAnsr(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
 		
 		ResultVO resultVO = new ResultVO();
 		
@@ -154,8 +144,7 @@ public class QuestAnsrController {
 		
 		param.put("updatIdno", userId);
 		
-		//int result = noticeService.updNotice(param);
-		int result = 0 ;
+		int result = questAnsrService.updQuestAnsr(param);
 		
 		if(result < 1) {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
@@ -168,35 +157,35 @@ public class QuestAnsrController {
 		
 		return resultVO;
 	} 
-	*/
+	
 	
 	/**
 	 * Q&A 삭제 
 	 * @param  requestParams - questId
 	 * @return resultVO
 	 * @throws BizException
-	
-	@PatchMapping(value = "/delNotice")
-	public ResultVO delNotice(@RequestBody List<QuestAnsrVO> questId, @AuthenticationPrincipal LoginVO user) throws Exception {
+	 */
+	@PatchMapping(value = "/delQuestAnsr")
+	public ResultVO delQuestAnsr(@RequestBody List<QuestAnsrVO> questId, @AuthenticationPrincipal LoginVO user) throws Exception {
 		
 		QuestAnsrVO questAnsrVO = new QuestAnsrVO();
 		ResultVO resultVO = new ResultVO();
 		
 		String userId = user.getId();
 		
-//		for(QuestAnsrVO quest : questId) {
-//			
-//			questAnsrVO.setUpdatIdno(userId);
-//			questAnsrVO.setQuestId(quest.getQuestId());
-//			questAnsrService.delQuestAnsr(questAnsrVO);
-//		
-//		}
+		for(QuestAnsrVO quest : questId) {
+			
+			questAnsrVO.setUpdatIdno(userId);
+			questAnsrVO.setQuestId(quest.getQuestId());
+			questAnsrService.delQuestAnsr(questAnsrVO);
+		
+		}
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		
 		return resultVO;
 	}
-	 */
+	
 	
 }

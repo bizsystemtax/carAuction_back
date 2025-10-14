@@ -52,7 +52,7 @@
 	</update>
 	
 	<!-- Q&A 상세조회 -->
-	<select id="getquestAnsrDetail" parameterType="egovframework.carauction.QuestAnsrVO" resultMap="QuestAnsrVO">
+	<select id="getQuestAnsrDetail" parameterType="egovframework.carauction.QuestAnsrVO" resultMap="QuestAnsrVO">
 		SELECT QUEST_ID
 				, QUEST_TIT
 				, QUEST_CTNT
@@ -109,7 +109,7 @@
 	</insert>
 	
 	<!-- Q&A 수정 -->
-	<update id="updquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
+	<update id="updQuestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
 		UPDATE CA_QUEST_ANSR
 		   SET QUEST_TIT = #{questTit}
 			, QUEST_CTNT = #{questCtnt}
@@ -120,7 +120,7 @@
 	
 	
 	<!-- Q&A 삭제 -->
-	<update id="delquestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
+	<update id="delQuestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">
 		UPDATE CA_QUEST_ANSR
 		   SET USE_YN = 'N'	/*사용여부*/
 		    , UPDAT_DATE = NOW()

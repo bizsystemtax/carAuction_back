@@ -20,10 +20,10 @@ public interface QuestAnsrService {
 	public int insQuestAnsr(Map<String, Object> paramMap) throws Exception;
 //	
 //	// Q&A 수정
-//	public int updNotice(Map<String, Object> paramMap) throws Exception;
-//	
-//	// Q&A 삭제
-//	public int delNotice(QuestAnsrVO QuestAnsrVO) throws Exception;
+	public int updQuestAnsr(Map<String, Object> paramMap) throws Exception;
+	
+	// Q&A 삭제
+	public int delQuestAnsr(QuestAnsrVO questAnsrVO) throws Exception;
 
 	
 }
