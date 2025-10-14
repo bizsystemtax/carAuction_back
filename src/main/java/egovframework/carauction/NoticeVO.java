@@ -26,9 +26,6 @@ public class NoticeVO implements Serializable {
 	private String targetType = "";		// 대상타입
 	private String attFileNm = "";		// 첨부파일명
 	
-	private String startDt = "";		// 시작일자
-	private String endDt = "";			// 종료일자
-	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}

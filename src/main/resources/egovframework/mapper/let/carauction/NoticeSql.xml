@@ -15,8 +15,6 @@
 		<result property = "entryIdno"		column = "ENTRY_IDNO" />
 		<result property = "updatDate"		column = "UPDAT_DATE" />
 		<result property = "updatIdno"		column = "UPDAT_IDNO" />
-		<result property = "startDt"		column = "START_DT" />
-		<result property = "endDt"			column = "END_DT" />
 	</resultMap>
 	
 	<resultMap id="fileList" type="egovframework.carauction.AttachFileVO">
@@ -43,9 +41,6 @@
 			 , ENTRY_IDNO	/*등록자ID*/
 		  FROM CA_NOTICE
 		 WHERE USE_YN = 'Y'
-		 <if test="startDt != null and startDt != ''">
-			 AND DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
-		 </if> 
 		 <if test="noticeTit != null and noticeTit != ''">
 		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
 		 </if>
