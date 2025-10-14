@@ -1,54 +1,120 @@
 package egovframework.carauction.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.service.CarAucInfService;
+import egovframework.com.cmm.ResponseCode;
+import egovframework.com.cmm.service.ResultVO;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+/**
+ * 차량 입찰 정보 조회 컨트롤러
+ */
 @RestController
+@Transactional
 @RequestMapping("/carAucInf")
 @CrossOrigin(origins = "http://localhost:3000")
 public class CarBidRegController {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(CarBidRegController.class);
+	
 	@Resource(name = "carAucInfService")
 	private CarAucInfService carAucInfService;
-
+	
 	/**
 	 * 차량 상세 정보 조회 (키값 기반)
 	 */
-	@GetMapping("/car/{aucRegNo}")
-	public CarInfoVO getCarDetail(@PathVariable String aucRegNo) throws Exception {
-	    return carAucInfService.getCarDetail(aucRegNo);
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping("/car")
+	public ResultVO getCarDetail(@RequestBody Map<String, String> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		String aucRegNo = requestParams.get("aucRegNo");
+		
+		CarInfoVO carInfo = carAucInfService.getCarDetail(aucRegNo);
+		
+		// 단일 객체를 Map으로 감싸기
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("result", carInfo);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
 	}
-
+	
 	/**
 	 * 은행 목록 조회
 	 */
-	@GetMapping("/banks")
-	public List<String> getBanks() throws Exception {
-	    return carAucInfService.getBanks();
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping("/banks")
+	public ResultVO getBanks(@RequestBody(required = false) Map<String, String> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		List<String> banks = carAucInfService.getBanks();
+		
+		// List를 Map으로 감싸기
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("resultList", banks);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
 	}
-
+	
 	/**
 	 * 계좌번호 목록 조회
 	 */
-	@GetMapping("/accounts")
-	public List<String> getAccountNumbers(@RequestParam String bank) throws Exception {
-	    return carAucInfService.getAccountNumbers(bank);
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping("/accounts")
+	public ResultVO getAccountNumbers(@RequestBody Map<String, String> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		String bank = requestParams.get("bank");
+		
+		List<String> accounts = carAucInfService.getAccountNumbers(bank);
+		
+		// List를 Map으로 감싸기
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("resultList", accounts);
+		
+		logger.info("resultMap ▶▶▶▶▶▶ {}", resultMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
 	}
-
-
 }
