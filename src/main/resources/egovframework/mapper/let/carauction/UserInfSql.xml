@@ -34,6 +34,24 @@
 		<result property="userId" column="USER_ID"/>
 		<result property="userPw" column="USER_PW"/>
 		
+		<!-- 회원관리 회원 현황 조회 파라미터 -->
+		<result property="inRegStartDate" column="IN_REG_START_DATE"/>
+		<result property="inRegEndDate" column="IN_REG_END_DATE"/>
+		<result property="inSearchCd" column="IN_SEARCH_CD"/>
+		<result property="carListNo" column="NUM"/>
+		<result property="carNo" column="CAR_NO"/>
+		<result property="carNm" column="CAR_NM"/>
+		<result property="carOption" column="AUC_CAR_CMNT"/>
+		<result property="carYear" column="AUC_CAR_MAKE_YR"/>
+		<result property="carOil" column="CODE_HNAME"/>
+		<result property="mileage" column="AUC_CAR_DRV_DIS"/>
+		<result property="gear" column="CAR_TRANS_GB_NM"/>
+		<result property="estimatedCost" column="BID_PLN_PRICE"/>
+		<result property="bidCnt" column="BID_CNT"/>
+		<result property="bidEntryCnt" column="ENTRY_DATE"/>
+		<result property="bidClosDate" column="BID_EXP_DT"/>
+		<result property="regMemNm" column="USER_NM"/>
+		
 		<!-- 필수 파라미터 -->
 		<result property="sessionId" column="SESSION_ID"/>
 		<result property="sessionIp" column="SESSION_IP"/>
@@ -142,4 +160,39 @@
 		WHERE	USER_ID = #{inUserId}
 		]]>
 	</update>
+	
+	<!-- Retrieve : 회원관리 회원 현황 조회 -->
+	<select id="userUseCntInfList" parameterType="egovframework.carauction.UserInfVO" resultMap="UserInfVO">
+		<![CDATA[
+			SELECT ROW_NUMBER() OVER (ORDER BY AUC.ENTRY_DATE DESC, AUC.CAR_NO DESC, AUC.AUC_REG_NO) AS NUM /* 순번 */
+				, AUC.CAR_NO		/* 차량번호 */
+				, CONCAT(CMM_CAR.CODE_HNAME, ' ', CAR.CAR_MODEL_NM) AS CAR_NM/* 차량명 */
+				, AUC.AUC_CAR_CMNT /* 옵션내용 */
+				, AUC.AUC_CAR_MAKE_YR /* 연식 */
+				, CMM.CODE_HNAME /* 연료명 */
+				, AUC.AUC_CAR_DRV_DIS /* 주행거리 */
+				, CASE WHEN AUC.CAR_TRANS_GB = 'A'THEN '오토'
+						ELSE '수동' END CAR_TRANS_GB_NM /* 변속기명 */
+				, AUC.BID_PLN_PRICE /* 예정가 */
+				, AUC.BID_CNT /* 입찰건수 */
+				, TO_CHAR(AUC.ENTRY_DATE, 'YYYYMMDD') ENTRY_DATE /* 경매등록일 */
+				, TO_CHAR(AUC.BID_EXP_DT, 'YYYYMMDD') BID_EXP_DT /* 경매마감일 */
+				, USER.USER_NM /* 사용자명 */
+			FROM CA_CAR_AUC_INF AUC
+			INNER JOIN CA_CAR_INF CAR ON AUC.CAR_MAIN_NO = CAR.CAR_MAIN_NO
+			INNER JOIN CA_USER_INF USER ON AUC.ENTRY_IDNO = USER.USER_ID
+			INNER JOIN CA_CMM_CD CMM ON AUC.CAR_ENG_CD = CMM.CODE_NO
+									AND CMM.CODE_FIRST = 'C'
+									AND CMM.CODE_SECOND = '04'
+									AND CMM.CODE_USEYN = 'Y'
+			INNER JOIN CA_CMM_CD CMM_CAR ON CAR.MKR_CD = CMM_CAR.CODE_NO
+									AND CMM_CAR.CODE_FIRST = 'C'
+									AND CMM_CAR.CODE_SECOND = '01'
+									AND CMM_CAR.CODE_USEYN = 'Y'
+			WHERE AUC.ENTRY_IDNO = 'bizsystem'
+		]]>
+		<!-- 등록일 -->
+		ORDER BY NUM, AUC.AUC_REG_NO
+	</select>
+	
 </mapper>

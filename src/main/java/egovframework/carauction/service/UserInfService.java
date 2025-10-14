@@ -14,4 +14,8 @@ public interface UserInfService {
 
 	// 비밀번호 초기화
 	public int userInfPwInitUpdate(UserInfVO userInfVO) throws Exception;
+
+	// 회원관리 회원 현황 조회
+	public Map<String, Object> userUseCntInfList(UserInfVO userInfVO) throws Exception;
+	
 }
