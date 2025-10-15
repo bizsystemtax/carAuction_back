@@ -190,7 +190,6 @@ public class CarSaleRegController {
 	 */
 	@Operation(
 			summary = "판매차량 등록",
-			description = "판매차량을 등록",
 			security = {@SecurityRequirement(name = "Authorization")},
 			tags = {"EgovBBSManageApiController"}
 	)
@@ -271,7 +270,6 @@ public class CarSaleRegController {
 	 */
 	@Operation(
 			summary = "판매차량 수정",
-			description = "판매차량을 수정",
 			security = {@SecurityRequirement(name = "Authorization")},
 			tags = {"EgovBBSManageApiController"}
 	)
@@ -311,6 +309,41 @@ public class CarSaleRegController {
 //		}
 
 		carAucInfService.updateCarSale(carSaleDetailVO);
+
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		return resultVO;
+	}
+	
+	/**
+	 * 경매 판매차량 등록
+	 */
+	@Operation(
+			summary = "판매차량 삭제",
+			security = {@SecurityRequirement(name = "Authorization")},
+			tags = {"EgovBBSManageApiController"}
+	)
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "수정 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님"),
+			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
+	})
+	@PostMapping(value ="/deleteCarSale")
+	public ResultVO deleteCarSale(@RequestBody CarSaleDetailVO carSaleDetailVO,
+		BindingResult bindingResult,
+		HttpServletRequest request)
+		throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		System.out.println("==============================" + carSaleDetailVO.toString());
+
+		logger.info("carSaleDetailVO >>>>>>>>>", carSaleDetailVO);
+		
+		// 수정자
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+		
+		carAucInfService.deleteCarSale(carSaleDetailVO);
 
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

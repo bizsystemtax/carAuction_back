@@ -247,5 +247,11 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 		carAucInfDAO.updateCarSale(carSaleDetailVO);
 	}
+	
+	// 경매 판매차량 삭제
+	@Override
+	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO) {
 
+		carAucInfDAO.deleteCarSale(carSaleDetailVO);
+	}
 }

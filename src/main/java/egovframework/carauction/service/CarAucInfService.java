@@ -119,4 +119,7 @@ public interface CarAucInfService {
 
 	// 경매 판매차량 수정
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO);
+	
+	// 경매 판매차량 삭제
+	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO);
 }

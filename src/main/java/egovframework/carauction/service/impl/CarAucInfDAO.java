@@ -123,5 +123,10 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO) {
 		insert("carAucInfDAO.updateCarSale", carSaleDetailVO);
 	}
+	
+	// 경매 판매차량 삭제
+	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO) {
+		insert("carAucInfDAO.deleteCarSale", carSaleDetailVO);
+	}
 
 }

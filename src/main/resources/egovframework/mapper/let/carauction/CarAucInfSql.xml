@@ -480,7 +480,7 @@
             AUC_REG_NO = #{aucRegNo}
 	 </select>
 	 
-	   <update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
     UPDATE 
            CA_CAR_AUC_INF 
        SET
@@ -501,8 +501,15 @@
          , EOM_YN = #{eomYn}
          , EOM_PRICE = #{eomPrice}
          , UPDAT_IDNO = #{updatIdno}
-      WHERE 
-            AUC_REG_NO = #{aucRegNo}
+     WHERE 
+           AUC_REG_NO = #{aucRegNo}
     </update>
-    
+
+	<update id="deleteCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+    DELETE 
+      FROM
+           CA_CAR_AUC_INF 
+     WHERE 
+           AUC_REG_NO = #{aucRegNo}
+    </update>
 </mapper>
