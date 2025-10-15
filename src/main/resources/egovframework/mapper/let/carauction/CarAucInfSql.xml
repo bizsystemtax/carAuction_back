@@ -237,6 +237,65 @@
         ORDER BY MNGR_ACC_NO
     ]]>
 </select>
+
+<!-- 입찰 순번 조회 (해당 경매번호의 최대 순번 + 1) -->
+<select id="getNextBidSeq" parameterType="String" resultType="String">
+    SELECT 
+        LPAD(IFNULL(MAX(CAST(AUC_REG_SEQ AS UNSIGNED)), 0) + 1, 2, '0') AS next_seq
+    FROM 
+        CA_CAR_AUC_DTL_BID_INF
+    WHERE 
+        AUC_REG_NO = #{aucRegNo}
+</select>
+
+<!-- 입찰 순번 조회 -->
+<select id="getNextAucRegSeq" parameterType="String" resultType="String">
+    SELECT
+        LPAD(IFNULL(MAX(CAST(AUC_REG_SEQ AS UNSIGNED)), 0) + 1, 2, '0') AS nextSeq
+    FROM
+        CA_CAR_AUC_DTL_BID_INF
+    WHERE
+        AUC_REG_NO = #{aucRegNo}
+</select>
+
+<!-- 입찰 등록 -->
+<insert id="insertBid" parameterType="java.util.Map">
+    INSERT INTO CA_CAR_AUC_DTL_BID_INF (
+        AUC_REG_NO
+        , AUC_REG_SEQ
+        , BIDMN_NM
+        , BID_PRICE
+        , BID_ENTRY_DATE
+        , BID_SDEP_PRICE
+        , DEP_BANK_NM
+        , DEP_ACC
+        , DEPMN_NM
+        , AUC_PROG_STAT_CD
+        , SBID_YN
+        , POM_PAY_YN
+        , ENTRY_DATE
+        , ENTRY_IDNO
+        , UPDAT_DATE
+        , UPDAT_IDNO
+    ) VALUES (
+        #{aucRegNo}
+        , #{aucRegSeq}
+        , #{depositorName}
+        , #{bidAmount}
+        , DATE_FORMAT(NOW(), '%Y%m%d')
+        , #{bidSdepPrice}
+        , #{bankName}
+        , #{accountNumber}
+        , #{depositorName}
+        , '0010'
+        , 'N'
+        , 'N'
+        , NOW()
+        , #{entryIdno}
+        , NOW()
+        , #{updatIdno}
+    )
+</insert>
 	
 
 	<!-- *******************************************************************************************************

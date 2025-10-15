@@ -3,7 +3,6 @@ package egovframework.carauction.service;
 import java.util.List;
 import java.util.Map;
 
-import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
@@ -76,6 +75,16 @@ public interface CarAucInfService {
      * 계좌번호 목록 조회
      */
     List<String> getAccountNumbers(String bankName) throws Exception;
+    
+    /**
+     * 입찰 순번 조회
+     */
+    String getNextAucRegSeq(String aucRegNo) throws Exception;
+    
+    /**
+     * 입찰 등록
+     */
+    void insertBid(Map<String, Object> bidData) throws Exception;
 
     /************************************************************************************************************************
 	 차량 판매 정보

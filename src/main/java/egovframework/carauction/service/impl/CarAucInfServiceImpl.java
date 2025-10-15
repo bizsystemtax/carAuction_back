@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
-import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
@@ -136,6 +135,25 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
         if ("".equals(criteria.getRegistrationCompany())) {
             criteria.setRegistrationCompany(null);
         }
+    }
+    
+    @Override
+    public String getNextAucRegSeq(String aucRegNo) throws Exception {
+        return carAucInfDAO.getNextAucRegSeq(aucRegNo); 
+    }
+    
+    @Override
+    public void insertBid(Map<String, Object> bidData) throws Exception {
+        String aucRegNo = (String) bidData.get("aucRegNo");
+        
+        // 1. 다음 순번 조회
+        String nextSeq = getNextAucRegSeq(aucRegNo);
+        
+        // 2. Map에 순번 추가
+        bidData.put("aucRegSeq", nextSeq);
+        
+        // 3. INSERT
+        carAucInfDAO.insertBid(bidData); 
     }
     
     /************************************************************************************************************************

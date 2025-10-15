@@ -6,7 +6,6 @@ import java.util.Map;
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
-import egovframework.carauction.BidInfoVO;
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
@@ -64,6 +63,13 @@ public class CarAucInfDAO extends EgovAbstractMapper {
         return selectOne("carAucInfDAO.findCarByAucRegNo", aucRegNo);
     }
 
+    public String getNextAucRegSeq(String aucRegNo) {
+        return selectOne("carAucInfDAO.getNextAucRegSeq", aucRegNo);
+    }
+
+    public int insertBid(Map<String, Object> bidData) {
+        return insert("carAucInfDAO.insertBid", bidData);
+    }
     
     /************************************************************************************************************************
 	 차량 판매 정보

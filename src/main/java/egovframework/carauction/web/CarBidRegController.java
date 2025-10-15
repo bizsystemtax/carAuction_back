@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.service.CarAucInfService;
+import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
+import egovframework.com.cmm.exception.BizException;
+import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.ResultVO;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -115,4 +122,80 @@ public class CarBidRegController {
 		
 		return resultVO;
 	}
+	
+	/**
+	 * 입찰 등록
+	 */
+	@ApiResponses(value = {
+	    @ApiResponse(responseCode = "200", description = "등록 성공"),
+	    @ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping("/bid")
+	public ResultVO submitBid(
+	        @RequestBody Map<String, Object> requestParams,
+	        HttpServletRequest request,
+	        @Parameter(hidden = true) @AuthenticationPrincipal LoginVO user) throws Exception {
+	    
+	    ResultVO resultVO = new ResultVO();
+	    
+	    /**
+	     * 사용자 로그인(세션) 확인
+	     */
+	    String userId = null;
+	    String userIp = null;
+	    
+	    if (user != null && !StringUtils.defaultString(user.getId()).isEmpty()) {
+	        userId = user.getId();
+	        userIp = user.getIp();
+	        logger.info("로그인 사용자: {} (IP: {})", userId, userIp);
+	    } else {
+	        // 로그인 안 되어 있으면 에러 처리
+	        throw new BizException(ErrorCode.ERR300, "로그인이 필요합니다.");
+	    }
+	    
+	    /**
+	     * 필수 파라미터 확인
+	     */
+	    String aucRegNo = (String) requestParams.get("aucRegNo");
+	    if (aucRegNo == null || aucRegNo.isEmpty()) {
+	        throw new BizException(ErrorCode.ERR001, "차량번호가 없습니다.");
+	    }
+	    
+	    Integer bidAmount = (Integer) requestParams.get("bidAmount");
+	    String depositorName = (String) requestParams.get("depositorName");
+	    String bankName = (String) requestParams.get("bankName");
+	    String accountNumber = (String) requestParams.get("accountNumber");
+	    Integer bidPlnPrice = (Integer) requestParams.get("bidPlnPrice");
+	    logger.info("bidPlnPrice 값 확인: {}", bidPlnPrice);
+	    // 입찰 보증금 계산 (예정가의 10%)
+	    Integer bidSdepPrice = (int) Math.floor(bidPlnPrice * 0.1);
+	    
+	    /**
+	     * 입찰 데이터 설정
+	     */
+	    Map<String, Object> bidData = new HashMap<>();
+	    bidData.put("aucRegNo", aucRegNo);
+	    bidData.put("bidAmount", bidAmount);
+	    bidData.put("depositorName", depositorName);
+	    bidData.put("bankName", bankName);
+	    bidData.put("accountNumber", accountNumber);
+	    bidData.put("bidSdepPrice", bidSdepPrice);
+	    
+	    // 로그인 사용자 정보
+	    bidData.put("entryIdno", userId);
+	    bidData.put("updatIdno", userId);
+	    
+	    logger.info("입찰 등록 데이터: {}", bidData);
+	    
+	    /**
+	     * 입찰 등록 처리
+	     */
+	    carAucInfService.insertBid(bidData);
+	    
+	    resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+	    resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+	    
+	    return resultVO;
+	}
 }
+	
