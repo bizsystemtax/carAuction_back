@@ -49,7 +49,7 @@
 		<result property="gear" column="CAR_TRANS_GB_NM"/>
 		<result property="estimatedCost" column="BID_PLN_PRICE"/>
 		<result property="bidCnt" column="BID_CNT"/>
-		<result property="bidEntryCnt" column="ENTRY_DATE"/>
+		<result property="bidRegDate" column="ENTRY_DATE"/>
 		<result property="bidClosDate" column="BID_EXP_DT"/>
 		<result property="regMemNm" column="USER_NM"/>
 		

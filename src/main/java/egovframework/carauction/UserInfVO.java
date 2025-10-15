@@ -60,7 +60,7 @@ public class UserInfVO implements Serializable {
 	private String gear = "";			// 변속기
 	private String estimatedCost = "";	// 예정가
 	private String bidCnt = "";			// 입찰건수
-	private String bidRegDate = "";		// 입찰등록일
+	private String bidRegDate = "";		// 경매등록일
 	private String bidClosDate = "";	// 입찰마감일
 	private String regMemNm = "";		// 경매(공매)등록 회원사명
 	
