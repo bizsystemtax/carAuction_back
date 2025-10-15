@@ -38,6 +38,7 @@
 		<result property="inRegStartDate" column="IN_REG_START_DATE"/>
 		<result property="inRegEndDate" column="IN_REG_END_DATE"/>
 		<result property="inSearchCd" column="IN_SEARCH_CD"/>
+		<result property="inSearchUserId" column="IN_SEARCH_USER_ID"/>
 		<result property="carListNo" column="NUM"/>
 		<result property="carNo" column="CAR_NO"/>
 		<result property="carNm" column="CAR_NM"/>
@@ -189,7 +190,7 @@
 									AND CMM_CAR.CODE_FIRST = 'C'
 									AND CMM_CAR.CODE_SECOND = '01'
 									AND CMM_CAR.CODE_USEYN = 'Y'
-			WHERE AUC.ENTRY_IDNO = 'bizsystem'
+			WHERE AUC.ENTRY_IDNO = #{inSearchUserId}
 		]]>
 		<!-- 등록일 -->
 		ORDER BY NUM, AUC.AUC_REG_NO
