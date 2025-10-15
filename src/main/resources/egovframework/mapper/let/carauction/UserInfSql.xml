@@ -194,7 +194,7 @@
 		]]>
 		<!-- 등록일 -->
 		<if test="inRegStartDate != null and inRegStartDate != '' and inRegEndDate != null and inRegEndDate != ''">
-			AND	TO_CHAR(A.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inRegEndDate} AND #{inRegEndDate}
+			AND	TO_CHAR(AUC.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inRegStartDate} AND #{inRegEndDate}
 		</if>
 		ORDER BY NUM, AUC.AUC_REG_NO
 	</select>
