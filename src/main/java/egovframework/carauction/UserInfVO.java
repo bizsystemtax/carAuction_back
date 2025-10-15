@@ -47,6 +47,7 @@ public class UserInfVO implements Serializable {
 	private String inRegStartDate = "";	//등록일(시작)
 	private String inRegEndDate = "";	//등록일(종료)
 	private String inSearchCd = "";		//조회구분코드
+	private String inSearchUserId = "";	//조회등록자ID
 	
 	// 회원관리 회원건수 현황 조회결과
 	private String carListNo = "";		// 순번
