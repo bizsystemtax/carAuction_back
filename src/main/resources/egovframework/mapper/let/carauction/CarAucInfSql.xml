@@ -479,4 +479,67 @@
 	  WHERE 
             AUC_REG_NO = #{aucRegNo}
 	 </select>
+	 
+	   <update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+    UPDATE 
+           CA_CAR_AUC_INF 
+       SET
+           CAR_MAIN_NO = #{carMainNo}
+         , LOC_IMP_GB = #{locImpGb}
+         , CAR_ENG_CD = #{carEngCd}
+         , AUC_CAR_CC = #{aucCarCc}
+         , CAR_TRANS_GB = #{carTransGb}
+         , AUC_CAR_SEAT = #{aucCarSeat}
+         , CAR_PRICE = #{carPrice}
+         , CAR_NO = #{carNo}
+         , AUC_CAR_CMNT = #{aucCarCmnt}
+         , AUC_CAR_MAKE_YR = #{aucCarMakeYr}
+         , AUC_CAR_DRV_DIS = #{aucCarDrvDis}
+         , BID_PLN_PRICE = #{bidPlnPrice}
+         , BID_SDEP_PRICE = #{bidSdepPrice}
+         , BID_EXP_DT = #{bidExpDt}
+         , EOM_YN = #{eomYn}
+         , EOM_PRICE = #{eomPrice}
+         , UPDAT_IDNO = #{updatIdno}
+      WHERE 
+            AUC_REG_NO = #{aucRegNo}
+    </update>
+    
+    <select id="getCarSaleDetail" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleDetailVO">
+    SELECT
+         cai.AUC_REG_NO 
+        , cai.CAR_MAIN_NO 
+        , cai.LOC_IMP_GB 
+        , cai.CAR_ENG_CD
+        , cai.AUC_CAR_CC
+        , cai.CAR_TRANS_GB 
+        , cai.AUC_CAR_SEAT 
+        , cai.CAR_PRICE 
+        , cai.CAR_NO
+        , cai.AUC_CAR_CMNT
+        , cai.AUC_CAR_MAKE_YR
+        , cai.AUC_CAR_DRV_DIS
+        , cai.BID_PLN_PRICE
+        , cai.BID_SDEP_PRICE
+        , cai.BID_EXP_DT
+        , cai.EOM_YN
+        , cai.EOM_PRICE
+        , cai.BID_CNT
+        , cai.AUC_PROG_STAT_CD
+        , cai.AUC_PROG_YN
+        , cai.ENTRY_DATE
+        , cai.ENTRY_IDNO
+        , cai.UPDAT_DATE
+        , cai.UPDAT_IDNO
+        , cci.MKR_CD
+        , cci.CAR_MODEL_CD 
+        , cci.CAR_LEVEL_CD
+        , cci.CAR_DT_LEVEL_CD
+      FROM
+          CA_CAR_AUC_INF as cai
+      INNER JOIN CA_CAR_INF as cci 
+              ON cai.CAR_MAIN_NO = cci.CAR_MAIN_NO
+      WHERE 
+             cai.AUC_REG_NO = #{aucRegNo}
+    </select>
 </mapper>
