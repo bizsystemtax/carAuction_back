@@ -87,6 +87,8 @@ public class SecurityConfig {
 
         "/cmmCdMnge/**", // 코드관리
         
+        "/carMnge/**", // 차량관리
+        
         //End
         "/v3/api-docs/**",
         "/swagger-resources",
