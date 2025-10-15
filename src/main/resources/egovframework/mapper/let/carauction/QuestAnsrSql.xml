@@ -10,7 +10,7 @@
 		<result property="ansrCtnt" 		column = "ANSR_CTNT"/>
 		<result property="ansrEntryIdno" 	column = "ANSR_ENTRY_IDNO"/>
 		<result property="ansrEntryDate" 	column = "ANSR_ENTRY_DATE"/>
-		<result property = "useYN" 		column = "USE_YN" />
+		<result property = "useYn" 		column = "USE_YN" />
 		<result property = "entryDate"		column = "ENTRY_DATE" />
 		<result property = "entryIdno"		column = "ENTRY_IDNO" />
 		<result property = "updatDate"		column = "UPDAT_DATE" />
@@ -60,8 +60,8 @@
 				, ANSR_YN
 				, ANSR_CTNT
 				, ANSR_ENTRY_IDNO
-				, ANSR_ENTRY_DATE
-				, ENTRY_DATE
+				, DATE_FORMAT(ANSR_ENTRY_DATE, '%Y-%m-%d') AS ANSR_ENTRY_DATE
+				, DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE
 				, ENTRY_IDNO
 				, UPDAT_DATE
 				, UPDAT_IDNO
@@ -118,6 +118,17 @@
 		WHERE QUEST_ID = #{questId}
 	</update>
 	
+	<!-- Q&A 답변쓰기 -->
+	<update id="updAnsrWrite" parameterType="egovframework.carauction.QuestAnsrVO">
+		UPDATE CA_QUEST_ANSR
+		   SET ANSR_CTNT = #{ansr_ctnt}
+			, ANSR_ENTRY_IDNO = #{updatIdno}
+			, ANSR_YN = 'Y'
+			, ANSR_ENTRY_DATE =  NOW()
+			, UPDAT_DATE = NOW()
+			, UPDAT_IDNO = #{updatIdno}
+		WHERE QUEST_ID = #{questId}
+	</update>
 	
 	<!-- Q&A 삭제 -->
 	<update id="delQuestAnsr" parameterType="egovframework.carauction.QuestAnsrVO">

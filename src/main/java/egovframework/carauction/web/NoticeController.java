@@ -67,12 +67,8 @@ public class NoticeController {
 		ResultVO resultVO = new ResultVO();
 		
 		// 조회 조건
-		String startDt = requestParams.get("startDate");	// 시작일자
-		String endDt = requestParams.get("endDate");		// 종료일자
 		String title = requestParams.get("noticeTit");		// 제목
 		
-		noticeVO.setStartDt(startDt);
-		noticeVO.setEndDt(endDt);
 		noticeVO.setNoticeTit(title);
 		
 		Map<String, Object> resultMap = noticeService.noticeList(noticeVO);
@@ -129,10 +125,8 @@ public class NoticeController {
 		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		String userId = "bizsystem";
-		
-		param.put("entryIdno", userId);
-		param.put("updatIdno", userId);
+		param.put("entryIdno", user.getId());
+		param.put("updatIdno", user.getId());
 		
 		int result = noticeService.insNotice(param);
 		
@@ -166,10 +160,7 @@ public class NoticeController {
 		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-//		String userId = user.getId();
-		String userId = "bizsystem";
-		
-		param.put("updatIdno", userId);
+		param.put("updatIdno", user.getId());
 		
 		int result = noticeService.updNotice(param);
 		
@@ -197,12 +188,9 @@ public class NoticeController {
 		NoticeVO noticeVO = new NoticeVO();
 		ResultVO resultVO = new ResultVO();
 		
-//		String userId = user.getId();
-		String userId = "bizsystem";
-		
 		for(NoticeVO notice : noticeId) {
 			
-			noticeVO.setUpdatIdno(userId);
+			noticeVO.setUpdatIdno(user.getId());
 			noticeVO.setNoticeId(notice.getNoticeId());
 			noticeService.delNotice(noticeVO);
 		}
