@@ -49,13 +49,15 @@ public class UserUseCntInfController {
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
 		String proState = requestParams.get("codeNo");						//조회구분코드
+		String userId = requestParams.get("userId");							//조회등록자ID
 		
 		/**
 		 * VO input 매핑
 		 */
 		userInfVO.setInRegStartDate(regStrDt);		//등록시작일자
-		userInfVO.setInRegEndDate(regEndDt); 	//등록종료일자
-		userInfVO.setInSearchCd(proState); 	//조회구분코드
+		userInfVO.setInRegEndDate(regEndDt); 		//등록종료일자
+		userInfVO.setInSearchCd(proState); 			//조회구분코드
+		userInfVO.setInSearchUserId(userId);		//경매(공매)등록 회원사명
 		logger.info("userInfVO =============== {} ", userInfVO);
 		
 		Map<String, Object> resultMap = userInfService.userUseCntInfList(userInfVO);
