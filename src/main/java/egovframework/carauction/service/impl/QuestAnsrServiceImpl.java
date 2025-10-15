@@ -63,4 +63,11 @@ public class QuestAnsrServiceImpl  extends EgovAbstractServiceImpl implements Qu
 		return result;
 	}
 	
+	// Q&A 답변 작성
+	@Override
+	public int updAnsrWrite(Map<String, Object> paramMap) throws Exception{
+		int result = questAnsrDAO.updAnsrWrite(paramMap);
+		return result;
+	}
+	
 }

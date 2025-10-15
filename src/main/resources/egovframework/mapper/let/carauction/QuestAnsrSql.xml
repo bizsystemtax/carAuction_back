@@ -121,10 +121,10 @@
 	<!-- Q&A 답변쓰기 -->
 	<update id="updAnsrWrite" parameterType="egovframework.carauction.QuestAnsrVO">
 		UPDATE CA_QUEST_ANSR
-		   SET ANSR_CTNT = #{ansr_ctnt}
+		   SET ANSR_CTNT = #{ansrCtnt}
 			, ANSR_ENTRY_IDNO = #{updatIdno}
 			, ANSR_YN = 'Y'
-			, ANSR_ENTRY_DATE =  NOW()
+			, ANSR_ENTRY_DATE = DATE_FORMAT(NOW(), '%Y%m%d')
 			, UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
 		WHERE QUEST_ID = #{questId}

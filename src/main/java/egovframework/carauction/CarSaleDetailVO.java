@@ -15,7 +15,7 @@ public class CarSaleDetailVO implements Serializable {
 	private String carMainNo;		// 차량관리번호
 	private String locImpGb;		// 내수/수입구분
 	private String carEngCd;		// 차량연료코드
-	private String aucCarCc;		// 경매차량CC
+	private int aucCarCc;			// 경매차량CC
 	private String carTransGb;		// 차량변속기구분
 	private int aucCarSeat;			// 경매차량인승
 	private int carPrice;			// 차량가격

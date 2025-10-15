@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +35,8 @@ public class QuestAnsrController {
 	
 	@Resource(name = "questAnsrService")
 	private QuestAnsrService questAnsrService;
+	private static final Logger logger = LoggerFactory.getLogger(CarSaleRegController.class);
+	
 	
 	/**
 	 * Q&A 목록 조회
@@ -49,6 +53,8 @@ public class QuestAnsrController {
 		
 		QuestAnsrVO questAnsrVO = new QuestAnsrVO();
 		ResultVO resultVO = new ResultVO();
+		
+		logger.debug(" questAnsrlist requestParams " + requestParams );
 		
 		// 조회 조건
 		String startDt = requestParams.get("startDate");	// 시작일자
@@ -140,6 +146,8 @@ public class QuestAnsrController {
 		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
+		logger.debug(" updQuestAnsr param " + param );
+		
 		String userId = user.getId();
 		
 		param.put("updatIdno", userId);
@@ -186,6 +194,43 @@ public class QuestAnsrController {
 		
 		return resultVO;
 	}
+	
+	
+	/**
+	 * Q&A 답변작성 
+	 * @param  requestParams - questId
+	 * @return resultVO
+	 * @throws BizException
+	 */
+	@PatchMapping(value = "/updAnsrWrite/{questId}")
+	public ResultVO updAnsrWrite(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
+		
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		logger.debug(" updAnsrWrite requestParams " + requestParams );
+		
+		String userId = user.getId();
+		param.put("updatIdno", userId);
+		param.put("ansrCtnt", param.get("ansrCtntWrite"));
+		
+		logger.debug(" updAnsrWrite param " + param );
+		
+		int result = questAnsrService.updAnsrWrite(param);
+		
+		if(result < 1) {
+			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
+		}
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	} 
 	
 	
 }
