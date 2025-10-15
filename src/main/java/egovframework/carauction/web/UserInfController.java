@@ -199,8 +199,8 @@ public class UserInfController {
 		 * 임시 비밀번호 생성
 		 */
 		// 임시 비밀번호 발급
-		String tempPw = PasswordUtil.makeTempPassword();
-//		String tempPw = "test"; // 테스트용
+//		String tempPw = PasswordUtil.makeTempPassword();
+		String tempPw = "1111"; // 일단 1111 으로 초기화 해주기로 함
 		
 		// 임시 비밀번호 암호화
 		String enPw = EgovFileScrty.encryptPassword(tempPw, inUserId);
