@@ -165,7 +165,7 @@
 	<!-- Retrieve : 회원관리 회원 현황 조회 -->
 	<select id="userUseCntInfList" parameterType="egovframework.carauction.UserInfVO" resultMap="UserInfVO">
 		<![CDATA[
-			SELECT ROW_NUMBER() OVER (ORDER BY AUC.ENTRY_DATE DESC, AUC.CAR_NO DESC, AUC.AUC_REG_NO) AS NUM /* 순번 */
+			SELECT ROW_NUMBER() OVER (ORDER BY AUC.ENTRY_DATE DESC, AUC.CAR_NO DESC) AS NUM /* 순번 */
 				, AUC.CAR_NO		/* 차량번호 */
 				, CONCAT(CMM_CAR.CODE_HNAME, ' ', CAR.CAR_MODEL_NM) AS CAR_NM/* 차량명 */
 				, AUC.AUC_CAR_CMNT /* 옵션내용 */
@@ -193,6 +193,9 @@
 			WHERE AUC.ENTRY_IDNO = #{inSearchUserId}
 		]]>
 		<!-- 등록일 -->
+		<if test="inRegStartDate != null and inRegStartDate != '' and inRegEndDate != null and inRegEndDate != ''">
+			AND	TO_CHAR(A.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inRegEndDate} AND #{inRegEndDate}
+		</if>
 		ORDER BY NUM, AUC.AUC_REG_NO
 	</select>
 	
