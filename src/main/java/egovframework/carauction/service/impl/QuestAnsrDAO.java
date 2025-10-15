@@ -41,4 +41,9 @@ public class QuestAnsrDAO extends EgovAbstractMapper {
 		return update("questAnsrDAO.delQuestAnsr", questAnsrVO);
 	}
 	
+	// Q&A답변작성
+	public int updAnsrWrite(Map<String, Object> paramMap) {
+		return update("questAnsrDAO.updAnsrWrite", paramMap);
+	}
+	
 }
