@@ -479,4 +479,30 @@
 	  WHERE 
             AUC_REG_NO = #{aucRegNo}
 	 </select>
+	 
+	   <update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+    UPDATE 
+           CA_CAR_AUC_INF 
+       SET
+           CAR_MAIN_NO = #{carMainNo}
+         , LOC_IMP_GB = #{locImpGb}
+         , CAR_ENG_CD = #{carEngCd}
+         , AUC_CAR_CC = #{aucCarCc}
+         , CAR_TRANS_GB = #{carTransGb}
+         , AUC_CAR_SEAT = #{aucCarSeat}
+         , CAR_PRICE = #{carPrice}
+         , CAR_NO = #{carNo}
+         , AUC_CAR_CMNT = #{aucCarCmnt}
+         , AUC_CAR_MAKE_YR = #{aucCarMakeYr}
+         , AUC_CAR_DRV_DIS = #{aucCarDrvDis}
+         , BID_PLN_PRICE = #{bidPlnPrice}
+         , BID_SDEP_PRICE = #{bidSdepPrice}
+         , BID_EXP_DT = #{bidExpDt}
+         , EOM_YN = #{eomYn}
+         , EOM_PRICE = #{eomPrice}
+         , UPDAT_IDNO = #{updatIdno}
+      WHERE 
+            AUC_REG_NO = #{aucRegNo}
+    </update>
+    
 </mapper>

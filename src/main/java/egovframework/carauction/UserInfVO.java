@@ -47,6 +47,7 @@ public class UserInfVO implements Serializable {
 	private String inRegStartDate = "";	//등록일(시작)
 	private String inRegEndDate = "";	//등록일(종료)
 	private String inSearchCd = "";		//조회구분코드
+	private String inSearchUserId = "";	//조회등록자ID
 	
 	// 회원관리 회원건수 현황 조회결과
 	private String carListNo = "";		// 순번
@@ -59,7 +60,7 @@ public class UserInfVO implements Serializable {
 	private String gear = "";			// 변속기
 	private String estimatedCost = "";	// 예정가
 	private String bidCnt = "";			// 입찰건수
-	private String bidRegDate = "";		// 입찰등록일
+	private String bidRegDate = "";		// 경매등록일
 	private String bidClosDate = "";	// 입찰마감일
 	private String regMemNm = "";		// 경매(공매)등록 회원사명
 	
