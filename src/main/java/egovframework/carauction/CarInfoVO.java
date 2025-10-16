@@ -15,9 +15,6 @@ public class CarInfoVO {
 
     // 차량번호 (경매등록번호)
     private String aucRegNo;
-    
-    //차량번호
-    private String carNo; 
 
     // 차량명 (제조사명 + 모델명)
     private String carModelNm;
