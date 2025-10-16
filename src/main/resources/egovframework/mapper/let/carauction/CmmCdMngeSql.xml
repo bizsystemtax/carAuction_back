@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="CmmCdMngeDAO"><select id="select" resultType="egovframework.carauction.CmmCdMngeVO">
-SELECT * 
-  FROM
-</select>
+<mapper namespace="CmmCdMngeDAO">
 <resultMap id="resultMap" type="egovframework.carauction.CmmCdMngeVO">
-<result property="serialVersionUID" />
+<result property="serialVersionUID" column="SERIAL_VSERSION_UID"/>
 <result property="codeFirst" column="CODE_FIRST"/>
 <result property="codeSecond" column="CODE_SECOND"/>
 <result property="codeNo" column="CODE_NO"/>
@@ -17,7 +14,7 @@ SELECT *
 <result property="codeKita5" column="CODE_KITA5"/>
 <result property="codeUseyn" column="CODE_USEYN"/>
 <result property="sortOrder" column="SORT_ORDER"/></resultMap>
-<select id="findCmmCdByCodeFirstAndCodeSecond" parameterType="java.lang.String" resultType="egovframework.carauction.CmmCdMngeVO">
+<select id="findCmmCdByCodeFirstAndCodeSecond" resultType="egovframework.carauction.CmmCdMngeVO" parameterType="egovframework.carauction.CmmCdMngeVO">
 select
 	CODE_FIRST as codeFirst,
 	CODE_SECOND as codeSecond,
@@ -37,7 +34,7 @@ and CODE_FIRST = #{codeFirst}
 and CODE_SECOND =  #{codeSecond}
 ;
 </select>
-<select id="findCmmCdByCodeNo" parameterType="java.lang.String" resultType="egovframework.carauction.CmmCdMngeVO">
+<select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
 select
 	CODE_FIRST as codeFirst,
 	CODE_SECOND as codeSecond,

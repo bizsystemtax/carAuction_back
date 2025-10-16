@@ -23,26 +23,23 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 
 	private final Logger logger = LoggerFactory.getLogger(MyPageServiceImpl.class);
 
-	public Map<String, Object> findCmmCdByCodeFirstAndCodeSecond(CmmCdMngeVO CmmCdMngeVO) throws Exception {
+	public Map<String, Object> findCmmCdByCodeFirstAndCodeSecond(CmmCdMngeVO cmmCdMngeVO) throws Exception {
 
 		Map<String, Object> map = new HashMap<>();
 
-		String codeFrist = CmmCdMngeVO.getCodeFirst();
-		String codeSecond = CmmCdMngeVO.getCodeSecond();
-
-		map.put("cmmCdList", cmmCdMngeDAO.findCmmCdByCodeFirstAndCodeSecond(codeFrist, codeSecond));
+		map.put("cmmCdList", cmmCdMngeDAO.findCmmCdByCodeFirstAndCodeSecond(cmmCdMngeVO));
 
 		return map;
 	}
 
-	public boolean findCmmCdByCodeNo(String codeNo) throws Exception {
+	public boolean findCmmCdByCodeNo(CmmCdMngeVO cmmCdMngeVO) throws Exception {
 
-		logger.info("findCmmCdByCodeNo 호출 ▶▶▶▶▶▶ {}", codeNo);
+		logger.info("findCmmCdByCodeNo 호출 ▶▶▶▶▶▶ {}", cmmCdMngeVO.getCodeNo());
 		
 		/*
 		 * 중복시 에러 반환
 		 */
-		cmmCdMngeDAO.findCmmCdByCodeNo(codeNo).ifPresent((m) -> {
+		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresent((m) -> {
 			throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
 		});
 
