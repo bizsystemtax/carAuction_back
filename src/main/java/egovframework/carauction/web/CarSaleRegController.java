@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.service.CarAucInfService;
+import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -188,7 +190,6 @@ public class CarSaleRegController {
 	 */
 	@Operation(
 			summary = "판매차량 등록",
-			description = "판매차량을 등록",
 			security = {@SecurityRequirement(name = "Authorization")},
 			tags = {"EgovBBSManageApiController"}
 	)
@@ -218,11 +219,9 @@ public class CarSaleRegController {
 		carSaleDetailVO.setAucProgStatCd("0010");
 		
 		// 등록자, 수정자
-		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		//carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
-		//carSaleDetailVO.setEntryIdno(loginVO.getId()); //등록자
-		carSaleDetailVO.setUpdatIdno("sejin"); //수정자
-		carSaleDetailVO.setEntryIdno("sejin"); //등록자
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+		carSaleDetailVO.setEntryIdno(loginVO.getId()); //등록자
 		
 //		List<FileVO> result = null;
 //		String atchFileId = "";
@@ -263,6 +262,91 @@ public class CarSaleRegController {
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		resultVO.setResult(resultMap);
 		
+		return resultVO;
+	}
+	
+	/**
+	 * 경매 판매차량 등록
+	 */
+	@Operation(
+			summary = "판매차량 수정",
+			security = {@SecurityRequirement(name = "Authorization")},
+			tags = {"EgovBBSManageApiController"}
+	)
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "수정 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님"),
+			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
+	})
+	@PostMapping(value ="/updateCarSale")
+	public ResultVO updateCarSale(@RequestBody CarSaleDetailVO carSaleDetailVO,
+		BindingResult bindingResult,
+		HttpServletRequest request)
+		throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		System.out.println("==============================" + carSaleDetailVO.toString());
+
+		logger.info("carSaleDetailVO >>>>>>>>>", carSaleDetailVO);
+		
+		// 입찰유효일(마감일)
+		String bidExpDt = "";
+		bidExpDt = carSaleDetailVO.getBidExpDt();
+		bidExpDt = bidExpDt.replace("-", "");
+		carSaleDetailVO.setBidExpDt(bidExpDt);
+		
+		// 수정자
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+		
+//		List<FileVO> result = null;
+//		String atchFileId = "";
+
+//		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+//		if (!files.isEmpty()) {
+//			result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
+//			atchFileId = fileMngService.insertFileInfs(result);
+//		}
+
+		carAucInfService.updateCarSale(carSaleDetailVO);
+
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		return resultVO;
+	}
+	
+	/**
+	 * 경매 판매차량 등록
+	 */
+	@Operation(
+			summary = "판매차량 삭제",
+			security = {@SecurityRequirement(name = "Authorization")},
+			tags = {"EgovBBSManageApiController"}
+	)
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "수정 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님"),
+			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
+	})
+	@PostMapping(value ="/deleteCarSale")
+	public ResultVO deleteCarSale(@RequestBody CarSaleDetailVO carSaleDetailVO,
+		BindingResult bindingResult,
+		HttpServletRequest request)
+		throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		System.out.println("==============================" + carSaleDetailVO.toString());
+
+		logger.info("carSaleDetailVO >>>>>>>>>", carSaleDetailVO);
+		
+		// 수정자
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+		
+		carAucInfService.deleteCarSale(carSaleDetailVO);
+
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		return resultVO;
 	}
 }

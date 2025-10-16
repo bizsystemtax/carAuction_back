@@ -15,6 +15,10 @@
 		<result property = "entryIdno"		column = "ENTRY_IDNO" />
 		<result property = "updatDate"		column = "UPDAT_DATE" />
 		<result property = "updatIdno"		column = "UPDAT_IDNO" />
+		<result property = "prevNoticeId"	column = "PREV_NOTICE_ID" />
+		<result property = "prevNoticeTit"	column = "PREV_NOTICE_TIT" />
+		<result property = "nextNoticeId"	column = "NEXT_NOTICE_ID" />
+		<result property = "nextNoticeTit"	column = "NEXT_NOTICE_TIT" />
 	</resultMap>
 	
 	<resultMap id="fileList" type="egovframework.carauction.AttachFileVO">
@@ -44,7 +48,7 @@
 		 <if test="noticeTit != null and noticeTit != ''">
 		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
 		 </if>
-		 ORDER BY ENTRY_DATE
+		 ORDER BY ENTRY_DATE DESC
 	</select>
 	
 	<!-- 공지사항 클릭 시 조회수 + 1 -->
@@ -64,6 +68,30 @@
 			 , ENTRY_IDNO	/*등록자ID*/
 		  FROM CA_NOTICE
 	 	 WHERE NOTICE_ID = #{noticeId}	/*공지사항ID*/
+	</select>
+	
+	<select id="getPrevNotice" parameterType="egovframework.carauction.NoticeVO" resultMap="NoticeVO">
+	<![CDATA[
+		SELECT NOTICE_ID	AS PREV_NOTICE_ID	/*공지사항ID*/ 
+			 , NOTICE_TIT	AS PREV_NOTICE_TIT	/*공지사항제목*/
+			 FROM CA_NOTICE
+	 	 WHERE NOTICE_ID < #{noticeId}
+	 	   AND USE_YN = 'Y'
+	 	 ORDER BY NOTICE_ID DESC 
+	 	 LIMIT 1
+	]]>
+	</select>
+	
+	<select id="getNextNotice" parameterType="egovframework.carauction.NoticeVO" resultMap="NoticeVO">
+	<![CDATA[
+		SELECT NOTICE_ID	AS NEXT_NOTICE_ID	/*공지사항ID*/ 
+			 , NOTICE_TIT	AS NEXT_NOTICE_TIT	/*공지사항제목*/
+			 FROM CA_NOTICE
+	 	 WHERE NOTICE_ID > #{noticeId}
+	 	   AND USE_YN = 'Y'
+	 	 ORDER BY NOTICE_ID ASC
+	 	 LIMIT 1
+	]]>
 	</select>
 	
 	<!-- 공지사항 등록 -->

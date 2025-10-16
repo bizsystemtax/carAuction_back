@@ -62,6 +62,10 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 		return selectOne("carAucInfDAO.findCarByAucRegNo", aucRegNo);
 	}
 
+	public int checkUserBidHistory(Map<String, String> params) {
+	    return selectOne("carAucInfDAO.checkUserBidHistory", params);
+	}
+	
 	public String getNextAucRegSeq(String aucRegNo) {
 		return selectOne("carAucInfDAO.getNextAucRegSeq", aucRegNo);
 	}
@@ -122,6 +126,11 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	// 경매 판매차량 수정
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO) {
 		insert("carAucInfDAO.updateCarSale", carSaleDetailVO);
+	}
+	
+	// 경매 판매차량 삭제
+	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO) {
+		insert("carAucInfDAO.deleteCarSale", carSaleDetailVO);
 	}
 
 }

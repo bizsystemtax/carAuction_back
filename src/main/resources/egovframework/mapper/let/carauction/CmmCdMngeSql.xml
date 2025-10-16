@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CmmCdMngeDAO">
+<resultMap id="resultMap" type="egovframework.carauction.CmmCdMngeVO">
+<result property="serialVersionUID" column="SERIAL_VSERSION_UID"/>
+<result property="codeFirst" column="CODE_FIRST"/>
+<result property="codeSecond" column="CODE_SECOND"/>
+<result property="codeNo" column="CODE_NO"/>
+<result property="codeHname" column="CODE_HNAME"/>
+<result property="codeKita1" column="CODE_KITA1"/>
+<result property="codeKita2" column="CODE_KITA2"/>
+<result property="codeKita3" column="CODE_KITA3"/>
+<result property="codeKita4" column="CODE_KITA4"/>
+<result property="codeKita5" column="CODE_KITA5"/>
+<result property="codeUseyn" column="CODE_USEYN"/>
+<result property="sortOrder" column="SORT_ORDER"/></resultMap>
+<select id="findCmmCdByCodeFirstAndCodeSecond" resultType="egovframework.carauction.CmmCdMngeVO" parameterType="egovframework.carauction.CmmCdMngeVO">
+select
+	CODE_FIRST as codeFirst,
+	CODE_SECOND as codeSecond,
+	CODE_NO as codeNo,
+	CODE_HNAME as codeHname,
+	CODE_KITA1 as codeKita1,
+	CODE_KITA2 as codeKita2,
+	CODE_KITA3 as codeKita3,
+	CODE_KITA4 as codeKita4,
+	CODE_KITA5 as codeKita5,
+	CODE_USEYN as codeUseyn,
+	SORT_ORDER as sortOrder
+from
+	ca_cmm_cd
+where 1=1
+and CODE_FIRST = #{codeFirst}
+and CODE_SECOND =  #{codeSecond}
+;
+</select>
+<select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
+select
+	CODE_FIRST as codeFirst,
+	CODE_SECOND as codeSecond,
+	CODE_NO as codeNo,
+	CODE_HNAME as codeHname,
+	CODE_KITA1 as codeKita1,
+	CODE_KITA2 as codeKita2,
+	CODE_KITA3 as codeKita3,
+	CODE_KITA4 as codeKita4,
+	CODE_KITA5 as codeKita5,
+	CODE_USEYN as codeUseyn,
+	SORT_ORDER as sortOrder
+from
+	ca_cmm_cd
+where 1=1
+and CODE_NO = #{codeNo}
+;
+</select>
+</mapper>

@@ -20,4 +20,10 @@ public class BizException extends RuntimeException {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
+	
+	public BizException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+        this.errorMessage = errorCode.getMessage();
+    }
 }

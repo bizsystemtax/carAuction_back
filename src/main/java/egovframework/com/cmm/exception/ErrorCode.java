@@ -1,5 +1,7 @@
 package egovframework.com.cmm.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +36,14 @@ public enum ErrorCode {
 	
 	//403
 	ERR300("ERR300", "로그인 후 이용 가능합니다."),
-	ERR301("ERR301", "세션이 만료되었습니다. 다시 로그인해 주세요.");
+	ERR301("ERR301", "세션이 만료되었습니다. 다시 로그인해 주세요."),
+	
+	// 코드관리
+	ERR016(String.valueOf(HttpStatus.CONFLICT.value()), "중복된 코드입니다. 다시 확인해주세요"),
 
+	//차량입찰
+	ERR017("ERR017", "이미 해당 차량에 입찰하셨습니다.");
+	
 	private final String code;
     private final String message;
 }

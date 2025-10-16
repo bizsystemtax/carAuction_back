@@ -6,6 +6,7 @@
 	<resultMap id="CarInfoVO" type="egovframework.carauction.CarInfoVO">
 		<result property="rowNum" column="RNUM"/>
 		<result property="aucRegNo" column="AUC_REG_NO"/>
+		<result property="carNo" column="CAR_NO"/>
 		<result property="carModelNm" column="CAR_MODEL_NM"/>
 		<result property="carLevelNm" column="CAR_LEVEL_NM"/>
 		<result property="aucCarMakeYr" column="AUC_CAR_MAKE_YR"/>
@@ -115,6 +116,7 @@
 		<![CDATA[
 			SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
 			       auc.AUC_REG_NO,
+			       auc.CAR_NO,
 			       CONCAT(
 			           (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01'),
 			           ' ',
@@ -194,6 +196,7 @@
     <![CDATA[
         SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
                auc.AUC_REG_NO,
+               auc.CAR_NO,
                CONCAT(
                    (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01'),
                    ' ',
@@ -246,6 +249,13 @@
         CA_CAR_AUC_DTL_BID_INF
     WHERE 
         AUC_REG_NO = #{aucRegNo}
+</select>
+
+<select id="checkUserBidHistory" parameterType="java.util.Map" resultType="int">
+    SELECT COUNT(*) 
+    FROM CA_CAR_AUC_DTL_BID_INF
+    WHERE AUC_REG_NO = #{aucRegNo}
+      AND ENTRY_IDNO = #{userId}
 </select>
 
 <!-- 입찰 순번 조회 -->
@@ -414,7 +424,7 @@
 								, AUC_CAR_MAKE_YR
 								, AUC_CAR_DRV_DIS
 								, BID_PLN_PRICE
-								, BID_SDEP_PRICE
+								, BID_SDEP_RT
 								, BID_EXP_DT
 								, EOM_YN
 								, EOM_PRICE
@@ -435,7 +445,7 @@
 								, #{aucCarMakeYr}
 								, #{aucCarDrvDis}
 								, #{bidPlnPrice}
-								, #{bidSdepPrice}
+								, #{bidSdepRt}
 								, #{bidExpDt}
 								, #{eomYn}
 								, #{eomPrice}
@@ -460,7 +470,7 @@
 		  , AUC_CAR_MAKE_YR
 		  , AUC_CAR_DRV_DIS
 		  , BID_PLN_PRICE
-		  , BID_SDEP_PRICE
+		  , BID_SDEP_RT
 		  , BID_EXP_DT
 		  , EOM_YN
 		  , EOM_PRICE
@@ -480,7 +490,7 @@
             AUC_REG_NO = #{aucRegNo}
 	 </select>
 	 
-	   <update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
     UPDATE 
            CA_CAR_AUC_INF 
        SET
@@ -496,13 +506,20 @@
          , AUC_CAR_MAKE_YR = #{aucCarMakeYr}
          , AUC_CAR_DRV_DIS = #{aucCarDrvDis}
          , BID_PLN_PRICE = #{bidPlnPrice}
-         , BID_SDEP_PRICE = #{bidSdepPrice}
+         , BID_SDEP_RT = #{bidSdepRt}
          , BID_EXP_DT = #{bidExpDt}
          , EOM_YN = #{eomYn}
          , EOM_PRICE = #{eomPrice}
          , UPDAT_IDNO = #{updatIdno}
-      WHERE 
-            AUC_REG_NO = #{aucRegNo}
+     WHERE 
+           AUC_REG_NO = #{aucRegNo}
     </update>
-    
+
+	<update id="deleteCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
+    DELETE 
+      FROM
+           CA_CAR_AUC_INF 
+     WHERE 
+           AUC_REG_NO = #{aucRegNo}
+    </update>
 </mapper>

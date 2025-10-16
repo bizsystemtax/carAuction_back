@@ -15,7 +15,7 @@ public class CarSaleDetailVO implements Serializable {
 	private String carMainNo;		// 차량관리번호
 	private String locImpGb;		// 내수/수입구분
 	private String carEngCd;		// 차량연료코드
-	private int aucCarCc;		// 경매차량CC
+	private int aucCarCc;			// 경매차량CC
 	private String carTransGb;		// 차량변속기구분
 	private int aucCarSeat;			// 경매차량인승
 	private int carPrice;			// 차량가격
@@ -25,6 +25,7 @@ public class CarSaleDetailVO implements Serializable {
 	private int aucCarDrvDis;		// 경매차량주행거리
 	private int bidPlnPrice;		// 입찰예정금액
 	private int bidSdepPrice;		// 입찰보증금액	
+	private double bidSdepRt;		// 입찰보증금액
 	private String bidExpDt;		// 입찰유효일
 	private String eomYn;			// 근저당설정여부
 	private int eomPrice;			// 근저당설정금액
