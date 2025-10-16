@@ -164,13 +164,13 @@ public class MySaleCarBidDtlController {
 			
 			MyPageVO bidVO = new MyPageVO();
 			
-			bidVO.setAucRegNo(item.getAucRegNo());   		//경매등록번호
-			bidVO.setAucRegSeq(item.getAucRegSeq()); 		//경매등록순번
+			bidVO.setAucRegNo(item.getAucRegNo());   		 //경매등록번호
+			bidVO.setAucRegSeq(item.getAucRegSeq()); 		 //경매등록순번
 			bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
-			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
+			bidVO.setDepmnNm(item.getDepmnNm());  		 //낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
-			bidVO.setPomPayYn(item.getPomPayYn());  		//대금납부완납여부
-			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
+			bidVO.setPomPayYn(item.getPomPayYn());  		 //대금납부완납여부
+			bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			
 			myPageService.myBidInfoSelectedUpdate(bidVO);
