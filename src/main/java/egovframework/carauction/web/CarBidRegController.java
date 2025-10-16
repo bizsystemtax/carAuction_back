@@ -161,6 +161,15 @@ public class CarBidRegController {
 	        throw new BizException(ErrorCode.ERR001, "차량번호가 없습니다.");
 	    }
 	    
+	    /**
+	     * 입찰 이력 확인 - 이미 입찰한 경우 차단
+	     */
+	    int bidHistoryCount = carAucInfService.checkUserBidHistory(aucRegNo, userId);
+	    if (bidHistoryCount > 0) {
+	        logger.warn("중복 입찰 시도 - 사용자: {}, 차량: {}", userId, aucRegNo);
+	        throw new BizException(ErrorCode.ERR017);
+	    }
+	    
 	    Integer bidAmount = (Integer) requestParams.get("bidAmount");
 	    String depositorName = (String) requestParams.get("depositorName");
 	    String bankName = (String) requestParams.get("bankName");

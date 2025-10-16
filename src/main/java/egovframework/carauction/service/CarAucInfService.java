@@ -80,6 +80,11 @@ public interface CarAucInfService {
 	List<String> getAccountNumbers(String bankName) throws Exception;
 
 	/**
+	 * 사용자 입찰 이력 확인
+	 */
+	int checkUserBidHistory(String aucRegNo, String userId) throws Exception;
+	
+	/**
 	 * 입찰 순번 조회
 	 */
 	String getNextAucRegSeq(String aucRegNo) throws Exception;
