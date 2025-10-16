@@ -6,6 +6,7 @@
 	<resultMap id="CarInfoVO" type="egovframework.carauction.CarInfoVO">
 		<result property="rowNum" column="RNUM"/>
 		<result property="aucRegNo" column="AUC_REG_NO"/>
+		<result property="carNo" column="CAR_NO"/>
 		<result property="carModelNm" column="CAR_MODEL_NM"/>
 		<result property="carLevelNm" column="CAR_LEVEL_NM"/>
 		<result property="aucCarMakeYr" column="AUC_CAR_MAKE_YR"/>
@@ -115,6 +116,7 @@
 		<![CDATA[
 			SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
 			       auc.AUC_REG_NO,
+			       auc.CAR_NO,
 			       CONCAT(
 			           (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01'),
 			           ' ',
@@ -194,6 +196,7 @@
     <![CDATA[
         SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
                auc.AUC_REG_NO,
+               auc.CAR_NO,
                CONCAT(
                    (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.MKR_CD AND CONCAT(CODE_FIRST, code_second) = 'C01'),
                    ' ',
@@ -246,6 +249,13 @@
         CA_CAR_AUC_DTL_BID_INF
     WHERE 
         AUC_REG_NO = #{aucRegNo}
+</select>
+
+<select id="checkUserBidHistory" parameterType="java.util.Map" resultType="int">
+    SELECT COUNT(*) 
+    FROM CA_CAR_AUC_DTL_BID_INF
+    WHERE AUC_REG_NO = #{aucRegNo}
+      AND ENTRY_IDNO = #{userId}
 </select>
 
 <!-- 입찰 순번 조회 -->
