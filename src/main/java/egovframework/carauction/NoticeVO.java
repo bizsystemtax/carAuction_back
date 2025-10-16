@@ -26,6 +26,11 @@ public class NoticeVO implements Serializable {
 	private String targetType = "";		// 대상타입
 	private String attFileNm = "";		// 첨부파일명
 	
+	private int prevNoticeId = 0;
+	private String prevNoticeTit = "";
+	private int nextNoticeId = 0;
+	private String nextNoticeTit = "";
+	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}

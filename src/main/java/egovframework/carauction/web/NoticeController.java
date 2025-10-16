@@ -182,17 +182,20 @@ public class NoticeController {
 	 * @return resultVO
 	 * @throws BizException
 	 */
-	@PatchMapping(value = "/delNotice")
-	public ResultVO delNotice(@RequestBody List<NoticeVO> noticeId, @AuthenticationPrincipal LoginVO user) throws Exception {
+	@PatchMapping(value = "/delete/{noticeId}")
+	public ResultVO delNotice(@PathVariable("noticeId") int noticeId, @AuthenticationPrincipal LoginVO user) throws Exception {
 		
 		NoticeVO noticeVO = new NoticeVO();
 		ResultVO resultVO = new ResultVO();
 		
-		for(NoticeVO notice : noticeId) {
-			
-			noticeVO.setUpdatIdno(user.getId());
-			noticeVO.setNoticeId(notice.getNoticeId());
-			noticeService.delNotice(noticeVO);
+		noticeVO.setNoticeId(noticeId);
+		noticeVO.setUpdatIdno(user.getId());
+		
+		int result = noticeService.delNotice(noticeVO);
+		
+		if(result < 1) {
+			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
 		}
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

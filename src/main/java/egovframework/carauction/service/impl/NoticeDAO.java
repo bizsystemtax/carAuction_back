@@ -27,6 +27,16 @@ public class NoticeDAO extends EgovAbstractMapper {
 		return (NoticeVO) selectOne("noticeDAO.getNoticeDetail", noticeVO);
 	}
 	
+	// 공지사항 이전글 조회
+	public NoticeVO getPrevNotice(NoticeVO noticeVO) {
+		return (NoticeVO) selectOne("noticeDAO.getPrevNotice", noticeVO);
+	}
+	
+	// 공지사항 다음글 조회
+	public NoticeVO getNextNotice(NoticeVO noticeVO) {
+		return (NoticeVO) selectOne("noticeDAO.getNextNotice", noticeVO);
+	}
+	
 	// 공지사항 등록
 	public int insNotice(Map<String, Object> paramMap) {
 		return insert("noticeDAO.insNotice", paramMap);

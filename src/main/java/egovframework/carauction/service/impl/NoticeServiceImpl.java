@@ -40,6 +40,10 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		// 상세조회 
 		map.put("resultData", noticeDAO.getNoticeDetail(noticeVO));
 		
+		// 이전글, 다음글 조회
+		map.put("prevNotice", noticeDAO.getPrevNotice(noticeVO));
+		map.put("nextNotice", noticeDAO.getNextNotice(noticeVO));
+		
 		// 첨부파일 목록 조회
 		AttachFileVO attachFileVO = new AttachFileVO();
 		
@@ -73,9 +77,8 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 	@Override
 	public int delNotice(NoticeVO noticeVO) throws Exception {
 		
-		int result = 0;
-		result = noticeDAO.delNotice(noticeVO);
-
+		int result = noticeDAO.delNotice(noticeVO);
+		
 		return result;
 	}
 	
