@@ -25,6 +25,7 @@ public class CarSaleDetailVO implements Serializable {
 	private int aucCarDrvDis;		// 경매차량주행거리
 	private int bidPlnPrice;		// 입찰예정금액
 	private int bidSdepPrice;		// 입찰보증금액	
+	private double bidSdepRt;		// 입찰보증금액
 	private String bidExpDt;		// 입찰유효일
 	private String eomYn;			// 근저당설정여부
 	private int eomPrice;			// 근저당설정금액

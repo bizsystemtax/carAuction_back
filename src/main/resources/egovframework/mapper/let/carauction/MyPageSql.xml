@@ -264,11 +264,8 @@
 			     , DATE_FORMAT(CCAI.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE /*입찰등록일(등록일시)*/
 			     , (SELECT CODE_NO FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_CD /*진행상태코드*/
 			     , CASE WHEN CCAI.AUC_PROG_STAT_CD = '0010' THEN '경매진행중'
-				        WHEN CCAI.AUC_PROG_STAT_CD = '0020' AND CCAI.AUC_PROG_YN = 'Y' AND CCAI.SBID_PRICE != 0 THEN '본인낙찰'
-					    WHEN CCAI.AUC_PROG_STAT_CD = '0020' AND  CCAI.AUC_PROG_YN = 'Y' AND CCAI.SBID_PRICE = 0 THEN '제3자 낙찰'
-					    WHEN CCAI.AUC_PROG_STAT_CD = '0020' THEN '낙찰'
-					    WHEN CCAI.AUC_PROG_STAT_CD = '0030' THEN '낙찰금액완납'
-					    WHEN CCAI.AUC_PROG_STAT_CD = '0040' THEN '명의이전완료'
+				        WHEN CCAI.AUC_PROG_STAT_CD IN('0020', '0030', '0040') AND CCAI.SBIDMN_NM = CCADBI.BIDMN_NM THEN '본인낙찰'
+						WHEN CCAI.AUC_PROG_STAT_CD IN('0020', '0030', '0040') AND CCAI.SBIDMN_NM != CCADBI.BIDMN_NM THEN '제3자 낙찰'
 					    WHEN CCAI.AUC_PROG_STAT_CD = '0050' THEN '유찰'
 				   ELSE ''
 				    END AS AUC_PROG_STAT_NM /*진행상태명*/
@@ -308,7 +305,7 @@
 		     , AUC_PROG_YN = #{aucProgYn} /*경매진행여부*/
 		     , SBID_PRICE = #{bidPrice} /*입찰금액*/
 		     , SBID_DATE = DATE_FORMAT(NOW(), '%Y%m%d') /*낙찰일시*/
-		     , SBIDMN_NM = #{depmnNm} /*낙찰자명*/  
+		     , SBIDMN_NM = #{depmnNm} /*낙찰자명->> 입찰자명 */   
 		     , UPDAT_DATE = NOW() /*수정일시*/
      		 , UPDAT_IDNO = #{updatIdno} /*수정자ID*/
  		 WHERE AUC_REG_NO = #{aucRegNo} /*경매등록번호*/
