@@ -48,7 +48,7 @@
 		 <if test="noticeTit != null and noticeTit != ''">
 		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
 		 </if>
-		 ORDER BY ENTRY_DATE
+		 ORDER BY ENTRY_DATE DESC
 	</select>
 	
 	<!-- 공지사항 클릭 시 조회수 + 1 -->
@@ -76,6 +76,7 @@
 			 , NOTICE_TIT	AS PREV_NOTICE_TIT	/*공지사항제목*/
 			 FROM CA_NOTICE
 	 	 WHERE NOTICE_ID < #{noticeId}
+	 	   AND USE_YN = 'Y'
 	 	 ORDER BY NOTICE_ID DESC 
 	 	 LIMIT 1
 	]]>
@@ -87,6 +88,7 @@
 			 , NOTICE_TIT	AS NEXT_NOTICE_TIT	/*공지사항제목*/
 			 FROM CA_NOTICE
 	 	 WHERE NOTICE_ID > #{noticeId}
+	 	   AND USE_YN = 'Y'
 	 	 ORDER BY NOTICE_ID ASC
 	 	 LIMIT 1
 	]]>
