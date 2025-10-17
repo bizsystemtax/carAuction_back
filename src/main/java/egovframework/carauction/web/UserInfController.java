@@ -21,7 +21,6 @@ import egovframework.carauction.UserInfVO;
 import egovframework.carauction.service.UserInfService;
 import egovframework.com.cmm.DateUtil;
 import egovframework.com.cmm.LoginVO;
-import egovframework.com.cmm.PasswordUtil;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.exception.ErrorCode;

@@ -61,65 +61,101 @@
 	<!-- Retrieve : 회원관리 목록 조회 -->
 	<select id="userInfListSelect" parameterType="egovframework.carauction.UserInfVO" resultMap="UserInfVO">
 		<![CDATA[
-		select ROW_NUMBER() OVER (ORDER BY A.ENTRY_DATE desc, A.USER_ID) AS NUM /* 순번 */
-		     , (
-		        select CMM.CODE_HNAME
-		        from   CA_CMM_CD CMM
-		        where  CMM.CODE_FIRST = 'U'
-		        and    CMM.CODE_SECOND = '01'
-		        and    CMM.CODE_NO = A.USER_GB_CD
-		        ) as USER_GB_NM /* 사용자구분명 */
-		     , A.USER_NM as USER_NM /* 사용자명 */
-		     , A.CONT_NM as CONT_NM /* 담당자명 */
-		     , A.CONT_CELLNO as CONT_CELLNO /* 담당자 휴대전화번호 */
-		     , A.COMP_ADDR as COMP_ADDR /* 회사주소 */
-		     , A.COMP_TELNO as COMP_TELNO /* 회사전화번호 */
-		     , (
-		        select COUNT(1)
-		        from   CA_CAR_AUC_INF CAI
-		        where  CAI.ENTRY_IDNO = A.USER_ID
-		        ) as AUC_ENTRY_CNT /* 경매등록건수 */
-		     , (
-		        select COUNT(1)
-		        from   CA_CAR_AUC_INF CAI
-		        where  CAI.ENTRY_IDNO = A.USER_ID
-		        and    CAI.AUC_PROG_YN = 'Y'
-		        ) as AUC_BID_PROG_CNT /* 경매입찰진행건수 */
-		     , (
-		        select COUNT(1)
-		        from   CA_CAR_AUC_INF CAI
-		        where  CAI.ENTRY_IDNO = A.USER_ID
-		        and    CAI.SBID_DATE is not NULL
-		        ) as AUC_SBID_CNT /* 경매낙찰건수 */
-		     , (
-		        select COUNT(1)
-		        from   CA_CAR_AUC_DTL_BID_INF CAD
-		        where  CAD.ENTRY_IDNO = A.USER_ID
-		        ) as BID_ENTRY_CNT /* 입찰등록건수 */
-		     , (
-		        select COUNT(1)
-		        from   CA_CAR_AUC_DTL_BID_INF CAD
-		        where  CAD.ENTRY_IDNO = A.USER_ID
-		        and    CAD.SBID_YN = 'Y'
-		        ) as BID_SBID_CNT /* 입찰낙찰건수 */
-		     , TO_CHAR(A.ENTRY_DATE, 'YYYYMMDD') AS REG_DATE /* 가입일자 */
-		     , A.USER_ID AS USER_ID /* 사용자ID */
-		from   CA_USER_INF A /* 회원관리 */
-		where  A.USER_ID IS NOT NULL
+		with LIST as (
+			SELECT ROW_NUMBER() OVER (ORDER BY A.ENTRY_DATE DESC, A.USER_ID) AS NUM /* 순번 */
+			     , (
+			        SELECT CMM.CODE_HNAME
+			        FROM   CA_CMM_CD CMM
+			        WHERE  CMM.CODE_FIRST = 'U'
+			        AND    CMM.CODE_SECOND = '01'
+			        AND    CMM.CODE_NO = A.USER_GB_CD
+			        AND	   CMM.CODE_USEYN = 'Y'
+			        ) AS USER_GB_NM /* 사용자구분명 */
+			     , A.USER_NM AS USER_NM /* 사용자명 */
+			     , A.CONT_NM AS CONT_NM /* 담당자명 */
+			     , A.CONT_CELLNO AS CONT_CELLNO /* 담당자 휴대전화번호 */
+			     , A.COMP_ADDR AS COMP_ADDR /* 회사주소 */
+			     , A.COMP_TELNO AS COMP_TELNO /* 회사전화번호 */
+			     , A.USER_ID AS USER_ID /* 사용자ID */
+			FROM   CA_USER_INF A /* 회원관리 */
+			WHERE  A.USER_ID IS NOT null
 		]]>
-		<!-- 가입일자기간 -->
-		<if test="inStartDate != null and inStartDate != '' and inEndDate != null and inEndDate != ''">
-		AND	TO_CHAR(A.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inStartDate} AND #{inEndDate}
-		</if>
-		<!-- 회원구분 -->
-		<if test="inUserGbCd != null and inUserGbCd != ''">
-		AND A.USER_GB_CD IN (${inUserGbCd})
-		</if>
-		<!-- 회원명 -->
-		<if test="inUserNm != null and inUserNm != ''">
-		AND A.USER_NM LIKE CONCAT('%', #{inUserNm}, '%')
-		</if>
-		ORDER BY NUM
+			<!-- 가입일자기간 -->
+			<if test="inStartDate != null and inStartDate != '' and inEndDate != null and inEndDate != ''">
+			AND	TO_CHAR(A.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inStartDate} AND #{inEndDate}
+			</if>
+			<!-- 회원구분 -->
+			<if test="inUserGbCd != null and inUserGbCd != ''">
+			AND A.USER_GB_CD IN (${inUserGbCd})
+			</if>
+			<!-- 회원명 -->
+			<if test="inUserNm != null and inUserNm != ''">
+			AND A.USER_NM LIKE CONCAT('%', #{inUserNm}, '%')
+			</if>
+		<![CDATA[
+		),
+		CNT as (
+			select AUC.AUC_REG_NO
+				 , AUC.ENTRY_IDNO
+				 , AUC.AUC_PROG_STAT_CD
+				 , AUC.SBID_AUC_SEQ
+			from CA_CAR_AUC_INF AUC /* 차량경매정보관리 */
+			INNER JOIN CA_CAR_INF CAR /* 차량정보관리 */
+				ON AUC.CAR_MAIN_NO = CAR.CAR_MAIN_NO
+			INNER JOIN CA_CMM_CD CMM /* 공통코드 */
+				ON CMM.CODE_NO = AUC.CAR_ENG_CD
+				AND CMM.CODE_FIRST = 'C'
+				AND CMM.CODE_SECOND = '04'
+				AND CMM.CODE_USEYN = 'Y'
+			INNER JOIN CA_CMM_CD CMM_CAR /* 공통코드 */
+				ON CMM_CAR.CODE_NO = CAR.MKR_CD
+				AND CMM_CAR.CODE_FIRST = 'C'
+				AND CMM_CAR.CODE_SECOND = '01'
+				AND CMM_CAR.CODE_USEYN = 'Y'
+			inner join LIST LIST
+				on LIST.USER_ID = AUC.ENTRY_IDNO
+		)
+		SELECT A.NUM /* 순번 */
+		     , A.USER_GB_NM /* 사용자구분명 */
+		     , A.USER_NM /* 사용자명 */
+		     , A.CONT_NM /* 담당자명 */
+		     , A.CONT_CELLNO /* 담당자 휴대전화번호 */
+		     , A.COMP_ADDR/* 회사주소 */
+		     , A.COMP_TELNO/* 회사전화번호 */
+		     , A.USER_ID /* 사용자ID */
+		     , NVL((select COUNT(1) 
+				    from CNT B
+				    where B.ENTRY_IDNO = A.USER_ID
+				    ), 0) as AUC_ENTRY_CNT /* 경매등록건수 */
+		     , NVL((select COUNT(1)
+				    from CNT B
+				    inner join CA_CAR_AUC_DTL_BID_INF BID
+					    on BID.AUC_REG_NO = B.AUC_REG_NO
+					    and BID.ENTRY_IDNO = B.ENTRY_IDNO
+				    where B.ENTRY_IDNO = A.USER_ID
+				    ), 0) as AUC_BID_PROG_CNT /* 경매입찰진행건수 */
+		     , NVL((select COUNT(1)
+				    from CNT B
+				    where B.ENTRY_IDNO = A.USER_ID
+				    and B.AUC_PROG_STAT_CD = '0020'
+				    ), 0) as AUC_SBID_CNT /* 경매낙찰건수 */
+		     , NVL((select COUNT(1)
+				    from CNT B
+				    inner join CA_CAR_AUC_DTL_BID_INF BID
+					    on BID.AUC_REG_NO = B.AUC_REG_NO
+					    and BID.ENTRY_IDNO = B.ENTRY_IDNO
+					    and BID.AUC_REG_SEQ = B.SBID_AUC_SEQ
+				    where B.ENTRY_IDNO = A.USER_ID
+				    and B.AUC_PROG_STAT_CD IN ('0020', '0030', '0040')
+				    ), 0) as BID_ENTRY_CNT /* 입찰등록건수 */
+		     , NVL((select COUNT(1)
+				    from CNT B
+				    where B.ENTRY_IDNO = A.USER_ID
+				    and B.AUC_PROG_STAT_CD = '0010'
+				    ), 0) as BID_SBID_CNT /* 입찰등록건수 */
+		FROM   LIST A
+		]]>
+		ORDER BY A.NUM
 	</select>
 
 	<!-- Retrieve : 회원 수정 모달 정보 조회 -->
@@ -131,6 +167,7 @@
 		        where  CMM.CODE_FIRST = 'U'
 		        and    CMM.CODE_SECOND = '01'
 		        and    CMM.CODE_NO = A.USER_GB_CD
+		        AND    CMM.CODE_USEYN = 'Y'
 		        ) as USER_GB_NM /* 사용자구분명 */
 		     , A.USER_NM as USER_NM /* 사용자명 */
 		     , A.CONT_NM as CONT_NM /* 담당자명 */
