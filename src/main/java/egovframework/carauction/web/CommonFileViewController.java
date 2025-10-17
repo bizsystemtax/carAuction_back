@@ -70,7 +70,10 @@ public class CommonFileViewController {
 
         String contentType = fileInfo.getAttFileType();
         if (contentType == null || contentType.isEmpty()) {
-            contentType = "application/octet-stream";
+            contentType = Files.probeContentType(file.toPath());  // 파일 경로로부터 MIME 타입 추측
+        }
+        if (contentType == null) {
+            contentType = "application/octet-stream";  // MIME 타입 못찾으면 기본값 설정
         }
         response.setContentType(contentType);
         response.setContentLengthLong(file.length());
@@ -87,16 +90,14 @@ public class CommonFileViewController {
             response.setHeader("Content-Disposition", dispositionType + "; filename=\"" + originalFileName + "\"");
         }
 
-        try (InputStream in = new FileInputStream(file);
-             OutputStream out = response.getOutputStream()) {
-
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-            out.flush();
-
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+        	     BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
+        	    byte[] buffer = new byte[8192];
+        	    int bytesRead;
+        	    while ((bytesRead = in.read(buffer)) != -1) {
+        	        out.write(buffer, 0, bytesRead);
+        	    }
+        	    out.flush();
         } catch (IOException e) {
             logger.error("파일 다운로드 중 오류 발생: {}", e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
