@@ -1,15 +1,18 @@
 package egovframework.carauction.service.impl;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
+import egovframework.carauction.service.CommonFileService;
 import egovframework.carauction.service.NoticeService;
 
 @Service("noticeService")
@@ -17,6 +20,9 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 	
 	@Resource(name = "noticeDAO")
 	private NoticeDAO noticeDAO;
+	
+	@Resource(name = "commonFileService")
+	private CommonFileService commonFileService;
 	
 	// 공지사항 목록
 	@Override
@@ -57,18 +63,37 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 	
 	// 공지사항 등록
 	@Override
-	public int insNotice(Map<String, Object> paramMap) throws Exception {
+	public int insNotice(Map<String, Object> paramMap, List<MultipartFile> files) throws Exception {
 		
 		int result = noticeDAO.insNotice(paramMap);
+		
+		//20251016 로직 추가
+		if (result > 0 && files != null && !files.isEmpty()) {
+            Integer noticeId = (Integer) paramMap.get("noticeId");
+            if (noticeId == null) {
+                throw new Exception("공지사항 ID가 존재하지 않습니다.");
+            }
+
+            commonFileService.saveFiles("notice", noticeId, files, paramMap);
+        }
 		
 		return result;
 	}
 	
 	// 공지사항 수정
 	@Override
-	public int updNotice(Map<String, Object> paramMap) throws Exception {
+	public int updNotice(Map<String, Object> paramMap, List<MultipartFile> files) throws Exception {
 		
 		int result = noticeDAO.updNotice(paramMap);
+		
+		if (result > 0 && files != null && !files.isEmpty()) {
+            Integer noticeId = (Integer) paramMap.get("noticeId");
+            if (noticeId == null) {
+                throw new Exception("공지사항 ID가 존재하지 않습니다.");
+            }
+
+            commonFileService.saveFiles("notice", noticeId, files, paramMap);
+        }
 		
 		return result;
 	}

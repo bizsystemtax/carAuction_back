@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +46,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Transactional
 @RequestMapping("/notice")
 public class NoticeController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(NoticeController.class);
 	
 	@Resource(name = "noticeService")
 	private NoticeService noticeService;
@@ -117,28 +125,41 @@ public class NoticeController {
 	 * @return resultVO
 	 * @throws BizException
 	 */
-	@PostMapping(value = "/insert")
-	public ResultVO insNotice(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
+	@PostMapping(value = "/insert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResultVO insNotice(
+			@RequestParam(value = "noticeTit", required = false) String noticeTit,
+	        @RequestParam(value = "noticeCtnt", required = false) String noticeCtnt,
+			@RequestPart(value = "files", required = false) List<MultipartFile> files,
+		    @AuthenticationPrincipal LoginVO user
+			) throws Exception{
 		
+		logger.info("noticeTit !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", noticeTit);
+		logger.info("noticeCtnt !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", noticeCtnt);
+		logger.info("files !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", files);
 		ResultVO resultVO = new ResultVO();
 		
+		/*
 		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		 */
+		Map<String, Object> param = new HashMap<>();		
+		param.put("noticeTit", noticeTit);		//공지사항 제목
+		param.put("noticeCtnt", noticeCtnt); 	//공지사항 내용
+		param.put("entryIdno", user.getId());   //등록자ID
+		param.put("updatIdno", user.getId());   //수정자ID
 		
-		param.put("entryIdno", user.getId());
-		param.put("updatIdno", user.getId());
-		
-		int result = noticeService.insNotice(param);
+		int result = noticeService.insNotice(param, files);
 		
 		if(result < 1) {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
 			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
+			return resultVO;
 		}
-		
+
 		///////////////////////////////////////////// 파일 업로드
 		
 		
-		resultVO.setResult(resultMap);
+		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		
@@ -152,24 +173,44 @@ public class NoticeController {
 	 * @return resultVO
 	 * @throws BizException
 	 */
-	@PatchMapping(value = "/update/{noticeId}")
-	public ResultVO updNotice(@RequestBody Map<String, Object> requestParams, @AuthenticationPrincipal LoginVO user) throws Exception{
+	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	//@PostMapping(value = "/update/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResultVO updNotice(
+			//@RequestParam("noticeTit") String noticeTit,
+	        //@RequestParam("noticeCtnt") String noticeCtnt,
+	        //@RequestParam("noticeId") int noticeId,
+			@RequestParam Map<String, String> params,
+	        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+	        @AuthenticationPrincipal LoginVO user) throws Exception {
+		
+		logger.info("noticeTit !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", params.get("noticeTit"));
+		logger.info("noticeCtnt !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", params.get("noticeCtnt"));
+		logger.info("files !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", files);
+		//logger.info("requestParams !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", requestParams);
 		
 		ResultVO resultVO = new ResultVO();
 		
-		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		//Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
+		//Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		Map<String, Object> param = new HashMap<>();		
+		param.put("noticeTit", params.get("noticeTit"));		//공지사항 제목
+		param.put("noticeCtnt", params.get("noticeCtnt")); 	//공지사항 내용
+		param.put("noticeId", Integer.parseInt((String) params.get("noticeId"))); 	//공지사항 내용
+		param.put("entryIdno", user.getId());   //등록자ID
+		param.put("updatIdno", user.getId());   //수정자ID
 		
 		param.put("updatIdno", user.getId());
 		
-		int result = noticeService.updNotice(param);
+		int result = noticeService.updNotice(param, files);
 		
 		if(result < 1) {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
 			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
+			return resultVO;
 		}
 		
-		resultVO.setResult(resultMap);
+		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		
