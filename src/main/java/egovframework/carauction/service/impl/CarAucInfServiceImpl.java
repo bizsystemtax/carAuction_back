@@ -138,6 +138,15 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 			criteria.setRegistrationCompany(null);
 		}
 	}
+	
+	@Override
+	public int checkUserBidHistory(String aucRegNo, String userId) throws Exception {
+	    Map<String, String> params = new HashMap<>();
+	    params.put("aucRegNo", aucRegNo);
+	    params.put("userId", userId);
+	    
+	    return carAucInfDAO.checkUserBidHistory(params);
+	}
 
 	@Override
 	public String getNextAucRegSeq(String aucRegNo) throws Exception {

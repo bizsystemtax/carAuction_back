@@ -166,19 +166,19 @@
 	<select id="userUseCntInfList" parameterType="egovframework.carauction.UserInfVO" resultMap="UserInfVO">
 		<![CDATA[
 			SELECT ROW_NUMBER() OVER (ORDER BY AUC.ENTRY_DATE DESC, AUC.CAR_NO DESC) AS NUM /* 순번 */
-				, AUC.CAR_NO		/* 차량번호 */
+				, AUC.CAR_NO			/* 차량번호 */
 				, CONCAT(CMM_CAR.CODE_HNAME, ' ', CAR.CAR_MODEL_NM) AS CAR_NM/* 차량명 */
-				, AUC.AUC_CAR_CMNT /* 옵션내용 */
-				, AUC.AUC_CAR_MAKE_YR /* 연식 */
-				, CMM.CODE_HNAME /* 연료명 */
-				, AUC.AUC_CAR_DRV_DIS /* 주행거리 */
+				, AUC.AUC_CAR_CMNT 		/* 옵션내용 */
+				, AUC.AUC_CAR_MAKE_YR 	/* 연식 */
+				, CMM.CODE_HNAME 		/* 연료명 */
+				, AUC.AUC_CAR_DRV_DIS 	/* 주행거리 */
 				, CASE WHEN AUC.CAR_TRANS_GB = 'A'THEN '오토'
 						ELSE '수동' END CAR_TRANS_GB_NM /* 변속기명 */
-				, AUC.BID_PLN_PRICE /* 예정가 */
-				, AUC.BID_CNT /* 입찰건수 */
+				, AUC.BID_PLN_PRICE 	/* 예정가 */
+				, AUC.BID_CNT 			/* 입찰건수 */
 				, TO_CHAR(AUC.ENTRY_DATE, 'YYYYMMDD') ENTRY_DATE /* 경매등록일 */
 				, TO_CHAR(AUC.BID_EXP_DT, 'YYYYMMDD') BID_EXP_DT /* 경매마감일 */
-				, USER.USER_NM /* 사용자명 */
+				, USER.USER_NM 			/* 사용자명 */
 			FROM CA_CAR_AUC_INF AUC
 			INNER JOIN CA_CAR_INF CAR ON AUC.CAR_MAIN_NO = CAR.CAR_MAIN_NO
 			INNER JOIN CA_USER_INF USER ON AUC.ENTRY_IDNO = USER.USER_ID
@@ -190,13 +190,47 @@
 									AND CMM_CAR.CODE_FIRST = 'C'
 									AND CMM_CAR.CODE_SECOND = '01'
 									AND CMM_CAR.CODE_USEYN = 'Y'
-			WHERE AUC.ENTRY_IDNO = #{inSearchUserId}
+		]]>
+		<if test="inSearchCd != null and inSearchCd != '' and inSearchCd == 'aucBidProgCnt' or inSearchCd == 'bidEntryCnt'">
+		    INNER JOIN CA_CAR_AUC_DTL_BID_INF BID ON AUC.AUC_REG_NO = BID.AUC_REG_NO
+			<if test="inSearchCd == 'bidEntryCnt'">
+			<![CDATA[
+		    									  AND AUC.SBID_AUC_SEQ = BID.AUC_REG_SEQ
+			]]>
+			</if>
+		</if>
+		<![CDATA[
+		  	WHERE 1=1
 		]]>
 		<!-- 등록일 -->
 		<if test="inRegStartDate != null and inRegStartDate != '' and inRegEndDate != null and inRegEndDate != ''">
 			AND	TO_CHAR(AUC.ENTRY_DATE, 'YYYYMMDD') BETWEEN #{inRegStartDate} AND #{inRegEndDate}
 		</if>
+		<if test="inSearchCd != null and inSearchCd != ''">
+			<choose>
+			  <when test="inSearchCd == 'aucEntryCnt'">
+				AND AUC.ENTRY_IDNO = #{inSearchUserId}
+			  </when>
+			  <when test="inSearchCd == 'aucBidProgCnt'">
+				AND BID.ENTRY_IDNO = #{inSearchUserId}
+			  </when>
+			  <when test="inSearchCd == 'aucSbidCnt'">
+				AND AUC.ENTRY_IDNO = #{inSearchUserId}
+			    AND AUC.AUC_PROG_STAT_CD = '0020'
+			  </when>
+			  <when test="inSearchCd == 'bidEntryCnt'">
+				AND BID.ENTRY_IDNO = #{inSearchUserId}
+				AND AUC.AUC_PROG_STAT_CD IN ('0020', '0030', '0040')
+			  </when>
+			  <when test="inSearchCd == 'bidSbidCnt'">
+			  	AND AUC.ENTRY_IDNO = #{inSearchUserId}
+			    AND AUC.AUC_PROG_STAT_CD = '0010'
+			  </when>
+			</choose>
+		</if>
+		<![CDATA[
 		ORDER BY NUM, AUC.AUC_REG_NO
+		]]>
 	</select>
 	
 </mapper>
