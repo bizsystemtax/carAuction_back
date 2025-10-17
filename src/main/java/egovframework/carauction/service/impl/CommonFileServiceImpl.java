@@ -89,7 +89,9 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             // 최종 파일명 (확장자 포함)
             String finalFileName = originalFilename.replace(ext, "") + "_" + timestamp + "_" + uuid + ext;
             // → "판매차량 입찰 현황_20251016_130733_xxxx-xxxx.xlsx"
-
+            
+            
+            logger.info("데이터 확인 ▶▶▶▶▶▶▶▶▶▶▶▶ {} ", finalFileName);
             // 절대 경로
             Path targetPath = targetFolder.resolve(finalFileName);
             
