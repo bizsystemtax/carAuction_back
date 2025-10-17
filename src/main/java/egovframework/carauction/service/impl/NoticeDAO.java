@@ -57,7 +57,9 @@ public class NoticeDAO extends EgovAbstractMapper {
 		return selectList("noticeDAO.getNotiFileList", attachFileVO);
 	}
 	
-	// 첨부파일 등록
-	
+	// 첨부파일 YN 
+	public void updAttFileYn(NoticeVO noticeVO) {
+		update("noticeDAO.updAttFileYn", noticeVO);
+	}
 	
 }

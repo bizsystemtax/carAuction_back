@@ -67,6 +67,8 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		
 		int result = noticeDAO.insNotice(paramMap);
 		
+		NoticeVO noticeVO = new NoticeVO(); 
+		
 		//20251016 로직 추가
 		if (result > 0 && files != null && !files.isEmpty()) {
             Integer noticeId = (Integer) paramMap.get("noticeId");
@@ -75,6 +77,10 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             }
 
             commonFileService.saveFiles("notice", noticeId, files, paramMap);
+            
+            noticeVO.setNoticeId(noticeId);
+            noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
+            
         }
 		
 		return result;
@@ -86,6 +92,8 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		
 		int result = noticeDAO.updNotice(paramMap);
 		
+		NoticeVO noticeVO = new NoticeVO(); 
+		
 		if (result > 0 && files != null && !files.isEmpty()) {
             Integer noticeId = (Integer) paramMap.get("noticeId");
             if (noticeId == null) {
@@ -93,6 +101,9 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             }
 
             commonFileService.saveFiles("notice", noticeId, files, paramMap);
+            
+            noticeVO.setNoticeId(noticeId);
+            noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
         }
 		
 		return result;

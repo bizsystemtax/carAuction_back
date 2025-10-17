@@ -43,12 +43,12 @@
 			 , DATE_FORMAT(ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE	/*등록일자*/
 			 , ATT_FILE_YN	/*첨부파일여부*/
 			 , ENTRY_IDNO	/*등록자ID*/
-		  FROM CA_NOTICE
+		  FROM CA_NOTICE A
 		 WHERE USE_YN = 'Y'
 		 <if test="noticeTit != null and noticeTit != ''">
 		   AND NOTICE_TIT LIKE CONCAT('%', #{noticeTit},'%')
 		 </if>
-		 ORDER BY ENTRY_DATE DESC
+		 ORDER BY A.ENTRY_DATE DESC
 	</select>
 	
 	<!-- 공지사항 클릭 시 조회수 + 1 -->
@@ -133,6 +133,13 @@
 			, UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
 		WHERE NOTICE_ID = #{noticeId}
+	</update>
+	
+	<!-- 첨부파일 -->
+	<update id="updAttFileYn" parameterType="egovframework.carauction.NoticeVO">
+		UPDATE CA_NOTICE
+		   SET ATT_FILE_YN = 'Y'
+		 WHERE NOTICE_ID = #{noticeId} 
 	</update>
 	
 	<!-- 공지사항 삭제 -->
