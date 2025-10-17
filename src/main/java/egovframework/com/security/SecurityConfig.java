@@ -77,6 +77,7 @@ public class SecurityConfig {
         "/file",
         "/file/upload",
         "/fileDelete",
+        "/fileView/**",
         
         "/questAnsr/**",		//Q&A
         
