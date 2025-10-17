@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="CmmCdMngeDAO">
 <resultMap id="resultMap" type="egovframework.carauction.CmmCdMngeVO">
-<result property="serialVersionUID" column="SERIAL_VSERSION_UID"/>
+
 <result property="codeFirst" column="CODE_FIRST"/>
 <result property="codeSecond" column="CODE_SECOND"/>
 <result property="codeNo" column="CODE_NO"/>
