@@ -70,4 +70,11 @@ public class QuestAnsrServiceImpl  extends EgovAbstractServiceImpl implements Qu
 		return result;
 	}
 	
+	// Q&A 답변 삭제
+	@Override
+	public int delAnsrWrite(QuestAnsrVO questAnsrVO) throws Exception{
+		int result = questAnsrDAO.delAnsrWrite(questAnsrVO);
+		return result;
+	}
+	
 }

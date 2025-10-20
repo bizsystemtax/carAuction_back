@@ -24,6 +24,9 @@ public interface QuestAnsrService {
 	
 	// Q&A 답변작성
 	public int updAnsrWrite(Map<String, Object> paramMap) throws Exception;
+	
+	// Q&A 답변삭제
+	public int delAnsrWrite(QuestAnsrVO questAnsrVO) throws Exception;
 
 	
 }

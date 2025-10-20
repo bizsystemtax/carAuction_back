@@ -35,13 +35,13 @@
 				, UPDAT_IDNO
 		FROM CA_QUEST_ANSR
 		WHERE USE_YN = 'Y'
-		 <if test="startDt != null and startDt != ''">
+	<!-- 	 <if test="startDt != null and startDt != ''">
 			 AND DATE_FORMAT(ENTRY_DATE, '%Y%m%d') BETWEEN #{startDt} AND #{endDt}
-		 </if> 
+		 </if>  -->
 		 <if test="questTit != null and questTit != ''">
 		   AND QUEST_TIT LIKE CONCAT('%', #{questTit},'%')
 		 </if>
-		 ORDER BY ENTRY_DATE
+		 ORDER BY QUEST_ID DESC
 	</select>
 	
 	<!-- Q&A 클릭 시 조회수 + 1 -->
@@ -125,6 +125,18 @@
 			, ANSR_ENTRY_IDNO = #{updatIdno}
 			, ANSR_YN = 'Y'
 			, ANSR_ENTRY_DATE = DATE_FORMAT(NOW(), '%Y%m%d')
+			, UPDAT_DATE = NOW()
+			, UPDAT_IDNO = #{updatIdno}
+		WHERE QUEST_ID = #{questId}
+	</update>
+	
+		<!-- Q&A 답변삭제 -->
+	<update id="delAnsrWrite" parameterType="egovframework.carauction.QuestAnsrVO">
+		UPDATE CA_QUEST_ANSR
+		   SET ANSR_CTNT =  ''
+			, ANSR_ENTRY_IDNO = ''
+			, ANSR_YN = 'N'
+			, ANSR_ENTRY_DATE =  ''
 			, UPDAT_DATE = NOW()
 			, UPDAT_IDNO = #{updatIdno}
 		WHERE QUEST_ID = #{questId}

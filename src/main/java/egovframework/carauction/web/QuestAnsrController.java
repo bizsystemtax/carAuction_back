@@ -214,11 +214,46 @@ public class QuestAnsrController {
 		
 		String userId = user.getId();
 		param.put("updatIdno", userId);
+		
 		param.put("ansrCtnt", param.get("ansrCtntWrite"));
 		
 		logger.debug(" updAnsrWrite param " + param );
 		
 		int result = questAnsrService.updAnsrWrite(param);
+		
+		if(result < 1) {
+			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+			resultVO.setResultMessage(ErrorCode.ERR005.getMessage());
+		}
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	} 
+	
+	/**
+	 * Q&A답변삭제
+	 * @param  requestParams - questId
+	 * @return resultVO
+	 * @throws BizException
+	 */
+	@PatchMapping(value = "/delAnsrWrite/{questId}")
+	public ResultVO delAnsrWrite( @PathVariable("questId") int questId  , @AuthenticationPrincipal LoginVO user) throws Exception{
+		
+		ResultVO resultVO = new ResultVO();
+		
+
+		QuestAnsrVO questAnsrVO = new QuestAnsrVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		
+		String userId = user.getId();
+		questAnsrVO.setUpdatIdno(userId);
+		questAnsrVO.setQuestId(questId);
+		
+		int result = questAnsrService.delAnsrWrite(questAnsrVO);
 		
 		if(result < 1) {
 			resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
