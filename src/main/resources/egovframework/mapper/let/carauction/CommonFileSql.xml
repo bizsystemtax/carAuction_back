@@ -40,7 +40,7 @@
 							) VALUES(
 							    #{attFileId}
 							  ,	#{targetType}
-							  , #{targetId}
+							  , #{targetId, javaType=String}
 							  , #{attFileNm}
 							  , #{attFileSize}
 							  , #{attFilePath}

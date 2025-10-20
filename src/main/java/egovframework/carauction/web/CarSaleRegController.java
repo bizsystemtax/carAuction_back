@@ -1,5 +1,7 @@
 package egovframework.carauction.web;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -7,12 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
@@ -198,16 +204,21 @@ public class CarSaleRegController {
 			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님"),
 			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
 	})
-	@PostMapping(value ="/insertCarSale")
-	public ResultVO insertCarSale(@RequestBody CarSaleDetailVO carSaleDetailVO,
-		BindingResult bindingResult,
-		HttpServletRequest request)
-		throws Exception {
+	@PostMapping(value ="/insertCarSale", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResultVO insertCarSale(
+			//@RequestBody CarSaleDetailVO carSaleDetailVO,
+			//BindingResult bindingResult,
+			//HttpServletRequest request
+			@ModelAttribute CarSaleDetailVO carSaleDetailVO,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files,
+			BindingResult bindingResult,
+			HttpServletRequest request
+			)throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
 		System.out.println("==============================" + carSaleDetailVO.toString());
 
-		logger.info("carSaleDetailVO >>>>>>>>>", carSaleDetailVO);
+		logger.info("carSaleDetailVO >>>>>>>>> {}", carSaleDetailVO);
 		
 		// 입찰유효일(마감일)
 		String bidExpDt = "";
@@ -231,8 +242,16 @@ public class CarSaleRegController {
 //			result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
 //			atchFileId = fileMngService.insertFileInfs(result);
 //		}
-
-		carAucInfService.insertCarSale(carSaleDetailVO);
+		
+		logger.info("여기까지 들어옴");
+		logger.info("files ▶▶▶▶▶▶▶▶▶▶ {}", files);
+		logger.info("carSaleDetailVO ▶▶▶▶▶▶▶▶▶▶ {}", carSaleDetailVO);
+		
+		Map<String, Object> param = new HashMap<>();
+		
+		param.put("carSaleDetailVO", carSaleDetailVO);
+		
+		carAucInfService.insertCarSale(param, files);
 
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());

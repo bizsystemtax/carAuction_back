@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CommonFileService;
+import egovframework.com.cmm.LoginVO;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.let.utl.fcc.service.EgovFormBasedFileVo;
 
 
@@ -46,15 +48,19 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
     private String baseUploadDir;
 
 	//파일 등록
-	@Override
-	public void saveFiles(String noticeGb, Integer noticeId, List<MultipartFile> files, Map<String, Object> paramMap) {
+	@Override                             
+	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) {
+		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		logger.error("loginVO :::::::: {} ", loginVO);
+		
 		//파일 없으면 바로 종료
 		if (files == null || files.isEmpty()) {
             return; 
         }
 		
 		String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-        Path targetFolder = Paths.get(baseUploadDir, noticeGb, today);
+        Path targetFolder = Paths.get(baseUploadDir, targetType, today);
 
         try {
             if (!Files.exists(targetFolder)) {
@@ -106,14 +112,14 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
             // 파일 DB 저장용 파라미터 설정
             Map<String, Object> fileParam = new HashMap<>();
-            fileParam.put("targetType", noticeGb);                        // 대상 타입 (예: "notice")
-            fileParam.put("targetId", noticeId);                          // 대상 ID (공지사항 ID)
+            fileParam.put("targetType", targetType);                        // 대상 타입 (예: "notice")
+            fileParam.put("targetId", targetId);                          // 대상 ID (공지사항 ID)
             fileParam.put("attFileNm", originalFilename);                 // 원본 파일명
             fileParam.put("attFileSize", (int) file.getSize());           // 파일 사이즈
             fileParam.put("attFilePath", targetPath.toString());       	  // 절대 경로
             fileParam.put("attFileType", ext);                            // 확장자만 저장 (ex: ".jpg")
-            fileParam.put("entryIdno", paramMap.get("entryIdno"));        // 등록자
-            fileParam.put("updatIdno", paramMap.get("entryIdno"));        // 수정자
+            fileParam.put("entryIdno", loginVO.getId());        // 등록자
+            fileParam.put("updatIdno", loginVO.getId());        // 수정자
             fileParam.put("fileSeq", fileSeq);                            // 파일 순번
             fileParam.put("fileSvrName", finalFileName);                  // UUID+확장자 파일명
 
@@ -122,80 +128,5 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             fileSeq++; // 순번 증가
         }
     }
-
-
-//	//실제 파일 저장 처리
-//	@Override
-//	public String saveFile(EgovFormBasedFileVo fileVo) throws Exception {
-//		
-//		String todayFolder = new SimpleDateFormat("yyyyMMdd").format(new Date());
-//		
-//		String dirPath = baseUploadDir + File.separator + todayFolder;
-//	    
-//	    // 디렉토리 없으면 생성
-//	    File dir = new File(dirPath);
-//	    if (!dir.exists()) {
-//	        dir.mkdirs();
-//	    }
-//	    
-//	    // 날짜 폴더까지 포함된 전체 파일 경로
-//	    String filePath = dirPath + File.separator + fileVo.getFileName();
-//	    
-//	    logger.info("filePath ▶▶▶▶▶▶▶▶▶▶▶ {} ", filePath);
-//	    
-//	    File targetFile = new File(filePath);
-//	    
-//	    try (FileOutputStream fos = new FileOutputStream(targetFile)) {
-//	        fos.write(fileVo.getData());
-//	    }
-//
-//	    return filePath;
-//	}
-//
-//	//새 파일 업로드가 존재하면 덮어쓰기(기존 파일 삭제)
-//	@Override
-//	public void deleteFile(String savedFilePath, String savedFileSvrNm) throws Exception {
-//		
-//		if (savedFilePath == null || savedFileSvrNm == null) return;
-//
-//        File file = new File(savedFilePath);
-//        if (file.exists()) {
-//            file.delete();
-//        }
-//		
-//	}
-//
-//	//등록
-//	@Override
-//	public void insertFile(AttachFileVO fileVO) throws Exception {
-//		
-//		commonFileDAO.insertFile(fileVO);
-//		
-//	}
-//
-//	//수정
-//	@Override
-//	public void updateFile(AttachFileVO fileVO) throws Exception {
-//		commonFileDAO.updateFile(fileVO);
-//		
-//	}
-//
-//	//삭제
-//	@Override
-//	public void deleteDataFile(AttachFileVO fileVO) throws Exception {
-//		commonFileDAO.deleteDataFile(fileVO);
-//		
-//	}
-//
-//	@Override
-//	public void uploadFiles(List<MultipartFile> fileList, String string, Long noticeId) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
-	
-
-	
-	
 	
 }

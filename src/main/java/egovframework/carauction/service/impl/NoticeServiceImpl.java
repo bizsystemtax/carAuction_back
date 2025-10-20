@@ -71,12 +71,13 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		
 		//20251016 로직 추가
 		if (result > 0 && files != null && !files.isEmpty()) {
-            Integer noticeId = (Integer) paramMap.get("noticeId");
+			Integer noticeId = (Integer) paramMap.get("noticeId");
             if (noticeId == null) {
-                throw new Exception("공지사항 ID가 존재하지 않습니다.");
+            	throw new Exception("공지사항 ID가 존재하지 않습니다.");
             }
+            String noticeIdStr = noticeId.toString();
 
-            commonFileService.saveFiles("notice", noticeId, files, paramMap);
+            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
             
             noticeVO.setNoticeId(noticeId);
             noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
@@ -97,10 +98,11 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		if (result > 0 && files != null && !files.isEmpty()) {
             Integer noticeId = (Integer) paramMap.get("noticeId");
             if (noticeId == null) {
-                throw new Exception("공지사항 ID가 존재하지 않습니다.");
+            	throw new Exception("공지사항 ID가 존재하지 않습니다.");
             }
+            String noticeIdStr = noticeId.toString();
 
-            commonFileService.saveFiles("notice", noticeId, files, paramMap);
+            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
             
             noticeVO.setNoticeId(noticeId);
             noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update

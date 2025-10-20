@@ -7,22 +7,33 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
+import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CarAucInfService;
+import egovframework.carauction.service.CommonFileService;
+import egovframework.carauction.web.NoticeController;
 
 /**
  * 차량 경매 정보 서비스 구현 클래스
  */
 @Service("carAucInfService")
 public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements CarAucInfService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(CarAucInfServiceImpl.class);
 
 	@Resource(name = "carAucInfDAO")
 	private CarAucInfDAO carAucInfDAO;
+	
+	@Resource(name = "commonFileService")
+	private CommonFileService commonFileService;
 
 	/************************************************************************************************************************
 	 * 차량 경매 정보
@@ -232,12 +243,47 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	}
 
 	// 경매 판매차량 등록
+//	@Override
+//	public void insertCarSale(CarSaleDetailVO carSaleDetailVO) {
+//		// 경매등록번호 시퀀스
+//		carSaleDetailVO.setAucRegNo(carAucInfDAO.getNextId());
+//
+//		carAucInfDAO.insertCarSale(carSaleDetailVO);
+//	}
+	
 	@Override
-	public void insertCarSale(CarSaleDetailVO carSaleDetailVO) {
-		// 경매등록번호 시퀀스
-		carSaleDetailVO.setAucRegNo(carAucInfDAO.getNextId());
+	public void insertCarSale(Map<String, Object> param, List<MultipartFile> files) throws Exception {
+		CarSaleDetailVO carSaleDetailVO = (CarSaleDetailVO) param.get("carSaleDetailVO"); 
+		
+		logger.info("param :::::::::::: {} ", param);
+		logger.info("files :::::::::::: {} ", files);
+		
+		String aucRegNo = carAucInfDAO.getNextId();
+		carSaleDetailVO.setAucRegNo(aucRegNo); 
+		
+		param.put("aucRegNo", aucRegNo);
+		logger.info("carSaleDetailVO :::::::::::: {} ", carSaleDetailVO);
+		
+		int result = carAucInfDAO.insertCarSale(carSaleDetailVO);
+		
+		//로직 추가
+		if (result > 0 && files != null && !files.isEmpty()) {
+			logger.info("일단 여기 들어와야 합니다.");
+            //try {
+			String aucRegNoId = (String)param.get("aucRegNo");
+                
+                logger.info("aucRegNoId :::::::::::: {} ", aucRegNoId);
+                commonFileService.saveFiles("auc", aucRegNoId, files, param);
+            //} catch (NumberFormatException e) {
+             //   logger.error("aucRegNo 형식이 올바르지 않습니다: {}", aucRegNo, e);
+              //  throw new Exception("경매등록번호 형식 오류", e);
+            //}
 
-		carAucInfDAO.insertCarSale(carSaleDetailVO);
+
+            //commonFileService.saveFiles("auc", aucRegNoId, files, param);
+               
+        }
+		
 	}
 
 	// 경매 판매차량 상세 조회
@@ -263,4 +309,6 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 		carAucInfDAO.deleteCarSale(carSaleDetailVO);
 	}
+
+	
 }
