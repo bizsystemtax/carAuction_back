@@ -135,12 +135,20 @@
 		WHERE NOTICE_ID = #{noticeId}
 	</update>
 	
-	<!-- 첨부파일 -->
+	<!-- 첨부파일 Y/N-->
 	<update id="updAttFileYn" parameterType="egovframework.carauction.NoticeVO">
 		UPDATE CA_NOTICE
-		   SET ATT_FILE_YN = 'Y'
+		   SET ATT_FILE_YN = #{attFileYn}
 		 WHERE NOTICE_ID = #{noticeId} 
 	</update>
+	
+	<!-- 첨부파일 갯수 -->
+	<select id="getAttFileCnt" parameterType="egovframework.carauction.NoticeVO" resultType="int">
+		SELECT COUNT(TARGET_ID) AS CNT
+		  FROM CA_ATT_FILE
+		 WHERE TARGET_TYPE = 'notice'
+		   AND TARGET_ID = #{noticeId}
+	</select>
 	
 	<!-- 공지사항 삭제 -->
 	<update id="delNotice" parameterType="egovframework.carauction.NoticeVO">

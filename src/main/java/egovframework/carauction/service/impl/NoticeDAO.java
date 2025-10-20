@@ -62,4 +62,9 @@ public class NoticeDAO extends EgovAbstractMapper {
 		update("noticeDAO.updAttFileYn", noticeVO);
 	}
 	
+	// 첨부파일 갯수
+	public int getAttFileCnt(NoticeVO noticeVO) {
+		return selectOne("noticeDAO.getAttFileCnt", noticeVO); 
+	}
+	
 }
