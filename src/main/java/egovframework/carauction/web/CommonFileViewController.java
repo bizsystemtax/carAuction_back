@@ -5,18 +5,18 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.CommonFileViewService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 @Transactional
@@ -46,13 +43,15 @@ public class CommonFileViewController {
 
 	
 	@GetMapping("/fileDownload/{fileId}")
-    public void downloadFile(@PathVariable("fileId") String fileId, 
+    public void downloadFile(
+    		@PathVariable("fileId") String fileId, 
     		@RequestParam(value = "inline", required = false, defaultValue = "false") boolean inline,
+    		HttpServletRequest request,
     		HttpServletResponse response) throws Exception {
 		
-		logger.info("여기는 들어오나?");
+		logger.info("파일 뷰 :::::: ");
+		logger.info("파일 다운로드 요청: fileId={}, inline={}", fileId, inline);
 		
-        // 실제 파일 정보 조회 (경로, 이름 등)
 		AttachFileVO fileInfo = commonFileViewService.getFileById(fileId);
         if (fileInfo == null) {
             logger.error("파일 정보를 찾을 수 없습니다. attFileId: {}", fileId);
@@ -68,39 +67,45 @@ public class CommonFileViewController {
             return;
         }
 
-        String contentType = fileInfo.getAttFileType();
-        if (contentType == null || contentType.isEmpty()) {
-            contentType = Files.probeContentType(file.toPath());  // 파일 경로로부터 MIME 타입 추측
-        }
-        if (contentType == null) {
-            contentType = "application/octet-stream";  // MIME 타입 못찾으면 기본값 설정
-        }
-        response.setContentType(contentType);
-        response.setContentLengthLong(file.length());
-
         String originalFileName = fileInfo.getAttFileNm();
-        try {
-            String encodedFileName = URLEncoder.encode(originalFileName, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
-            // inline == true 면 inline; 아니면 attachment
-            String dispositionType = inline ? "inline" : "attachment";
-            response.setHeader("Content-Disposition", dispositionType + "; filename=\"" + encodedFileName + "\"");
-        } catch (UnsupportedEncodingException e) {
-            logger.warn("파일명 인코딩 실패, 기본값 사용: {}", originalFileName, e);
-            String dispositionType = inline ? "inline" : "attachment";
-            response.setHeader("Content-Disposition", dispositionType + "; filename=\"" + originalFileName + "\"");
-        }
+        String fileExt = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        String contentType = resolveMimeType(fileExt);
+        response.setContentType(contentType);
 
+        // 파일 스트림 응답 처리
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-        	     BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
-        	    byte[] buffer = new byte[8192];
-        	    int bytesRead;
-        	    while ((bytesRead = in.read(buffer)) != -1) {
-        	        out.write(buffer, 0, bytesRead);
-        	    }
-        	    out.flush();
-        } catch (IOException e) {
-            logger.error("파일 다운로드 중 오류 발생: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+                BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
+
+               byte[] buffer = new byte[8192];
+               int bytesRead;
+               while ((bytesRead = in.read(buffer)) != -1) {
+                   out.write(buffer, 0, bytesRead);
+               }
+               out.flush();
+               }
     }
+	
+	
+	private String resolveMimeType(String typeOrExt) {
+		
+		String input = typeOrExt.toLowerCase();
+		
+		if (input.contains("/") && !input.contains(".")) {
+	        return input;
+	    }
+
+	    switch (input) {
+	        case "pdf": return "application/pdf";
+	        case "png": return "image/png";
+	        case "jpg":
+	        case "jpeg": return "image/jpeg";
+	        case "gif": return "image/gif";
+	        case "xls": return "application/vnd.ms-excel";
+	        case "xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	        case "hwp": return "application/x-hwp";
+	        case "doc": return "application/msword";
+	        case "docx": return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	        default: return "application/octet-stream";
+	    }
+	}
 }
