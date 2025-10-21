@@ -74,9 +74,9 @@ public class SecurityConfig {
         "/carAucSaleReg/**",   //경매차량판매등록
         
         "/notice/**",		// 공지사항
-        "/file",
-        "/file/upload",
-        "/fileDelete",
+        "/file/**",
+        //"/file/upload",
+        //"/fileDelete",
         "/fileView/**",
         
         "/questAnsr/**",		//Q&A
