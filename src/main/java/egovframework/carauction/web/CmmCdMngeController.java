@@ -71,7 +71,8 @@ public class CmmCdMngeController {
 	 * 코드관리 입력
 	 */
 	@PostMapping("")
-	public ResultVO insertCmmCd() {
+	public ResultVO insertCmmCd(CmmCdMngeVO input) {
+		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		return null;
 	}
 	

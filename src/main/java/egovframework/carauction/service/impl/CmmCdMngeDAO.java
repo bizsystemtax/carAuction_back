@@ -20,5 +20,17 @@ public class CmmCdMngeDAO extends EgovAbstractMapper {
 		return Optional.ofNullable(vo);
 	};
 	
+	public int insert(CmmCdMngeVO cmmCdMngeVO) {
+		return insert("CmmCdMngeDAO.insert",cmmCdMngeVO);
+	}
+	
+	/*
+	 단건조회
+	 */
+	public Optional<CmmCdMngeVO> findByCodeAndCodeNo(CmmCdMngeVO cmmCdMngeVO) throws Exception {
+		CmmCdMngeVO vo = selectOne("CmmCdMngeDAO.findByCodeAndCodeNo", cmmCdMngeVO);
+		return Optional.ofNullable(vo);
+	}
+	
 
 }

@@ -32,7 +32,7 @@ from
 where 1=1
 and CODE_FIRST = #{codeFirst}
 and CODE_SECOND =  #{codeSecond}
-and CODE_HNAME LIKE '%' | #{codeHname} |'%'
+and CODE_HNAME LIKE '%' | #{codeHname} | '%'
 ;
 </select>
 <select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
@@ -52,6 +52,52 @@ from
 	ca_cmm_cd
 where 1=1
 and CODE_NO = #{codeNo}
+;
+</select>
+<insert id="insert" parameterType="egovframework.carauction.CmmCdMngeVO">
+INSERT INTO ca_cmm_cd (
+    CODE_FIRST,
+    CODE_SECOND,
+    CODE_NO,
+    CODE_HNAME,
+    CODE_KITA1,
+    CODE_KITA2,
+    CODE_KITA3,
+    CODE_KITA4,
+    CODE_KITA5,
+    CODE_USEYN,
+    SORT_ORDER
+) VALUES (
+    #{codeFirst},         -- CODE_FIRST (대분류)
+    #{codeSecond},         -- CODE_SECOND (중분류)
+    #{codeNo},     -- CODE_NO (코드번호)
+    #{codeHname},  -- CODE_HNAME (코드명)
+    #{codeKita1},       -- CODE_KITA1
+    #{codeKita2},       -- CODE_KITA2
+    #{codeKita3},       -- CODE_KITA3
+    #{codeKita4},       -- CODE_KITA4
+    #{codeKita5},       -- CODE_KITA5
+    'Y',           -- CODE_USEYN (사용여부)
+    1             -- SORT_ORDER
+);
+</insert>
+<select id="findByCodeAndCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
+select
+	CODE_FIRST as codeFirst,
+	CODE_SECOND as codeSecond,
+	CODE_NO as codeNo,
+	CODE_HNAME as codeHname,
+	CODE_KITA1 as codeKita1,
+	CODE_KITA2 as codeKita2,
+	CODE_KITA3 as codeKita3,
+	CODE_KITA4 as codeKita4,
+	CODE_KITA5 as codeKita5,
+	CODE_USEYN as codeUseyn,
+	SORT_ORDER as sortOrder
+where 1=1
+and CODE_NO = #{codeNo}
+and CODE_SECOND = #{codeSecond}
+and CODE_FIRST = #{codeFirst}
 ;
 </select>
 </mapper>
