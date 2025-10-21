@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CmmCdMngeVO implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 	//공통코드
 	private String     codeFirst = "";							//코드대분류
 	private String     codeSecond = "";							//코드중분류

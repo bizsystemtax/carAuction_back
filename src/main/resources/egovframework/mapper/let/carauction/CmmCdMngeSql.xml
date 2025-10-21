@@ -32,6 +32,7 @@ from
 where 1=1
 and CODE_FIRST = #{codeFirst}
 and CODE_SECOND =  #{codeSecond}
+and CODE_HNAME LIKE '%' | #{codeHname} |'%'
 ;
 </select>
 <select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
