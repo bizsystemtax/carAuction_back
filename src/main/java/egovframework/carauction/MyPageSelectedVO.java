@@ -20,7 +20,9 @@ public class MyPageSelectedVO implements Serializable {
     private String pomPayYn;
     private String depmnNm;
     private String flag;
-    private String bidmnNm;							
+    private String bidmnNm;	
+    private String sbidAucSeq;
+    private String sdepPayYn;
 	
 	
 	public String toString() {

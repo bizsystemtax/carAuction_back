@@ -65,4 +65,10 @@ public class MyPageDAO extends EgovAbstractMapper {
 		update("myPageDAO.myBidInfoUnSelectedUpdate", myPageVO);
 		
 	}
+
+	//보증금 수납처리
+	public void depositPaymentUpdate(MyPageVO bidVO) {
+		update("myPageDAO.depositPaymentUpdate", bidVO);
+		
+	}
 }
