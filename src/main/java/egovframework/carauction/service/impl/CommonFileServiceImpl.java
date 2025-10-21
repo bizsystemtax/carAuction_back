@@ -141,7 +141,22 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 			throw new FileNotFoundException("파일 정보를 찾을 수 없습니다.");
 		}
 		
-		Path fullFilePath = Paths.get(deleteFile.getAttFilePath(), deleteFile.getFileSvrName());
+		String filePath = deleteFile.getAttFilePath(); //파일경로
+		String fileName = deleteFile.getFileSvrName(); //파일명
+		
+		logger.info("filePath ▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", filePath);
+		logger.info("fileName ▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", fileName);
+		
+		if(filePath.endsWith(fileName)) {
+			filePath = filePath.substring(0, filePath.length() - fileName.length());
+			
+			// (/ 또능 \ 제거)
+			if(filePath.endsWith("\\") || filePath.endsWith("/")) {
+				filePath = filePath.substring(0, filePath.length() - 1);
+			}
+		}
+		
+		Path fullFilePath = Paths.get(filePath, fileName);
 		File file = fullFilePath.toFile();
 		
 		logger.info("fullFilePath ▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", fullFilePath);
