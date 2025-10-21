@@ -85,6 +85,8 @@ public class SecurityConfig {
         "/userInf/updateModalData", // 회원관리 - 수정 모달 데이터 조회
         "/userInf/pwInit", 			// 회원관리 - 비밀번호 초기화
         "/userInf/cntList", 		// 회원관리 - 회원현황 조회
+        
+        "/userLogin/**", // 로그인
 
         "/cmmCdMnge/**", // 코드관리
         
