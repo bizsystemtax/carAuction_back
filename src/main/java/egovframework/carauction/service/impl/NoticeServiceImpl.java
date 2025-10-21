@@ -80,6 +80,7 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
             
             noticeVO.setNoticeId(noticeId);
+            noticeVO.setAttFileYn("Y");
             noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
             
         }
@@ -105,6 +106,7 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
             
             noticeVO.setNoticeId(noticeId);
+            noticeVO.setAttFileYn("Y");
             noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
         }
 		
