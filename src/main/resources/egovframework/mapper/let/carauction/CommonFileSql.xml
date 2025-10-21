@@ -53,11 +53,27 @@
 							  , #{fileSvrName}
 							)
 	</insert>
-	<!-- <update id="commonUpdateFile"  parameterType="egovframework.carauction.AttachFileVO">
-	</update>
-	<delete id="commonDeleteFile"  parameterType="egovframework.carauction.AttachFileVO">
-	</delete> -->
 	
+	<!-- DB 테이터 삭제하기 전 데이터 조회 -->
+	<select id="selectFileInfo" parameterType="egovframework.carauction.AttachFileVO" resultType="egovframework.carauction.AttachFileVO">
+		SELECT ATT_FILE_ID
+		     , TARGET_TYPE
+		     , TARGET_ID
+		     , ATT_FILE_NM
+		     , ATT_FILE_SIZE
+		     , ATT_FILE_PATH
+		     , ATT_FILE_TYPE
+		     , FILE_SEQ
+		     , FILE_SVR_NAME
+		  FROM CA_ATT_FILE
+		 WHERE ATT_FILE_ID = #{attFileId}
+	</select>
+	
+	<!-- 실제 DB데이터 삭제 -->
+	<delete id="deleteFile"  parameterType="egovframework.carauction.AttachFileVO">
+		DELETE FROM CA_ATT_FILE
+		 WHERE ATT_FILE_ID = #{attFileId}
+	</delete>
 
 	
 	

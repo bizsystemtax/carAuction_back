@@ -15,13 +15,15 @@ public class CommonFileDAO extends EgovAbstractMapper {
 		insert("commonFileDAO.commonInsertFile", fileParam);
 	}
 
-//	//첨부파일 수정
-//	public void updateFile(AttachFileVO fileVO) {
-//		update("commonFileDAO.commonUpdateFile", fileVO);
-//	}
-//
-//	//DB데이터 삭제
-//	public void deleteDataFile(AttachFileVO fileVO) {
-//		delete("commonFileDAO.commonDeleteFile", fileVO);	
-//	}
+	//DB 테이터 삭제하기 전 데이터 조회
+	public AttachFileVO selectFileInfo(AttachFileVO attachFileVO) {
+		
+		return selectOne("commonFileDAO.selectFileInfo", attachFileVO);
+	}
+
+	//실제 DB데이터 삭제
+	public int deleteFile(AttachFileVO attachFileVO) {
+		return delete("commonFileDAO.deleteFile", attachFileVO);
+	}
+
 }

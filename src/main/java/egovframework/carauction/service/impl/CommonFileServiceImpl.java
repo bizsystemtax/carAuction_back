@@ -1,23 +1,22 @@
 package egovframework.carauction.service.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.slf4j.Logger;
@@ -31,9 +30,8 @@ import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CommonFileService;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
-import egovframework.let.utl.fcc.service.EgovFormBasedFileVo;
 
-
+@Transactional
 @Service("commonFileService")
 public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements CommonFileService {
 	
@@ -42,7 +40,8 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	@Resource(name = "commonFileDAO")
 	private CommonFileDAO commonFileDAO;
 	
-	//private static final String BASE_UPLOAD_DIR = "/upload/files"; // 실제 경로로 수정 필요
+	@Resource(name = "noticeDAO")
+	private NoticeDAO noticeDAO;
 	
 	@Value("${file.upload.path}")  // properties 파일의 file.upload.path 값을 읽어옴
     private String baseUploadDir;
@@ -128,5 +127,72 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             fileSeq++; // 순번 증가
         }
     }
+
+	//파일삭제
+	@Override
+	public void deleteFile(AttachFileVO attachFileVO) throws Exception {
+		
+		logger.info("▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", attachFileVO);
+		
+		//DB 테이터 삭제하기 전 데이터 조회
+		AttachFileVO deleteFile = commonFileDAO.selectFileInfo(attachFileVO);
+		
+		if(deleteFile == null) {
+			throw new FileNotFoundException("파일 정보를 찾을 수 없습니다.");
+		}
+		
+		Path fullFilePath = Paths.get(deleteFile.getAttFilePath(), deleteFile.getFileSvrName());
+		File file = fullFilePath.toFile();
+		
+		logger.info("fullFilePath ▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", fullFilePath);
+		logger.info("file         ▶▶▶▶▶▶▶▶▶▶▶▶▶ {} ", file);
+		
+		//실제 경로에서 파일 삭제
+		if(file.exists()) {
+			boolean deleted = file.delete();
+			
+			if (!deleted) {
+	            throw new IOException("실제 파일 삭제 실패 {}" + fullFilePath);
+	        } else {
+	            logger.info("파일 삭제 성공 ▶▶▶▶▶▶▶▶▶▶▶▶▶ {}", fullFilePath);
+	        }
+	    } else {
+	        logger.warn("파일이 존재하지 않아 삭제되지 않음 ▶▶▶▶▶▶▶▶▶▶▶▶▶ {}", fullFilePath);
+	    }
+		
+		//실제 DB데이터 삭제
+		int result = commonFileDAO.deleteFile(attachFileVO);
+		
+	    if (result < 1) {
+	        throw new RuntimeException("DB 파일 정보 삭제 실패");
+	    } else {
+	        logger.info("DB 파일 정보 삭제 성공 ▶▶▶▶▶▶▶▶▶▶▶▶▶ {}", attachFileVO.getAttFileId());
+	        
+	        int targetId = deleteFile.getTargetId();
+	        logger.info("targetId ▶▶▶▶▶▶▶▶▶▶▶▶▶ {}", targetId);
+	        
+	        //noticeDAO 호출
+	        NoticeVO noticeVO = new NoticeVO();
+	        noticeVO.setNoticeId(deleteFile.getTargetId());
+	        
+	        int fileCnt = noticeDAO.getAttFileCnt(noticeVO);
+	        logger.info("fileCnt ▶▶▶▶▶▶▶▶▶▶▶▶▶ {}", fileCnt);
+	        
+	        if(fileCnt > 0) {
+	        	noticeVO.setAttFileYn("Y");
+	        	noticeDAO.updAttFileYn(noticeVO);
+	        	logger.info("삭제 됨 Y {}", noticeVO.getAttFileYn());
+	        }else {
+	        	noticeVO.setAttFileYn("N");
+	        	noticeDAO.updAttFileYn(noticeVO);
+	        	logger.info("삭제 됨 N {}", noticeVO.getAttFileYn());
+	        }
+	        
+	        
+	        
+	    }
+		
+		
+	}
 	
 }
