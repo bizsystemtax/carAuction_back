@@ -33,7 +33,6 @@
 							  , ATT_FILE_TYPE
 							  , ENTRY_DATE
 							  , ENTRY_IDNO
-							  <!-- , UPDAT_DATE -->
 							  , UPDAT_IDNO
 							  , FILE_SEQ
 							  , FILE_SVR_NAME
@@ -47,7 +46,6 @@
 							  , #{attFileType}
 							  , NOW()
 							  , #{entryIdno}
-							  <!-- , #{updatDate} -->
 							  , #{updatIdno}
 							  , #{fileSeq}
 							  , #{fileSvrName}
@@ -74,8 +72,5 @@
 		DELETE FROM CA_ATT_FILE
 		 WHERE ATT_FILE_ID = #{attFileId}
 	</delete>
-
-	
-	
 	
 </mapper>

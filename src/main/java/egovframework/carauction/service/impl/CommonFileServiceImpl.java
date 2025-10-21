@@ -48,7 +48,7 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
 	//파일 등록
 	@Override                             
-	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) {
+	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) throws Exception {
 		
 		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		logger.error("loginVO :::::::: {} ", loginVO);
@@ -81,9 +81,6 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             if (dotIndex > -1) {
                 ext = originalFilename.substring(dotIndex);
             }
-
-            //String savedFileName = originalFilename + "_" + UUID.randomUUID().toString() + ext;
-            //Path targetPath = targetFolder.resolve(savedFileName);
             
             // 현재 시간 추가
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
@@ -106,8 +103,6 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
                 logger.error("파일 저장 실패: {}", originalFilename, e);
                 throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.");
             }
-            
-            //String attFileId = commonFileDAO.insertFile(fileParam);
 
             // 파일 DB 저장용 파라미터 설정
             Map<String, Object> fileParam = new HashMap<>();

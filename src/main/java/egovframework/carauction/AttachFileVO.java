@@ -12,7 +12,7 @@ import lombok.Setter;
 public class AttachFileVO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private String attFileId = "";			// 첨부파일ID
+	private String attFileId = "";		// 첨부파일ID
 	private String targetType = "";		// 대상타입
 	private int targetId = 0;			// 대상ID         
 	private String attFileNm = "";		// 첨부파일명

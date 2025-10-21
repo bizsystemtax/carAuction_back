@@ -18,24 +18,23 @@
 		<result property = "fileSvrName"		column = "FILE_SVR_NAME"/>   
 	</resultMap> 
 	
-
+	<!-- 첨부파일 PDF, 이미지 -> 웹브라우저 미리보기, 엑셀, 워드, 한글 직접 다운로드 -->
 	<select id="getFileById" parameterType="String" resultType="egovframework.carauction.AttachFileVO">
-		SELECT 
-		ATT_FILE_ID,
-		TARGET_TYPE,
-		TARGET_ID,
-		ATT_FILE_NM,
-		ATT_FILE_TYPE,
-		ATT_FILE_SIZE,
-		ATT_FILE_PATH,
-		ENTRY_DATE,
-		ENTRY_IDNO,
-		UPDAT_DATE,
-		UPDAT_IDNO,
-		FILE_SEQ,
-		FILE_SVR_NAME
-	FROM CA_ATT_FILE
-	WHERE ATT_FILE_ID = #{fileId}
+		SELECT ATT_FILE_ID
+			 , TARGET_TYPE
+			 , TARGET_ID
+			 , ATT_FILE_NM
+			 , ATT_FILE_TYPE
+			 , ATT_FILE_SIZE
+			 , ATT_FILE_PATH
+			 , ENTRY_DATE
+			 , ENTRY_IDNO
+			 , UPDAT_DATE
+			 , UPDAT_IDNO
+			 , FILE_SEQ
+			 , FILE_SVR_NAME
+		  FROM CA_ATT_FILE
+		 WHERE ATT_FILE_ID = #{fileId}
 	</select>
 	
 

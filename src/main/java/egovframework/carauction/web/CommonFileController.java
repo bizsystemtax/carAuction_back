@@ -44,14 +44,10 @@ public class CommonFileController {
     	ResultVO resultVO = new ResultVO();
 		
     	String atchFileId = attachFileVO.getAttFileId().replaceAll(" ", "+");
-    	//byte[] decodedBytes = Base64.getDecoder().decode(atchFileId);
-    	//String decodedFileId = new String(decodedBytes, StandardCharsets.UTF_8);
     	
     	logger.info("request      :::::::::::::: {}", request);
     	logger.info("attachFileVO :::::::::::::: {}", attachFileVO);
     	logger.info("삭제가 되는지 확인  :::::::::::::: {}", atchFileId);
-    	//logger.info("decodedBytes :::::::::::::: {}", decodedBytes);
-    	//logger.info("decodedFileId :::::::::::::: {}", decodedFileId);
     	
     	try {
     		commonFileService.deleteFile(attachFileVO);
