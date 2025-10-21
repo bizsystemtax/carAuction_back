@@ -24,8 +24,8 @@ public class UserJoinDAO extends EgovAbstractMapper {
 	}
 	
 	//회원등록 (회원가입)
-	public void insertUser(UserLoginVO userLoginVO) {
-		insert("userJoinDAO.insertUser", userLoginVO);
+	public int insertUser(UserLoginVO userLoginVO) {
+		return insert("userJoinDAO.insertUser", userLoginVO);
 	}
 	
 }

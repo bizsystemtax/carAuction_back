@@ -7,10 +7,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.UserLoginVO;
+import egovframework.carauction.service.CommonFileService;
 import egovframework.carauction.service.UserJoinService;
 
 
@@ -19,9 +23,14 @@ import egovframework.carauction.service.UserJoinService;
  */
 @Service("userJoinService")
 public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements UserJoinService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserJoinServiceImpl.class);
 
     @Resource(name = "userJoinDAO")
     private UserJoinDAO userJoinDAO;
+    
+    @Resource(name = "commonFileService")
+	private CommonFileService commonFileService;
 
 	/************************************************************************************************************************
 	 회원가입 
@@ -46,9 +55,34 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
   	}
 
   	//회원등록 (회원가입)
-  	@Override
-	public void insertUser(UserLoginVO userLoginVO) {
+//  	@Override
+//	public void insertUser(UserLoginVO userLoginVO) {
+//
+//  		userJoinDAO.insertUser(userLoginVO);
+//	}
 
-  		userJoinDAO.insertUser(userLoginVO);
+	@Override
+	public void insertUser(Map<String, Object> param, List<MultipartFile> files) throws Exception {
+		UserLoginVO userLoginVO = (UserLoginVO) param.get("userLoginVO");
+		
+		logger.info("param :::::::::::: {} ", param);
+		logger.info("files :::::::::::: {} ", files);
+		
+		String userId = userLoginVO.getUserId();
+		logger.info("userId :::::::::::: {} ", userId );
+		userLoginVO.setUserId(userId); 
+		
+		int result = userJoinDAO.insertUser(userLoginVO);
+		logger.info("result :::::::::::: {} ", result );
+		
+		if (result > 0 && files != null && !files.isEmpty()) {
+			logger.info("일단 여기 들어와야 합니다.");
+			
+			param.put("userId", userId); 
+			commonFileService.saveFiles("user", userId, files, param);
+               
+        }
+		
 	}
+
 }

@@ -3,6 +3,8 @@ package egovframework.carauction.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import egovframework.carauction.UserLoginVO;
 
 
@@ -19,6 +21,8 @@ public interface UserJoinService {
 	public Map<String, Object> bankCdList(UserLoginVO userLoginVO) throws Exception;
 	
 	//회원등록 (회원가입)
-	public void insertUser(UserLoginVO userLoginVO) throws Exception;
+	//public void insertUser(UserLoginVO userLoginVO) throws Exception;
+
+	public void insertUser(Map<String, Object> param, List<MultipartFile> files) throws Exception;
     
 }

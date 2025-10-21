@@ -50,8 +50,49 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	@Override                             
 	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) throws Exception {
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		logger.error("loginVO :::::::: {} ", loginVO);
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		logger.error("Start :::::::: {} ", targetId);
+		String entryIdno = null;
+		String updatIdno = null;
+		
+		if("user".equals(targetType)) {
+			logger.error("targetType :::::::: {} ", targetType);
+			entryIdno = targetId;
+			updatIdno = targetId;
+		} else {
+			LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+			entryIdno = loginVO.getId();
+	        updatIdno = loginVO.getId();
+		}
+		
+//		Object authUser = null;
+//	    try {
+//	    authUser = EgovUserDetailsHelper.getAuthenticatedUser();
+//	    } catch (Exception e) {
+//	        logger.error("getAuthenticatedUser 호출 중 예외 발생", e);
+//	    }
+//	    logger.error("authUser :::::::: {} ", authUser);
+//
+//	    LoginVO loginVO = null;
+//	    String entryIdno = null;
+//	    String updatIdno = null;
+//
+//	    if (authUser instanceof LoginVO) {
+//	        loginVO = (LoginVO) authUser;
+//	        entryIdno = loginVO.getId();
+//	        updatIdno = loginVO.getId();
+//	    } else {
+//	        if (paramMap != null && paramMap.get("userId") != null) {
+//	            entryIdno = paramMap.get("userId").toString();
+//	            updatIdno = entryIdno;
+//	        } else {
+//	            entryIdno = targetId;
+//	            updatIdno = targetId;
+//	        }
+//	    }
+
+	    logger.error("entryIdno after logic :::::::: {} ", entryIdno);
+	    logger.error("updatIdno after logic :::::::: {} ", updatIdno);
 		
 		//파일 없으면 바로 종료
 		if (files == null || files.isEmpty()) {
@@ -106,16 +147,16 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
             // 파일 DB 저장용 파라미터 설정
             Map<String, Object> fileParam = new HashMap<>();
-            fileParam.put("targetType", targetType);                        // 대상 타입 (예: "notice")
-            fileParam.put("targetId", targetId);                          // 대상 ID (공지사항 ID)
-            fileParam.put("attFileNm", originalFilename);                 // 원본 파일명
-            fileParam.put("attFileSize", (int) file.getSize());           // 파일 사이즈
-            fileParam.put("attFilePath", targetPath.toString());       	  // 절대 경로
-            fileParam.put("attFileType", ext);                            // 확장자만 저장 (ex: ".jpg")
-            fileParam.put("entryIdno", loginVO.getId());        // 등록자
-            fileParam.put("updatIdno", loginVO.getId());        // 수정자
-            fileParam.put("fileSeq", fileSeq);                            // 파일 순번
-            fileParam.put("fileSvrName", finalFileName);                  // UUID+확장자 파일명
+            fileParam.put("targetType", targetType);                    // 대상 타입 (예: "notice")
+            fileParam.put("targetId", targetId);                        // 대상 ID (공지사항 ID)
+            fileParam.put("attFileNm", originalFilename);               // 원본 파일명
+            fileParam.put("attFileSize", (int) file.getSize());         // 파일 사이즈
+            fileParam.put("attFilePath", targetPath.toString());       	// 절대 경로
+            fileParam.put("attFileType", ext);                          // 확장자만 저장 (ex: ".jpg")
+            fileParam.put("entryIdno", entryIdno);        				// 등록자
+            fileParam.put("updatIdno", updatIdno);        				// 수정자
+            fileParam.put("fileSeq", fileSeq);                          // 파일 순번
+            fileParam.put("fileSvrName", finalFileName);                // UUID+확장자 파일명
 
             commonFileDAO.insertFile(fileParam);
 

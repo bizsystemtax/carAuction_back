@@ -1,5 +1,7 @@
 package egovframework.carauction.web;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -7,12 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.UserLoginVO;
@@ -21,6 +27,7 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.ErrorCode;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -92,11 +99,14 @@ public class UserJoinController {
 			@ApiResponse(responseCode = "200", description = "등록 성공"),
 			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
 	})
-	@PostMapping(value ="/insertUser")
-	public ResultVO insertUser(@RequestBody UserLoginVO userLoginVO,
-		BindingResult bindingResult,
-		HttpServletRequest request)
-		throws Exception {
+	@PostMapping(value ="/insertUser", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResultVO insertUser(
+			//@RequestBody UserLoginVO userLoginVO,
+			@ModelAttribute UserLoginVO userLoginVO,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files,
+			BindingResult bindingResult,
+			HttpServletRequest request
+			)throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
 		System.out.println("==============================" + userLoginVO.toString());
@@ -108,8 +118,11 @@ public class UserJoinController {
 //		bidExpDt = userLoginVO.getBidExpDt();
 //		bidExpDt = bidExpDt.replace("-", "");
 //		userLoginVO.setBidExpDt(bidExpDt);
-
-		userJoinService.insertUser(userLoginVO);
+	
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("userLoginVO", userLoginVO);
+		userJoinService.insertUser(param, files);
 		
 
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
