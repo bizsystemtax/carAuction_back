@@ -78,11 +78,9 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 	 * 코드 수정
 	 */
 	public void updateCmmCd(CmmCdMngeVO cmmCdMngeVO) throws Exception {
-		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresentOrElse(existCode -> {
-			//유효한 코드일 때 업데이트
-			cmmCdMngeDAO.update(existCode);
-		}, () -> {
-			//없는 코드 업데이트 시도시 에러 반환
+		logger.info("updateCmmCd 호출 ▶▶▶▶▶▶ {}", cmmCdMngeVO.getCodeNo());
+
+		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresentOrElse(existCode -> cmmCdMngeDAO.update(existCode), () -> {
 			throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
 		});
 	}

@@ -73,6 +73,9 @@ public class CmmCdMngeController {
 	@PostMapping("")
 	public ResultVO insertCmmCd(CmmCdMngeVO input) {
 		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
+		
+		insertCmmCd(input);
+		
 		return null;
 	}
 	
@@ -80,8 +83,10 @@ public class CmmCdMngeController {
 	 * 코드관리 중복체크
 	 */
 
-	@GetMapping("/{code_no}")
-	public ResultVO checkDuplicatedCd(@PathVariable("code_no") String codeNo) throws Exception {
+	@GetMapping("/check")
+	public ResultVO checkDuplicatedCd(@RequestParam(value = "frist") String codeFirst,
+			@RequestParam(value = "second") String codeSecond,
+			@RequestParam(value = "no") String codeNo) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		CmmCdMngeVO input = new CmmCdMngeVO();
 		
@@ -90,7 +95,7 @@ public class CmmCdMngeController {
 		input.setCodeNo(codeNo);
 		
 		//중복 체크
-		cmmCdMngeService.findCmmCdByCodeNo(input);
+		cmmCdMngeService.existCode(input);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
