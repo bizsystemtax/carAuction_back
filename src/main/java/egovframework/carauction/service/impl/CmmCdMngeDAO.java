@@ -32,5 +32,9 @@ public class CmmCdMngeDAO extends EgovAbstractMapper {
 		return Optional.ofNullable(vo);
 	}
 	
+	public int update(CmmCdMngeVO cmmCdMngeVO) {
+		return update("CmmCdMngeDAO.update", cmmCdMngeVO);
+	}
+	
 
 }

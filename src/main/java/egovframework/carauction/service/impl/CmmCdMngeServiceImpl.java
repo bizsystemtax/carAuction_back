@@ -47,10 +47,15 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 
 	}
 
-	public boolean existCmmCdByCode(CmmCdMngeVO cmmCdMngeVO) throws Exception {
-		logger.info("코드 존재여부 체크 ▶▶▶▶▶▶ {}", cmmCdMngeVO.getCodeNo());
+	/*
+	 * 중복체크
+	 */
+	public boolean existCode(CmmCdMngeVO cmmCdMngeVO) throws Exception {
+		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresent((existCode) -> {
+			throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
+		});
 
-		return cmmCdMngeDAO.existByCode(cmmCdMngeVO).isPresent();
+		return true;
 	}
 
 	/*
@@ -59,8 +64,8 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 	public void insertCmmCd(CmmCdMngeVO cmmCdMngeVO) throws Exception {
 		logger.info("insertCmmCd 호출 ▶▶▶▶▶▶ {}", cmmCdMngeVO.getCodeNo());
 
-		// 중복 체크
-		findCmmCdByCodeNo(cmmCdMngeVO);
+		// 중복체크
+		existCode(cmmCdMngeVO);
 
 		int result = cmmCdMngeDAO.insert(cmmCdMngeVO);
 		if (result <= 0) {
@@ -74,8 +79,11 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 	 */
 	public void updateCmmCd(CmmCdMngeVO cmmCdMngeVO) throws Exception {
 		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresentOrElse(existCode -> {
-			/* cmmCdMngeDAO.update(); */ }, () -> {
-				throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
-			});
+			//유효한 코드일 때 업데이트
+			cmmCdMngeDAO.update(existCode);
+		}, () -> {
+			//없는 코드 업데이트 시도시 에러 반환
+			throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
+		});
 	}
 }

@@ -100,4 +100,21 @@ and CODE_SECOND = #{codeSecond}
 and CODE_FIRST = #{codeFirst}
 ;
 </select>
+<update id="update" parameterType="egovframework.carauction.CmmCdMngeVO">
+UPDATE ca_cmm_cd
+  SET
+    CODE_HNAME = #{codeHname},
+    CODE_KITA1 = #{codeKita1},
+    CODE_KITA2 = #{codeKita2},
+    CODE_KITA3 = #{codeKita3},
+    CODE_KITA4 = #{codeKita4},
+    CODE_KITA5 = #{codeKita5},
+    CODE_USEYN = #{codeUseyn},
+    SORT_ORDER = #{sortOrder}
+  WHERE 1=1 
+    AND CODE_FIRST = #{codeFirst}
+    AND CODE_SECOND = #{codeSecond}
+    AND CODE_NO = #{codeNo}
+ ;
+</update>
 </mapper>
