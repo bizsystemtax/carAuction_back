@@ -45,6 +45,10 @@ public class CarSaleDetailVO implements Serializable {
 	private String entryIdno;		// 등록자
 	private String updatDate;		// 수정일시
 	private String updatIdno;		// 수정자
+	private String mkrCd;			// 메이커코드
+	private String carModelCd;		// 차량모델코드
+	private String carLevelCd;		// 등급코드
+	private String carDtLevelCd;	// 등급코드
 	
 	
 	//필수

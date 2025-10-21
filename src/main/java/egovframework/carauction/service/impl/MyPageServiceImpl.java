@@ -140,4 +140,13 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 		myPageDAO.myBidInfoUnSelectedUpdate(myPageVO);   
 		
 	}
+
+	//보증금 수납처리
+	@Override
+	public void depositPaymentUpdate(MyPageVO bidVO) throws Exception {
+		
+		bidVO.setSdepPayYn("Y");
+		myPageDAO.depositPaymentUpdate(bidVO); 
+		
+	}
 }

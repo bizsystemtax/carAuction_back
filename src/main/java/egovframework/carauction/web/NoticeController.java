@@ -1,12 +1,10 @@
 package egovframework.carauction.web;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,21 +22,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.NoticeService;
-import egovframework.com.cmm.FileUploadService;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.exception.BizException;
 import egovframework.com.cmm.exception.ErrorCode;
-import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.ResultVO;
-import egovframework.let.utl.fcc.service.EgovFormBasedFileVo;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -51,12 +41,6 @@ public class NoticeController {
 	
 	@Resource(name = "noticeService")
 	private NoticeService noticeService;
-	
-	@Resource(name = "fileUploadService")
-	private FileUploadService fileUploadService;
-	
-	@Resource(name = "EgovFileMngService")
-	private EgovFileMngService fileService;
 	
 	/**
 	 * 공지사항 목록 조회
@@ -106,13 +90,6 @@ public class NoticeController {
 		
 		resultMap = noticeService.getNoticeDetail(noticeVO);
 		
-//		// 첨부파일 조회
-//		AttachFileVO fileVO = new AttachFileVO();
-//		fileVO.setTargetId(noticeId);
-//		List<AttachFileVO> resultFiles = noticeService.getNotiFileList(fileVO);
-//		
-//		resultMap.put("resultFiles", resultFiles);
-		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -138,10 +115,6 @@ public class NoticeController {
 		logger.info("files !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", files);
 		ResultVO resultVO = new ResultVO();
 		
-		/*
-		Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		 */
 		Map<String, Object> param = new HashMap<>();		
 		param.put("noticeTit", noticeTit);		//공지사항 제목
 		param.put("noticeCtnt", noticeCtnt); 	//공지사항 내용
@@ -156,10 +129,6 @@ public class NoticeController {
 			return resultVO;
 		}
 
-		///////////////////////////////////////////// 파일 업로드
-		
-		
-		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		
@@ -174,11 +143,7 @@ public class NoticeController {
 	 * @throws BizException
 	 */
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	//@PostMapping(value = "/update/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResultVO updNotice(
-			//@RequestParam("noticeTit") String noticeTit,
-	        //@RequestParam("noticeCtnt") String noticeCtnt,
-	        //@RequestParam("noticeId") int noticeId,
 			@RequestParam Map<String, String> params,
 	        @RequestPart(value = "files", required = false) List<MultipartFile> files,
 	        @AuthenticationPrincipal LoginVO user) throws Exception {
@@ -186,12 +151,8 @@ public class NoticeController {
 		logger.info("noticeTit !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", params.get("noticeTit"));
 		logger.info("noticeCtnt !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", params.get("noticeCtnt"));
 		logger.info("files !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", files);
-		//logger.info("requestParams !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", requestParams);
 		
 		ResultVO resultVO = new ResultVO();
-		
-		//Map<String, Object> param = (Map<String, Object>) requestParams.get("data");
-		//Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		Map<String, Object> param = new HashMap<>();		
 		param.put("noticeTit", params.get("noticeTit"));		//공지사항 제목
@@ -210,7 +171,6 @@ public class NoticeController {
 			return resultVO;
 		}
 		
-		//resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		

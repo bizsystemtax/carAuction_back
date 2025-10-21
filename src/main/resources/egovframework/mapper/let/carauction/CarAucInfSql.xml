@@ -19,6 +19,7 @@
 		<result property="entryDate" column="ENTRY_DATE"/>
 		<result property="bidExpDt" column="BID_EXP_DT"/>
 		<result property="entryIdno" column="ENTRY_IDNO"/>
+		<result property="bidSdepRt" column="BID_SDEP_RT"/>
 	</resultMap>
 
 	<!-- *******************************************************************************************************
@@ -212,7 +213,8 @@
                auc.LOC_IMP_GB,
                auc.ENTRY_DATE,
                DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
-               auc.ENTRY_IDNO
+               auc.ENTRY_IDNO,
+               auc.BID_SDEP_RT
         FROM CA_CAR_AUC_INF auc
         LEFT JOIN CA_CAR_INF car ON auc.CAR_MAIN_NO = car.CAR_MAIN_NO
         WHERE auc.AUC_REG_NO = #{aucRegNo}
@@ -365,7 +367,7 @@
 	 <select id="dtlGrdNmList" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleVO">
 	 SELECT 
 		    CAR_DT_LEVEL_CD as CODE_NO
-		  , CAR_DT_LEVEL_NM as CODE_HNAME
+		  , IFNULL(CAR_DT_LEVEL_NM,'-') as CODE_HNAME
 	   FROM 
 	        CA_CAR_INF
 	  WHERE 
@@ -456,36 +458,42 @@
 	 </insert>
 	 
 	 <select id="getCarSaleDetail" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleDetailVO">
-	 SELECT
-			AUC_REG_NO
-		  , CAR_MAIN_NO
-		  , LOC_IMP_GB
-		  , CAR_ENG_CD
-		  , AUC_CAR_CC
-		  , CAR_TRANS_GB
-		  , AUC_CAR_SEAT
-		  , CAR_PRICE
-		  , CAR_NO
-		  , AUC_CAR_CMNT
-		  , AUC_CAR_MAKE_YR
-		  , AUC_CAR_DRV_DIS
-		  , BID_PLN_PRICE
-		  , BID_SDEP_RT
-		  , BID_EXP_DT
-		  , EOM_YN
-		  , EOM_PRICE
-		  , BID_CNT
-		  , AUC_PROG_STAT_CD
-		  , AUC_PROG_YN
-		  , SBID_PRICE
-		  , SBID_DATE
-		  , SBIDMN_NM
-		  , ENTRY_DATE
-		  , ENTRY_IDNO
-		  , UPDAT_DATE
-		  , UPDAT_IDNO
+	 	 SELECT
+			A.AUC_REG_NO
+		  , A.CAR_MAIN_NO
+		  , A.LOC_IMP_GB
+		  , A.CAR_ENG_CD
+		  , A.AUC_CAR_CC
+		  , A.CAR_TRANS_GB
+		  , A.AUC_CAR_SEAT
+		  , A.CAR_PRICE
+		  , A.CAR_NO
+		  , A.AUC_CAR_CMNT
+		  , A.AUC_CAR_MAKE_YR
+		  , A.AUC_CAR_DRV_DIS
+		  , A.BID_PLN_PRICE
+		  , A.BID_SDEP_RT
+		  , A.BID_EXP_DT
+		  , A.EOM_YN
+		  , A.EOM_PRICE
+		  , A.BID_CNT
+		  , A.AUC_PROG_STAT_CD
+		  , A.AUC_PROG_YN
+		  , A.SBID_PRICE
+		  , A.SBID_DATE
+		  , A.SBIDMN_NM
+		  , A.ENTRY_DATE
+		  , A.ENTRY_IDNO
+		  , A.UPDAT_DATE
+		  , A.UPDAT_IDNO
+		  , B.MKR_CD
+		  , B.CAR_MODEL_CD
+		  , B.CAR_LEVEL_CD
+		  , B.CAR_DT_LEVEL_CD
 	   FROM
-		    CA_CAR_AUC_INF
+		    CA_CAR_AUC_INF A
+		    LEFT OUTER JOIN CA_CAR_INF B
+		    ON A.CAR_MAIN_NO = B.CAR_MAIN_NO
 	  WHERE 
             AUC_REG_NO = #{aucRegNo}
 	 </select>

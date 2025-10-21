@@ -34,4 +34,7 @@ public interface MyPageservice {
 
 	//내 판매차량 입찰 상세 현황 - 저장(선택되지 않은 값)
 	public void myBidInfoUnSelectedUpdate(MyPageVO myPageVO) throws Exception;
+
+	//보증금 수납처리
+	public void depositPaymentUpdate(MyPageVO bidVO) throws Exception;
 }

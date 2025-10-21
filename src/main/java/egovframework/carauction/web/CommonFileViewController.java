@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.AttachFileVO;
-import egovframework.carauction.CommonFileViewService;
+import egovframework.carauction.service.CommonFileViewService;
 
 @RestController
 @Transactional
@@ -41,7 +41,7 @@ public class CommonFileViewController {
 	@Resource(name = "commonFileViewService")
 	private CommonFileViewService commonFileViewService; 
 
-	
+	//첨부파일 PDF, 이미지 -> 웹브라우저 미리보기, 엑셀, 워드, 한글 직접 다운로드
 	@GetMapping("/fileDownload/{fileId}")
     public void downloadFile(
     		@PathVariable("fileId") String fileId, 
@@ -62,7 +62,7 @@ public class CommonFileViewController {
         String fullFilePath = fileInfo.getAttFilePath();
         File file = new File(fullFilePath);
         if (!file.exists() || !file.isFile()) {
-            logger.error("파일이 존재하지 않거나 파일이 아님. 경로: {}", fullFilePath);
+            logger.error("파일이 존재하지 않거나 파일이 아님. 경로 {}", fullFilePath);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -85,7 +85,7 @@ public class CommonFileViewController {
                }
     }
 	
-	
+	//각 파일의 확장자
 	private String resolveMimeType(String typeOrExt) {
 		
 		String input = typeOrExt.toLowerCase();

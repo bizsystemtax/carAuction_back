@@ -167,7 +167,7 @@ public class MySaleCarBidDtlController {
 			bidVO.setAucRegNo(item.getAucRegNo());   		 //경매등록번호
 			bidVO.setAucRegSeq(item.getAucRegSeq()); 		 //경매등록순번
 			bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
-			bidVO.setDepmnNm(item.getDepmnNm());  		 //낙찰자명
+			bidVO.setDepmnNm(item.getDepmnNm());  		 	//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
 			bidVO.setPomPayYn(item.getPomPayYn());  		 //대금납부완납여부
 			bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
@@ -192,6 +192,49 @@ public class MySaleCarBidDtlController {
 			bidVO.setFlag(item.getFlag());                   //구분
 			
 			myPageService.myBidInfoUnSelectedUpdate(bidVO);
+		}
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		
+		return resultVO;
+	}
+	
+	//보증금 수납처리
+	@PostMapping(value = "/depositPaymentUpdate") 
+	public ResultVO depositPaymentUpdate(
+			MyPageVO myPageVO,
+			BindingResult bindingResult,
+			HttpServletRequest request,
+			@RequestBody MyPageVO requestBody
+			) throws Exception {
+		
+		ResultVO resultVO = new ResultVO();
+		
+		List<MyPageSelectedVO> selected = requestBody.getSelected();
+	    //List<MyPageUnSeledctedVO> unselected = requestBody.getUnselected();
+		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		
+		//입찰 현황에서 선택한 값
+		for (int i = 0; i < selected.size(); i++) {
+			MyPageSelectedVO item = selected.get(i);
+			
+			MyPageVO bidVO = new MyPageVO();
+			
+			bidVO.setAucRegNo(item.getAucRegNo());   		 //경매등록번호
+			bidVO.setAucRegSeq(item.getAucRegSeq()); 		 //경매등록순번
+			bidVO.setBidPrice(item.getBidPrice().replace("원", "").replace(",", ""));         	//입찰금액
+			bidVO.setDepmnNm(item.getDepmnNm());  		 	//낙찰자명
+			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
+			bidVO.setPomPayYn(item.getPomPayYn());  		 //대금납부완납여부
+			bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
+			bidVO.setFlag(item.getFlag());                   //구분
+			//bidVO.setSdepPayYn(item.getSdepPayYn());         //보증금수납여부
+			
+			myPageService.depositPaymentUpdate(bidVO);
+
 		}
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
