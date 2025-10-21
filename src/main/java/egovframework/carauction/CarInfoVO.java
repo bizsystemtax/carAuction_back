@@ -1,8 +1,10 @@
 package egovframework.carauction;
 
+import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 // 차량 경매 정보 VO
 @Data
@@ -69,4 +71,7 @@ public class CarInfoVO {
 
     // 등록회원사명
     private String registrationCompanyName;
+    
+    // 입찰보증금율
+    private BigDecimal bidSdepRt;
 }
