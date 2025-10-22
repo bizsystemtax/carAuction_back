@@ -45,6 +45,9 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	
 	@Value("${file.upload.path}")  // properties 파일의 file.upload.path 값을 읽어옴
     private String baseUploadDir;
+	
+	@Value("${Globals.posblAtchFileSize}")
+	private long maxFileSize; //파일 사이즈 50MB 제한
 
 	//파일 등록
 	@Override                             
@@ -64,32 +67,6 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 			entryIdno = loginVO.getId();
 	        updatIdno = loginVO.getId();
 		}
-		
-//		Object authUser = null;
-//	    try {
-//	    authUser = EgovUserDetailsHelper.getAuthenticatedUser();
-//	    } catch (Exception e) {
-//	        logger.error("getAuthenticatedUser 호출 중 예외 발생", e);
-//	    }
-//	    logger.error("authUser :::::::: {} ", authUser);
-//
-//	    LoginVO loginVO = null;
-//	    String entryIdno = null;
-//	    String updatIdno = null;
-//
-//	    if (authUser instanceof LoginVO) {
-//	        loginVO = (LoginVO) authUser;
-//	        entryIdno = loginVO.getId();
-//	        updatIdno = loginVO.getId();
-//	    } else {
-//	        if (paramMap != null && paramMap.get("userId") != null) {
-//	            entryIdno = paramMap.get("userId").toString();
-//	            updatIdno = entryIdno;
-//	        } else {
-//	            entryIdno = targetId;
-//	            updatIdno = targetId;
-//	        }
-//	    }
 
 	    logger.error("entryIdno after logic :::::::: {} ", entryIdno);
 	    logger.error("updatIdno after logic :::::::: {} ", updatIdno);
@@ -115,6 +92,12 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
         for (MultipartFile file : files) {
             if (file.isEmpty()) continue;
+            
+            //파일 크기 제한
+            if (file.getSize() > maxFileSize) {
+                logger.info("업로드 파일 크기 초과 {} ", file.getSize(), maxFileSize);
+                throw new IllegalArgumentException("업로드 가능한 파일 크기는 최대 " + (maxFileSize / (1024 * 1024)) + "MB입니다.");
+            }
 
             String originalFilename = file.getOriginalFilename();
             String ext = "";
@@ -239,11 +222,7 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	        	logger.info("삭제 됨 N {}", noticeVO.getAttFileYn());
 	        }
 	        
-	        
-	        
 	    }
-		
-		
 	}
 	
 }
