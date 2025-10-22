@@ -68,8 +68,8 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	        updatIdno = loginVO.getId();
 		}
 
-	    logger.error("entryIdno after logic :::::::: {} ", entryIdno);
-	    logger.error("updatIdno after logic :::::::: {} ", updatIdno);
+	    logger.error("entryIdno :::::::: {} ", entryIdno);
+	    logger.error("updatIdno :::::::: {} ", updatIdno);
 		
 		//파일 없으면 바로 종료
 		if (files == null || files.isEmpty()) {
