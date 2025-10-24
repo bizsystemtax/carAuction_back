@@ -50,8 +50,12 @@ public class CarSaleDetailVO implements Serializable {
 	private String carLevelCd;		// 등급코드
 	private String carDtLevelCd;	// 등급코드
 	
-	
-	//필수
+	private String attFileNm;
+	private int attFileSize;
+	private String attFilePath;
+	private String attFileType;
+	private String fileSeq;
+
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP
 	

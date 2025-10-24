@@ -124,6 +124,9 @@ public interface CarAucInfService {
 
 	// 경매 판매차량 상세 조회
 	public Map<String, Object> getCarSaleDetail(CarSaleVO carSaleVO) throws Exception;
+	
+	// 경매 판매차량 이미지 상세 조회
+	public Map<String, Object> getCarSaleImgDetail(CarSaleVO carSaleVO) throws Exception;
 
 	// 경매 판매차량 수정
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO);
