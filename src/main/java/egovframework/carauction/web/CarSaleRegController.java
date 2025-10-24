@@ -285,6 +285,32 @@ public class CarSaleRegController {
 	}
 	
 	/**
+	 * 경매 판매차량 이미지 상세 조회
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "조회 성공"),
+			@ApiResponse(responseCode = "403", description = "인가된 사용자가 아님")
+	})
+	@PostMapping(value = "/getCarSaleImgDetail")
+	public ResultVO getCarSaleImgDetail(@RequestBody Map<String, String> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		CarSaleVO carSaleVO = new CarSaleVO();
+
+		// 경매번호
+		carSaleVO.setAucRegNo(requestParams.get("aucRegNo"));
+		
+		Map<String, Object> resultMap = carAucInfService.getCarSaleImgDetail(carSaleVO);
+		
+		logger.info("resultMap > " + resultMap);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
+	/**
 	 * 경매 판매차량 등록
 	 */
 	@Operation(

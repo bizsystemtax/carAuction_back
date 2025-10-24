@@ -295,6 +295,16 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 		return map;
 	}
+	
+	// 경매 판매차량 이미지 상세 조회
+	@Override
+	public Map<String, Object> getCarSaleImgDetail(CarSaleVO carSaleVO) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("resultList", carAucInfDAO.getCarSaleImgDetail(carSaleVO));
+
+		return map;
+	}
 
 	// 경매 판매차량 수정
 	@Override
