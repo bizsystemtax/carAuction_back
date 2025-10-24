@@ -7,8 +7,10 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +23,7 @@ import egovframework.com.cmm.service.ResultVO;
 
 
 /*
- *  get
+ *  /cmmCdMnge - CRUD
  *  post
  *  
  */
@@ -48,11 +50,8 @@ public class CmmCdMngeController {
 		
 		logger.info("getCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", code);
 		
-		String codeFirst = code.substring(0, 1);
-		String codeSecond = code.substring(1,3);
-		
-		input.setCodeFirst(codeFirst);
-		input.setCodeSecond(codeSecond);
+		input.setCodeFirst(code.substring(0, 1));
+		input.setCodeSecond(code.substring(1,3));
 		input.setCodeHname(codeName);
 		
 		/*
@@ -68,13 +67,33 @@ public class CmmCdMngeController {
 	}
 	
 	/*
-	 * 코드관리 입력
+	 * 코드관리 등록
 	 */
 	@PostMapping("")
 	public ResultVO insertCmmCd(CmmCdMngeVO input) {
 		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		
 		insertCmmCd(input);
+		
+		return null;
+	}
+	
+	/*
+	 * 코드관리 수정
+	 */
+	@PutMapping("")
+	public ResultVO updateCmmCd(CmmCdMngeVO input) {
+		logger.info("updateCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
+		
+		return null;
+	}
+	
+	/*
+	 * 코드관리 삭제
+	 */
+	@PatchMapping("")
+	public ResultVO deleteCmmCd(CmmCdMngeVO input) {
+		logger.info("deleteCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		
 		return null;
 	}
@@ -87,6 +106,7 @@ public class CmmCdMngeController {
 	public ResultVO checkDuplicatedCd(@RequestParam(value = "frist") String codeFirst,
 			@RequestParam(value = "second") String codeSecond,
 			@RequestParam(value = "no") String codeNo) throws Exception {
+		
 		ResultVO resultVO = new ResultVO();
 		CmmCdMngeVO input = new CmmCdMngeVO();
 		
