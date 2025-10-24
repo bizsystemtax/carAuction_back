@@ -458,7 +458,7 @@
 	 </insert>
 	 
 	 <select id="getCarSaleDetail" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleDetailVO">
-	 	 SELECT
+	 SELECT
 			A.AUC_REG_NO
 		  , A.CAR_MAIN_NO
 		  , A.LOC_IMP_GB
@@ -496,6 +496,19 @@
 		    ON A.CAR_MAIN_NO = B.CAR_MAIN_NO
 	  WHERE 
             AUC_REG_NO = #{aucRegNo}
+	 </select>
+	 
+	 <select id="getCarSaleImgDetail" parameterType="egovframework.carauction.CarSaleVO" resultType="egovframework.carauction.CarSaleDetailVO">
+	 SELECT
+		    ATT_FILE_NM
+		  , ATT_FILE_SIZE
+		  , ATT_FILE_PATH
+		  , ATT_FILE_TYPE
+		  , FILE_SEQ
+	   FROM
+		    CA_ATT_FILE
+	  WHERE 
+            TARGET_ID = #{aucRegNo}
 	 </select>
 	 
 	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
