@@ -92,6 +92,9 @@ public class UserInfController {
 					case "5":
 						inUserGbCdFormat += "'0060'";
 						break;
+					default :
+						inUserGbCdFormat = "-1";
+						break;
 				}
 			}
 		}
