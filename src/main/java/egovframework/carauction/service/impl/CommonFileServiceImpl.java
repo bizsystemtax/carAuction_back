@@ -215,11 +215,11 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	        if(fileCnt > 0) {
 	        	noticeVO.setAttFileYn("Y");
 	        	noticeDAO.updAttFileYn(noticeVO);
-	        	logger.info("삭제 됨 Y {}", noticeVO.getAttFileYn());
+	        	logger.info("첨부파일이 한건이라도 존재하는 경우 Y {}", noticeVO.getAttFileYn());
 	        }else {
 	        	noticeVO.setAttFileYn("N");
 	        	noticeDAO.updAttFileYn(noticeVO);
-	        	logger.info("삭제 됨 N {}", noticeVO.getAttFileYn());
+	        	logger.info("첨부파일이 단 한건도 존재하지 않는 경우 N {}", noticeVO.getAttFileYn());
 	        }
 	        
 	    }
