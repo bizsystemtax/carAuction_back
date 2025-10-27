@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="carMngeDAO">
+	<resultMap id="CarMngeVO"
+		type="egovframework.carauction.CarMngeVO">
+		<result property="carMainNo" column="CAR_MAIN_NO" />
+		<result property="mkrCd" column="MKR_CD" />
+		<result property="mkrNm" column="MKR_NM" />
+		<result property="carModelCd" column="CAR_MODEL_CD" />
+		<result property="carModelNm" column="CAR_MODEL_NM" />
+		<result property="repCarYn" column="REP_CAR_YN" />
+		<result property="carLevelCd" column="CAR_LEVEL_CD" />
+		<result property="carLevelNm" column="CAR_LEVEL_NM" />
+		<result property="carDtLevelCd" column="CAR_DT_LEVEL_CD" />
+		<result property="carDtLevelNm" column="CAR_DT_LEVEL_NM" />
+		<result property="locImpGb" column="LOC_IMP_GB" />
+		<result property="carEngCd" column="CAR_ENG_CD" />
+		<result property="carEngNm" column="CAR_ENG_NM" />
+		<result property="carKindCd" column="CAR_KIND_CD" />
+		<result property="carPrice" column="CAR_PRICE" />
+		<result property="makeStrtYrMn" column="MAKE_STRT_YR_MN" />
+		<result property="makeEndYrMn" column="MAKE_END_YR_MN" />
+		<result property="carCc" column="CAR_CC" />
+		<result property="carTransGb" column="CAR_TRANS_GB" />
+		<result property="useYn" column="USE_YN" />
+		<result property="entryDate" column="ENTRY_DATE" />
+		<result property="entryIdno" column="ENTRY_IDNO" />
+		<result property="updatDate" column="UPDAT_DATE" />
+		<result property="updatIdno" column="UPDAT_IDNO" />
+	</resultMap>
+
+	<!-- 차량관리 검색조건(제조사) 조회 -->
+	<select id="selMkrList" parameterType="String"
+		resultType="java.util.Map">
+		SELECT
+		CODE_NO
+		, CODE_HNAME
+		FROM
+		CA_CMM_CD
+		WHERE
+		CODE_FIRST = 'C'
+		AND CODE_SECOND = '01'
+		AND CODE_USEYN = 'Y'
+		<if test="locImpGb != null and locImpGb != ''">
+			AND CODE_KITA5 = #{locImpGb}
+		</if>
+		ORDER BY SORT_ORDER, CODE_NO
+	</select>
+
+	<!-- 차량관리 검색조건(모델, 등급명, 세부등급명) 조회 -->
+	<select id="selSrchCondList"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultMap="CarMngeVO">
+		SELECT
+		<choose>
+			<when test="carLevelCd != null and carLevelCd != ''">
+				CAR_DT_LEVEL_CD
+				, CAR_DT_LEVEL_NM
+			</when>
+			<when test="carModelCd != null and carModelCd != ''">
+				CAR_LEVEL_CD
+				, CAR_LEVEL_NM
+			</when>
+			<when test="mkrCd != null and mkrCd != ''">
+				CAR_MODEL_CD
+				, CAR_MODEL_NM
+			</when>
+		</choose>
+		FROM
+		CA_CAR_INF
+		WHERE
+		USE_YN = 'Y'
+		<if test="mkrCd != null and mkrCd != ''">
+			AND MKR_CD = #{mkrCd}
+		</if>
+		<if test="carModelCd != null and carModelCd != ''">
+			AND CAR_MODEL_CD = #{carModelCd}
+		</if>
+		<if test="carLevelCd != null and carLevelCd != ''">
+			AND CAR_LEVEL_CD = #{carLevelCd}
+		</if>
+		GROUP BY
+		<choose>
+			<when test="carLevelCd != null and carLevelCd != ''">
+				CAR_DT_LEVEL_CD
+				, CAR_DT_LEVEL_NM
+			</when>
+			<when test="carModelCd != null and carModelCd != ''">
+				CAR_LEVEL_CD
+				, CAR_LEVEL_NM
+			</when>
+			<when test="mkrCd != null and mkrCd != ''">
+				CAR_MODEL_CD
+				, CAR_MODEL_NM
+			</when>
+		</choose>
+		ORDER BY
+		CAR_MAIN_NO
+	</select>
+
+	<!-- 차량관리 검색조건(연료) 조회 -->
+	<select id="selFuelList" resultType="java.util.Map">
+		SELECT
+		CODE_NO
+		, CODE_HNAME
+		FROM
+		CA_CMM_CD
+		WHERE
+		CODE_FIRST = 'C'
+		AND CODE_SECOND = '04'
+		AND CODE_USEYN = 'Y'
+		ORDER BY SORT_ORDER, CODE_NO
+	</select>
+
+	<!-- 차량관리 리스트 조회 -->
+	<select id="selCarMngeList"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultMap="CarMngeVO">
+		SELECT
+		INF.CAR_MAIN_NO
+		, CASE
+		INF.LOC_IMP_GB
+		WHEN '내수' THEN '국산'
+		WHEN '수입' THEN '수입'
+		ELSE ''
+		END AS LOC_IMP_GB
+		, (SELECT CODE_HNAME FROM
+		CA_CMM_CD
+		WHERE CODE_NO = INF.MKR_CD
+		AND CODE_FIRST = 'C'
+		AND CODE_SECOND = '01'
+		AND CODE_USEYN = 'Y') AS MKR_NM
+		, INF.CAR_MODEL_NM
+		, INF.CAR_LEVEL_NM
+		, INF.CAR_DT_LEVEL_NM
+		, (SELECT CODE_HNAME FROM
+		CA_CMM_CD
+		WHERE CODE_NO = INF.CAR_ENG_CD
+		AND CODE_FIRST = 'C'
+		AND CODE_SECOND = '04'
+		AND CODE_USEYN = 'Y') AS CAR_ENG_NM
+		, CASE
+		INF.CAR_TRANS_GB
+		WHEN 'A' THEN '오토'
+		WHEN 'M' THEN '수동'
+		ELSE ''
+		END AS CAR_TRANS_GB
+		, INF.CAR_CC
+		, INF.CAR_PRICE
+		, INF.USE_YN
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		1 = 1
+		<if test="locImpGb != null and locImpGb != ''">
+			AND INF.LOC_IMP_GB = #{locImpGb}
+		</if>
+		<if test="mkrCd != null and mkrCd != ''">
+			AND INF.MKR_CD = #{mkrCd}
+		</if>
+		<if test="carModelCd != null and carModelCd != ''">
+			AND INF.CAR_MODEL_CD = #{carModelCd}
+		</if>
+		<if test="carLevelCd != null and carLevelCd != ''">
+			AND INF.CAR_LEVEL_CD = #{carLevelCd}
+		</if>
+		<if test="carDtLevelCd != null and carDtLevelCd != ''">
+			AND INF.CAR_DT_LEVEL_CD = #{carDtLevelCd}
+		</if>
+		<if test="carEngCd != null and carEngCd != ''">
+			AND INF.CAR_ENG_CD = #{carEngCd}
+		</if>
+		<if test="startCarCc != null and startCarCc != ''">
+			<![CDATA[AND INF.CAR_CC >= #{startCarCc}]]>
+		</if>
+		<if test="endCarCc != null and endCarCc != ''">
+			<![CDATA[AND INF.CAR_CC <= #{endCarCc}]]>
+		</if>
+		<if test="carModelNm != null and carModelNm != ''">
+			AND INF.CAR_MODEL_NM LIKE CONCAT('%', #{carModelNm}, '%')
+		</if>
+		ORDER BY
+		INF.CAR_MAIN_NO
+	</select>
+	
+	<!-- 차량관리 상세 조회 -->
+	<select id="selCarMnge"
+		parameterType="String"
+		resultMap="CarMngeVO">
+		SELECT
+		INF.CAR_MAIN_NO
+		, INF.LOC_IMP_GB
+		, INF.MKR_CD
+		, INF.CAR_MODEL_CD
+		, INF.CAR_LEVEL_CD
+		, INF.CAR_DT_LEVEL_CD
+		, INF.CAR_ENG_CD
+		, INF.CAR_TRANS_GB
+		, INF.CAR_CC
+		, INF.CAR_PRICE
+		, INF.USE_YN
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.CAR_MAIN_NO = #{carMainNo}
+	</select>
+</mapper>
