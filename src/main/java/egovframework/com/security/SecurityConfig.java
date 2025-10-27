@@ -67,32 +67,24 @@ public class SecurityConfig {
         "/fineMnge/downloadOCR",
         "/fineMnge/downloadCartax",
         //(↑ 추후에 삭제 처리)
-        //여기부터 추가해주세요 Start        
-        "/myPage/**", //마이페이지(내 판매차량 입찰현황, 내 판매차량 입찰 상세 현황, 내 입찰 현황)
         
-        "/carAucInf/**",   //경매차량
-        "/carAucSaleReg/**",   //경매차량판매등록
-        
-        "/notice/**",		// 공지사항
-        "/file/**",
-        //"/file/upload",
-        //"/fileDelete",
-        "/fileView/**",
-        
-        "/questAnsr/**",		//Q&A
-        
+        // 여기부터 추가해주세요 Start        
+        "/myPage/**", 				// 마이페이지(내 판매차량 입찰현황, 내 판매차량 입찰 상세 현황, 내 입찰 현황)
+        "/carAucInf/**",   			// 경매차량
+        "/carAucSaleReg/**",    	// 경매차량판매등록
+        "/notice/**",				// 공지사항
+        "/file/**",         		// 첨부파일 
+        "/fileView/**", 			// 첨부파일 뷰(이미지, PDF)
+        "/questAnsr/**",			// Q&A
         "/userInf/list", 			// 회원관리 - 목록 조회
         "/userInf/updateModalData", // 회원관리 - 수정 모달 데이터 조회
         "/userInf/pwInit", 			// 회원관리 - 비밀번호 초기화
         "/userInf/cntList", 		// 회원관리 - 회원현황 조회
+        "/userLogin/**", 			// 로그인
+        "/cmmCdMnge/**", 			// 코드관리
+        "/carMnge/**", 				// 차량관리
+        // 추가 End
         
-        "/userLogin/**", // 로그인
-
-        "/cmmCdMnge/**", // 코드관리
-        
-        "/carMnge/**", // 차량관리
-        
-        //End
         "/v3/api-docs/**",
         "/swagger-resources",
         "/swagger-resources/**",
