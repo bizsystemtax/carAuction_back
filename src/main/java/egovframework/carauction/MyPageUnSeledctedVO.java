@@ -20,6 +20,8 @@ public class MyPageUnSeledctedVO implements Serializable {
     private String depmnNm;
     private String flag;
     private String bidmnNm;	
+    private String sbidAucSeq;
+    private String sdepPayYn;
 	
 	
 	public String toString() {

@@ -1,6 +1,7 @@
 package egovframework.carauction;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -17,11 +18,16 @@ public class CarSaleDetailVO implements Serializable {
 	private String carEngCd;		// 차량연료코드
 	private int aucCarCc;			// 경매차량CC
 	private String carTransGb;		// 차량변속기구분
-	private int aucCarSeat;			// 경매차량인승
+	//private int aucCarSeat;			// 경매차량인승
+	
+	private Integer aucCarSeat;			// 경매차량인승
+	
+	
 	private int carPrice;			// 차량가격
 	private String carNo;			// 차량번호
 	private String aucCarCmnt;		// 경매차량비고
-	private int aucCarMakeYr;		// 경매차량생산년
+	//private int aucCarMakeYr;		// 경매차량생산년
+	private Integer aucCarMakeYr;		// 경매차량생산년
 	private int aucCarDrvDis;		// 경매차량주행거리
 	private int bidPlnPrice;		// 입찰예정금액
 	private int bidSdepPrice;		// 입찰보증금액	
@@ -39,9 +45,17 @@ public class CarSaleDetailVO implements Serializable {
 	private String entryIdno;		// 등록자
 	private String updatDate;		// 수정일시
 	private String updatIdno;		// 수정자
+	private String mkrCd;			// 메이커코드
+	private String carModelCd;		// 차량모델코드
+	private String carLevelCd;		// 등급코드
+	private String carDtLevelCd;	// 등급코드
 	
-	
-	//필수
+	private String attFileNm;
+	private int attFileSize;
+	private String attFilePath;
+	private String attFileType;
+	private String fileSeq;
+
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP
 	

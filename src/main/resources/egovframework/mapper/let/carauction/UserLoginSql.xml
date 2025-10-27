@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userJoinDAO">
+	
+	<resultMap id="userLoginVO" type="egovframework.carauction.UserLoginVO">
+	  	<result property = "codeFirst"		    column = "CODE_FIRST"/>
+	  	<result property = "codeSecond"		    column = "CODE_SECOND"/>
+	  	<result property = "codeNo"		        column = "CODE_NO"/>
+	  	<result property = "codeHname"		    column = "CODE_HNAME"/>
+	  	<result property = "codeKita1"		    column = "CODE_KITA1"/>
+	  	<result property = "codeKita2"		    column = "CODE_KITA2"/>
+	  	<result property = "codeKita3"		    column = "CODE_KITA3"/>
+	  	<result property = "codeKita4"		    column = "CODE_KITA4"/>
+	  	<result property = "codeKita5"		    column = "CODE_KITA5"/>
+	  	<result property = "codeUseyn"		    column = "CODE_USEYN"/>
+	  	<result property = "sortOrder"		    column = "SORT_ORDER"/>
+	  	
+		<result property = "userId"		    	column = "USER_ID"/>
+		<result property = "userPw"		    	column = "USER_PW"/>
+		<result property = "userGbCd"		    column = "USER_GB_CD"/>
+		<result property = "userNm"		    	column = "USER_NM"/>
+		<result property = "contNm"		    	column = "CONT_NM"/>
+		<result property = "contCellno"		    column = "CONT_CELLNO"/>
+		<result property = "contEmailAddr"		column = "CONT_EMAIL_ADDR"/>
+		<result property = "compAddr"		    column = "COMP_ADDR"/>
+		<result property = "compTelno"		    column = "COMP_TELNO"/>
+		<result property = "compFaxno"		    column = "COMP_FAXNO"/>
+		<result property = "compHmpgAddr"		column = "COMP_HMPG_ADDR"/>
+		<result property = "refdBank"		    column = "REFD_BANK"/>
+		<result property = "refdAcc"		    column = "REFD_ACC"/>
+		<result property = "refdAccAhdrNm"		column = "REFD_ACC_AHDR_NM"/>
+		<result property = "entryDate"		    column = "ENTRY_DATE"/>
+		<result property = "entryIdno"		    column = "ENTRY_IDNO"/>
+		<result property = "updatDate"		    column = "UPDAT_DATE"/>
+		<result property = "updatIdno"		    column = "UPDAT_IDNO"/>		
+	</resultMap>
+	
+	<!-- 회원구분코드 조회 -->
+	<select id="userGbCdList" parameterType="egovframework.carauction.UserLoginVO" resultType="egovframework.carauction.UserLoginVO">
+		<![CDATA[
+			SELECT CODE_NO    /*코드번호*/
+			     , CODE_HNAME /*코드명*/
+			  FROM CA_CMM_CD 
+		 	WHERE CODE_USEYN = 'Y'
+		  	 AND CONCAT(CODE_FIRST, CODE_SECOND) = 'U01'
+		]]>
+	</select>
+	
+	<!-- 은행코드 조회 -->
+	<select id="bankCdList" parameterType="egovframework.carauction.UserLoginVO" resultType="egovframework.carauction.UserLoginVO">
+		<![CDATA[
+			SELECT CODE_NO    /*코드번호*/
+			     , CODE_HNAME /*코드명*/
+			  FROM CA_CMM_CD 
+		 	WHERE CODE_USEYN = 'Y'
+		  	 AND CONCAT(CODE_FIRST, CODE_SECOND) = 'B01'
+		]]>
+	</select>
+	
+	<insert id="insertUser" parameterType="egovframework.carauction.UserLoginVO">
+		INSERT INTO CA_USER_INF
+		(
+			USER_ID,			/*사용자ID*/
+			USER_PW,			/*사용자PW*/
+			USER_GB_CD,			/*사용자구분코드*/
+			USER_NM,			/*사용자명*/
+			CONT_NM,			/*담당자명*/
+			CONT_CELLNO,		/*담당자휴대전화번호*/
+			CONT_EMAIL_ADDR,	/*담당자메일주소*/
+			COMP_ADDR ,			/*회사주소*/
+			COMP_TELNO ,		/*회사전화번호*/
+			COMP_FAXNO ,		/*회사팩스번호*/
+			COMP_HMPG_ADDR ,	/*회사홈페이지주소*/
+			REFD_BANK ,			/*환불계좌*/
+			REFD_ACC ,			/*환불은행*/
+			REFD_ACC_AHDR_NM ,	/*환불계좌예금주명*/
+			ENTRY_DATE ,		/*등록일시*/
+			ENTRY_IDNO ,		/*등록자ID*/
+			UPDAT_DATE ,		/*수정일시*/
+			UPDAT_IDNO 			/*수정자ID*/
+		)
+		VALUES
+		(
+			#{userId}
+			, #{userPw}
+			, #{userGbCd}
+			, #{userNm}
+			, #{contNm}
+			, #{contCellno}
+			, #{contEmailAddr}
+			, #{compAddr}
+			, #{compTelno}
+			, #{compFaxno}
+			, #{compHmpgAddr}
+			, #{refdBank}
+			, #{refdAcc}			
+			, #{refdAccAhdrNm}			
+			, NOW()
+			, #{entryIdno}
+			, NOW()
+			, #{updatIdno}
+		)
+	</insert>
+	
+	
+</mapper>

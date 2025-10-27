@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="commonFileDAO">
+	
+	<resultMap id="AttachFileVO" type="egovframework.carauction.AttachFileVO">
+		<result property = "attFileId"			column = "ATT_FILE_ID"/>  
+		<result property = "targetType"			column = "TARGET_TYPE"/>
+		<result property = "targetId"			column = "TARGET_ID"/>       
+		<result property = "attFileNm"			column = "ATT_FILE_NM"/>     
+		<result property = "attFileSize"		column = "ATT_FILE_SIZE"/>   
+		<result property = "attFilePath"		column = "ATT_FILE_PATH"/>   
+		<result property = "attFileType"		column = "ATT_FILE_TYPE"/>   
+		<result property = "entryDate"			column = "ENTRY_DATE"/>      
+		<result property = "entryIdno"			column = "ENTRY_IDNO"/>      
+		<result property = "updatDate"			column = "UPDAT_DATE"/>      
+		<result property = "updatIdno"			column = "UPDAT_IDNO"/>      
+		<result property = "fileSeq"			column = "FILE_SEQ"/>        
+		<result property = "fileSvrName"		column = "FILE_SVR_NAME"/>   
+	</resultMap> 
+	
+
+	<insert id="commonInsertFile"  parameterType="egovframework.carauction.AttachFileVO">
+		<selectKey keyProperty="attFileId" resultType="String" order="BEFORE">
+			SELECT LPAD(IFNULL(MAX(ATT_FILE_ID), 0) + 1, 4, '0') FROM CA_ATT_FILE 
+		</selectKey>
+		INSERT INTO CA_ATT_FILE(
+							    ATT_FILE_ID
+							  ,	TARGET_TYPE
+							  , TARGET_ID
+							  , ATT_FILE_NM
+							  , ATT_FILE_SIZE
+							  , ATT_FILE_PATH
+							  , ATT_FILE_TYPE
+							  , ENTRY_DATE
+							  , ENTRY_IDNO
+							  , UPDAT_IDNO
+							  , FILE_SEQ
+							  , FILE_SVR_NAME
+							) VALUES(
+							    #{attFileId}
+							  ,	#{targetType}
+							  , #{targetId, javaType=String}
+							  , #{attFileNm}
+							  , #{attFileSize}
+							  , #{attFilePath}
+							  , #{attFileType}
+							  , NOW()
+							  , #{entryIdno}
+							  , #{updatIdno}
+							  , #{fileSeq}
+							  , #{fileSvrName}
+							)
+	</insert>
+	
+	<!-- DB 테이터 삭제하기 전 데이터 조회 -->
+	<select id="selectFileInfo" parameterType="egovframework.carauction.AttachFileVO" resultType="egovframework.carauction.AttachFileVO">
+		SELECT ATT_FILE_ID
+		     , TARGET_TYPE
+		     , TARGET_ID
+		     , ATT_FILE_NM
+		     , ATT_FILE_SIZE
+		     , ATT_FILE_PATH
+		     , ATT_FILE_TYPE
+		     , FILE_SEQ
+		     , FILE_SVR_NAME
+		  FROM CA_ATT_FILE
+		 WHERE ATT_FILE_ID = #{attFileId}
+	</select>
+	
+	<!-- 실제 DB데이터 삭제 -->
+	<delete id="deleteFile"  parameterType="egovframework.carauction.AttachFileVO">
+		DELETE FROM CA_ATT_FILE
+		 WHERE ATT_FILE_ID = #{attFileId}
+	</delete>
+	
+</mapper>

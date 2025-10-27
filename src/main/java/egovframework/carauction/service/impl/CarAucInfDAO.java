@@ -114,8 +114,13 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	}
 
 	// 경매 판매차량 등록
-	public void insertCarSale(CarSaleDetailVO carSaleDetailVO) {
-		insert("carAucInfDAO.insertCarSale", carSaleDetailVO);
+//	public void insertCarSale(CarSaleDetailVO carSaleDetailVO) {
+//		insert("carAucInfDAO.insertCarSale", carSaleDetailVO);
+//	}
+	
+	public int insertCarSale(CarSaleDetailVO carSaleDetailVO) {
+		// TODO Auto-generated method stub
+		return insert("carAucInfDAO.insertCarSale", carSaleDetailVO);
 	}
 
 	// 경매 판매차량 상세 조회
@@ -123,6 +128,11 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 		return selectOne("carAucInfDAO.getCarSaleDetail", carSaleVO);
 	}
 
+	// 경매 판매차량 이미지 상세 조회
+	public List<CarSaleDetailVO> getCarSaleImgDetail(CarSaleVO carSaleVO) {
+		return selectList("carAucInfDAO.getCarSaleImgDetail", carSaleVO);
+	}
+	
 	// 경매 판매차량 수정
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO) {
 		insert("carAucInfDAO.updateCarSale", carSaleDetailVO);
@@ -132,5 +142,7 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO) {
 		insert("carAucInfDAO.deleteCarSale", carSaleDetailVO);
 	}
+
+	
 
 }

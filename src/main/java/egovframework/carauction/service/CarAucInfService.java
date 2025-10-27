@@ -3,6 +3,8 @@ package egovframework.carauction.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
@@ -117,14 +119,20 @@ public interface CarAucInfService {
 	public Map<String, Object> getCarEngCd(CarSaleVO carSaleVO) throws Exception;
 
 	// 경매 판매차량 등록
-	public void insertCarSale(CarSaleDetailVO carSaleDetailVO);
+	//public void insertCarSale(CarSaleDetailVO carSaleDetailVO);
+	void insertCarSale(Map<String, Object> param, List<MultipartFile> files) throws Exception;
 
 	// 경매 판매차량 상세 조회
 	public Map<String, Object> getCarSaleDetail(CarSaleVO carSaleVO) throws Exception;
+	
+	// 경매 판매차량 이미지 상세 조회
+	public Map<String, Object> getCarSaleImgDetail(CarSaleVO carSaleVO) throws Exception;
 
 	// 경매 판매차량 수정
 	public void updateCarSale(CarSaleDetailVO carSaleDetailVO);
 	
 	// 경매 판매차량 삭제
 	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO);
+
+	
 }

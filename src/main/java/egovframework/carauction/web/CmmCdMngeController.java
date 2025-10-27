@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.carauction.CmmCdMngeVO;
@@ -17,6 +18,13 @@ import egovframework.carauction.service.CmmCdMngeService;
 import egovframework.carauction.service.impl.MyPageServiceImpl;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
+
+
+/*
+ *  get
+ *  post
+ *  
+ */
 
 @RestController
 @RequestMapping("/cmmCdMnge")
@@ -26,18 +34,26 @@ public class CmmCdMngeController {
 	private CmmCdMngeService cmmCdMngeService;
 	
 	private final Logger logger = LoggerFactory.getLogger(MyPageServiceImpl.class);
-
-	@GetMapping("/{code_first}/{code_second}")
-	public ResultVO getCmmCd(@PathVariable("code_first") String codeFirst,
-			@PathVariable("code_second") String codeSecond) throws Exception {
+	
+	/*
+	 * 코드관리 조회
+	 */
+	@GetMapping("/{code}")
+	public ResultVO getCmmCd(@PathVariable("code") String code,
+            @RequestParam(value = "name", required = false) String codeName)
+            throws Exception {
 		
 		ResultVO resultVO = new ResultVO();
 		CmmCdMngeVO input = new CmmCdMngeVO();
 		
-		logger.info("getCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", codeFirst);
+		logger.info("getCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", code);
+		
+		String codeFirst = code.substring(0, 1);
+		String codeSecond = code.substring(1,3);
 		
 		input.setCodeFirst(codeFirst);
 		input.setCodeSecond(codeSecond);
+		input.setCodeHname(codeName);
 		
 		/*
 		 * 조회
@@ -50,9 +66,27 @@ public class CmmCdMngeController {
 		
 		return resultVO;
 	}
+	
+	/*
+	 * 코드관리 입력
+	 */
+	@PostMapping("")
+	public ResultVO insertCmmCd(CmmCdMngeVO input) {
+		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
+		
+		insertCmmCd(input);
+		
+		return null;
+	}
+	
+	/*
+	 * 코드관리 중복체크
+	 */
 
-	@GetMapping("/{code_no}")
-	public ResultVO checkDuplicatedCd(@PathVariable("code_no") String codeNo) throws Exception {
+	@GetMapping("/check")
+	public ResultVO checkDuplicatedCd(@RequestParam(value = "frist") String codeFirst,
+			@RequestParam(value = "second") String codeSecond,
+			@RequestParam(value = "no") String codeNo) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		CmmCdMngeVO input = new CmmCdMngeVO();
 		
@@ -61,7 +95,7 @@ public class CmmCdMngeController {
 		input.setCodeNo(codeNo);
 		
 		//중복 체크
-		cmmCdMngeService.findCmmCdByCodeNo(input);
+		cmmCdMngeService.existCode(input);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -70,10 +104,7 @@ public class CmmCdMngeController {
 		return resultVO;
 		
 	}
-
-	@PostMapping("")
-	public ResultVO insertCmmCd() {
-		return null;
-	}
+	
+	
 
 }

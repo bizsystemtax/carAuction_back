@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="CmmCdMngeDAO">
 <resultMap id="resultMap" type="egovframework.carauction.CmmCdMngeVO">
-<result property="serialVersionUID" column="SERIAL_VSERSION_UID"/>
+
 <result property="codeFirst" column="CODE_FIRST"/>
 <result property="codeSecond" column="CODE_SECOND"/>
 <result property="codeNo" column="CODE_NO"/>
@@ -32,6 +32,7 @@ from
 where 1=1
 and CODE_FIRST = #{codeFirst}
 and CODE_SECOND =  #{codeSecond}
+and CODE_HNAME LIKE '%' | #{codeHname} | '%'
 ;
 </select>
 <select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
@@ -53,4 +54,67 @@ where 1=1
 and CODE_NO = #{codeNo}
 ;
 </select>
+<insert id="insert" parameterType="egovframework.carauction.CmmCdMngeVO">
+INSERT INTO ca_cmm_cd (
+    CODE_FIRST,
+    CODE_SECOND,
+    CODE_NO,
+    CODE_HNAME,
+    CODE_KITA1,
+    CODE_KITA2,
+    CODE_KITA3,
+    CODE_KITA4,
+    CODE_KITA5,
+    CODE_USEYN,
+    SORT_ORDER
+) VALUES (
+    #{codeFirst},         -- CODE_FIRST (대분류)
+    #{codeSecond},         -- CODE_SECOND (중분류)
+    #{codeNo},     -- CODE_NO (코드번호)
+    #{codeHname},  -- CODE_HNAME (코드명)
+    #{codeKita1},       -- CODE_KITA1
+    #{codeKita2},       -- CODE_KITA2
+    #{codeKita3},       -- CODE_KITA3
+    #{codeKita4},       -- CODE_KITA4
+    #{codeKita5},       -- CODE_KITA5
+    'Y',           -- CODE_USEYN (사용여부)
+    1             -- SORT_ORDER
+);
+</insert>
+<select id="findByCodeAndCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
+select
+	CODE_FIRST as codeFirst,
+	CODE_SECOND as codeSecond,
+	CODE_NO as codeNo,
+	CODE_HNAME as codeHname,
+	CODE_KITA1 as codeKita1,
+	CODE_KITA2 as codeKita2,
+	CODE_KITA3 as codeKita3,
+	CODE_KITA4 as codeKita4,
+	CODE_KITA5 as codeKita5,
+	CODE_USEYN as codeUseyn,
+	SORT_ORDER as sortOrder
+where 1=1
+and CODE_NO = #{codeNo}
+and CODE_SECOND = #{codeSecond}
+and CODE_FIRST = #{codeFirst}
+;
+</select>
+<update id="update" parameterType="egovframework.carauction.CmmCdMngeVO">
+UPDATE ca_cmm_cd
+  SET
+    CODE_HNAME = #{codeHname},
+    CODE_KITA1 = #{codeKita1},
+    CODE_KITA2 = #{codeKita2},
+    CODE_KITA3 = #{codeKita3},
+    CODE_KITA4 = #{codeKita4},
+    CODE_KITA5 = #{codeKita5},
+    CODE_USEYN = #{codeUseyn},
+    SORT_ORDER = #{sortOrder}
+  WHERE 1=1 
+    AND CODE_FIRST = #{codeFirst}
+    AND CODE_SECOND = #{codeSecond}
+    AND CODE_NO = #{codeNo}
+ ;
+</update>
 </mapper>

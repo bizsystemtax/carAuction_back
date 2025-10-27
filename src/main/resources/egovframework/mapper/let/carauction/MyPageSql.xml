@@ -76,7 +76,8 @@
 		<result property = "RNUM"				column = "RNUM"/>
 		<result property = "realDepPrice"		column = "REAL_DEP_PRICE"/>
 		<result property = "entryIdnoNm"		column = "ENTRY_IDNO_NM"/>
-		
+		<result property = "sdepPayYn"			column = "SDEP_PAY_YN"/>
+		<result property = "sdepPayNm"			column = "SDEP_PAY_NM"/>
 	</resultMap>
 	
 	<!-- 콤보박스 진행상태 조회 -->
@@ -222,13 +223,16 @@
 			     , BIDMN_NM /*담당자명*/
 			     , BIDMN_CELLNO /*담당자 연락처*/
 			     , BIDMN_EMAIL_ADDR /*담당자 이메일*/
+			     , SDEP_PAY_YN /*보증금완납여부*/
+			     , CASE WHEN SDEP_PAY_YN = 'Y' THEN '완납'
+			            ELSE '미 완납' 
+			        END AS SDEP_PAY_NM /*보증금완납여부명*/
 			  FROM CA_CAR_AUC_DTL_BID_INF
 			 WHERE AUC_REG_NO = #{aucRegNo} 
 			
 		]]>
 		  ORDER BY RNUM ASC 
 	</select>
-	
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 콤보박스 진행상태 조회 -->
 	<select id="statusComboBoxList" parameterType="egovframework.carauction.MyPageVO" resultType="egovframework.carauction.MyPageVO">
@@ -240,9 +244,7 @@
 		  	   AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01'
 		  	   AND CODE_NO != '0050'
 		]]>
-
 	</select>
-	
 	
 	<!-- 내 입찰 현황 -->
 	<select id="myBidList" parameterType="egovframework.carauction.MyPageVO" resultType="egovframework.carauction.MyPageVO">
@@ -264,7 +266,7 @@
 			     , DATE_FORMAT(CCAI.ENTRY_DATE, '%Y-%m-%d') AS ENTRY_DATE /*입찰등록일(등록일시)*/
 			     , (SELECT CODE_NO FROM CA_CMM_CD WHERE CODE_NO = CCAI.AUC_PROG_STAT_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'S01') AS AUC_PROG_STAT_CD /*진행상태코드*/
 			     , CASE WHEN CCAI.AUC_PROG_STAT_CD = '0010' THEN '경매진행중'
-				        WHEN CCAI.AUC_PROG_STAT_CD IN('0020', '0030', '0040') AND CCAI.SBIDMN_NM = CCADBI.BIDMN_NM THEN '본인낙찰'
+				        WHEN CCAI.AUC_PROG_STAT_CD IN('0020', '0030', '0040') AND CCAI.SBID_AUC_SEQ = CCADBI.AUC_REG_SEQ THEN '본인낙찰'
 						WHEN CCAI.AUC_PROG_STAT_CD IN('0020', '0030', '0040') AND CCAI.SBIDMN_NM != CCADBI.BIDMN_NM THEN '제3자 낙찰'
 					    WHEN CCAI.AUC_PROG_STAT_CD = '0050' THEN '유찰'
 				   ELSE ''
@@ -273,7 +275,7 @@
 			 FROM CA_CAR_AUC_INF CCAI 
 			 INNER JOIN CA_CAR_INF CCI 
 			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO
-			 INNER JOIN ca_car_auc_dtl_bid_inf CCADBI
+			 INNER JOIN CA_CAR_AUC_DTL_BID_INF CCADBI
 			    ON CCAI.AUC_REG_NO = CCADBI.AUC_REG_NO
 			 WHERE CCAI.ENTRY_DATE BETWEEN #{regStrDt} AND #{regEndDt}
 			   AND CCADBI.ENTRY_IDNO = #{entryIdno}
@@ -287,28 +289,29 @@
 	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매상세입찰정보) -->
 	<update id="caCarAucDtlBidInfUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_DTL_BID_INF
-		   SET AUC_PROG_STAT_CD = #{aucProgStatCd} /*경매진행상태코드*/
-		     , SBID_YN = #{aucProgYn} /*낙찰여부*/
-		     , SBID_PRICE = #{bidPrice} /*입찰금액*/
-		     , POM_PAY_YN = #{pomPayYn} /*대금납부완납여부*/
+		   SET AUC_PROG_STAT_CD = #{aucProgStatCd}      /*경매진행상태코드*/
+		     , SBID_YN = #{aucProgYn}                   /*낙찰여부*/
+		     , SBID_PRICE = #{bidPrice}                 /*입찰금액*/
+		     , POM_PAY_YN = #{pomPayYn}                 /*대금납부완납여부*/
 		     , SBID_DATE = DATE_FORMAT(NOW(), '%Y%m%d') /*낙찰일시*/
-		     , UPDAT_DATE = NOW() /*수정일시*/
-		     , UPDAT_IDNO = #{updatIdno} /*수정자ID*/
-		 WHERE AUC_REG_NO = #{aucRegNo} /*경매등록번호*/
-		   AND AUC_REG_SEQ = #{aucRegSeq} /*경매등록순번*/
+		     , UPDAT_DATE = NOW()                       /*수정일시*/
+		     , UPDAT_IDNO = #{updatIdno}                /*수정자ID*/
+		 WHERE AUC_REG_NO = #{aucRegNo}                 /*경매등록번호*/
+		   AND AUC_REG_SEQ = #{aucRegSeq}               /*경매등록순번*/
 	</update>
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매정보관리) -->
 	<update id="caCarAucInfUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_INF
-		   SET AUC_PROG_STAT_CD = #{aucProgStatCd} /*경매진행상태코드*/
-		     , AUC_PROG_YN = #{aucProgYn} /*경매진행여부*/
-		     , SBID_PRICE = #{bidPrice} /*입찰금액*/
+		   SET AUC_PROG_STAT_CD = #{aucProgStatCd}      /*경매진행상태코드*/
+		     , AUC_PROG_YN = #{aucProgYn}               /*경매진행여부*/
+		     , SBID_PRICE = #{bidPrice}                 /*입찰금액*/
 		     , SBID_DATE = DATE_FORMAT(NOW(), '%Y%m%d') /*낙찰일시*/
-		     , SBIDMN_NM = #{depmnNm} /*낙찰자명->> 입찰자명 */   
-		     , UPDAT_DATE = NOW() /*수정일시*/
-     		 , UPDAT_IDNO = #{updatIdno} /*수정자ID*/
- 		 WHERE AUC_REG_NO = #{aucRegNo} /*경매등록번호*/
+		     , SBIDMN_NM = #{depmnNm}                   /*낙찰자명->> 입찰자명 */   
+		     , UPDAT_DATE = NOW()                       /*수정일시*/
+     		 , UPDAT_IDNO = #{updatIdno}                /*수정자ID*/
+     		 , SBID_AUC_SEQ	= #{aucRegSeq}              /*낙찰경매순서*/
+ 		 WHERE AUC_REG_NO = #{aucRegNo}                 /*경매등록번호*/
 	</update>
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 선택되지 않은 행들 유찰 -->
@@ -320,6 +323,16 @@
 		     , UPDAT_IDNO = #{updatIdno}  /*수정자ID*/
 		 WHERE AUC_REG_NO = #{aucRegNo}   /*경매등록번호*/
 		   AND AUC_REG_SEQ = #{aucRegSeq} /*경매등록순번*/
+	</update>
+	
+	<!-- 보증금 수납처리 -->
+	<update id="depositPaymentUpdate"  parameterType="egovframework.carauction.MyPageVO">
+		UPDATE CA_CAR_AUC_DTL_BID_INF
+		   SET SDEP_PAY_YN = #{sdepPayYn}  /*보증금완납여부*/
+		     , UPDAT_DATE = NOW()          /*수정일시*/
+		     , UPDAT_IDNO = #{updatIdno}   /*수정자ID*/
+		 WHERE AUC_REG_NO = #{aucRegNo}    /*경매등록번호*/
+		   AND AUC_REG_SEQ = #{aucRegSeq}  /*경매등록순번*/
 	</update>
 	
 </mapper>
