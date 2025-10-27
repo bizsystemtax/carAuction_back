@@ -52,6 +52,8 @@ from
 	ca_cmm_cd
 where 1=1
 and CODE_NO = #{codeNo}
+and CODE_FIRST = #{codeFirst}
+and CODE_SECOND = #{codeSecond}
 ;
 </select>
 <insert id="insert" parameterType="egovframework.carauction.CmmCdMngeVO">

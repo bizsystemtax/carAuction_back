@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,10 +71,10 @@ public class CmmCdMngeController {
 	 * 코드관리 등록
 	 */
 	@PostMapping("")
-	public ResultVO insertCmmCd(CmmCdMngeVO input) {
+	public ResultVO insertCmmCd(CmmCdMngeVO input) throws Exception {
 		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		
-		insertCmmCd(input);
+		cmmCdMngeService.insertCmmCd(input);
 		
 		return null;
 	}
@@ -82,10 +83,17 @@ public class CmmCdMngeController {
 	 * 코드관리 수정
 	 */
 	@PutMapping("")
-	public ResultVO updateCmmCd(CmmCdMngeVO input) {
+	public ResultVO updateCmmCd(@RequestBody CmmCdMngeVO input) throws Exception {
 		logger.info("updateCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		
-		return null;
+		ResultVO resultVO = new ResultVO();
+		
+		cmmCdMngeService.updateCmmCd(input);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
 	}
 	
 	/*

@@ -80,7 +80,7 @@ public class CmmCdMngeServiceImpl extends EgovAbstractServiceImpl implements Cmm
 	public void updateCmmCd(CmmCdMngeVO cmmCdMngeVO) throws Exception {
 		logger.info("updateCmmCd 호출 ▶▶▶▶▶▶ {}", cmmCdMngeVO.getCodeNo());
 
-		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresentOrElse(existCode -> cmmCdMngeDAO.update(existCode), () -> {
+		cmmCdMngeDAO.findCmmCdByCodeNo(cmmCdMngeVO).ifPresentOrElse(existCode -> cmmCdMngeDAO.update(cmmCdMngeVO), () -> {
 			throw new BizException(ErrorCode.ERR016, ErrorCode.ERR016.getMessage());
 		});
 	}
