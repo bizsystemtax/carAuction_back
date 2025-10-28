@@ -76,15 +76,18 @@ public class CommonFileViewController {
         String encodedFileName = URLEncoder.encode(originalFileName, StandardCharsets.UTF_8.toString())
                 .replaceAll("\\+", "%20");
 
-		boolean previewable = contentType.startsWith("image/") || contentType.equals("application/pdf");
-		if (inline && previewable) {
-			response.setHeader("Content-Disposition",
-			"inline; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
-		} else {
-			response.setHeader("Content-Disposition",
-			"attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
-		}
-			response.setHeader("Content-Length", String.valueOf(file.length()));
+        boolean previewable = contentType.startsWith("image/") || contentType.equals("application/pdf");
+
+        if (previewable) {
+            // PDF, 이미지 → 브라우저 미리보기
+            response.setHeader("Content-Disposition",
+                "inline; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
+        } else {
+            // 나머지 → 다운로드
+            response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
+        }
+		response.setHeader("Content-Length", String.valueOf(file.length()));
         //추가 끝
 
         // 파일 스트림 응답 처리
