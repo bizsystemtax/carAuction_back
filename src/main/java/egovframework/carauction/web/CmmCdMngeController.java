@@ -71,12 +71,17 @@ public class CmmCdMngeController {
 	 * 코드관리 등록
 	 */
 	@PostMapping("")
-	public ResultVO insertCmmCd(CmmCdMngeVO input) throws Exception {
+	public ResultVO insertCmmCd(@RequestBody CmmCdMngeVO input) throws Exception {
 		logger.info("insertCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
+		
+		ResultVO resultVO = new ResultVO();
 		
 		cmmCdMngeService.insertCmmCd(input);
 		
-		return null;
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
 	}
 	
 	/*
@@ -100,7 +105,7 @@ public class CmmCdMngeController {
 	 * 코드관리 삭제
 	 */
 	@PatchMapping("")
-	public ResultVO deleteCmmCd(CmmCdMngeVO input) {
+	public ResultVO deleteCmmCd(@RequestBody CmmCdMngeVO input) {
 		logger.info("deleteCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", input.getCodeNo());
 		
 		return null;
@@ -109,9 +114,8 @@ public class CmmCdMngeController {
 	/*
 	 * 코드관리 중복체크
 	 */
-
 	@GetMapping("/check")
-	public ResultVO checkDuplicatedCd(@RequestParam(value = "frist") String codeFirst,
+	public ResultVO checkDuplicatedCd(@RequestParam(value = "first") String codeFirst,
 			@RequestParam(value = "second") String codeSecond,
 			@RequestParam(value = "no") String codeNo) throws Exception {
 		
@@ -121,18 +125,16 @@ public class CmmCdMngeController {
 		logger.info("checkDuplicatedCd 컨트롤러 ▶▶▶▶▶▶ {}", codeNo);
 		
 		input.setCodeNo(codeNo);
+		input.setCodeFirst(codeFirst);
+		input.setCodeSecond(codeSecond);
 		
 		//중복 체크
 		cmmCdMngeService.existCode(input);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-		
-		
+			
 		return resultVO;
-		
 	}
-	
-	
 
 }
