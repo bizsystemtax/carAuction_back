@@ -14,7 +14,7 @@
 		<result property="aucCarDrvDis" column="AUC_CAR_DRV_DIS"/>
 		<result property="carTransGb" column="CAR_TRANS_GB"/>
 		<result property="bidPlnPrice" column="BID_PLN_PRICE"/>
-		<result property="aucCarCc" column="AUC_CAR_CC"/>
+		<result property="bidCnt" column="BID_CNT"/>
 		<result property="locImpGb" column="LOC_IMP_GB"/>
 		<result property="entryDate" column="ENTRY_DATE"/>
 		<result property="bidExpDt" column="BID_EXP_DT"/>
@@ -524,7 +524,7 @@
 	  WHERE 
             TARGET_ID = #{aucRegNo}
 			AND FILE_SEQ  = #{fileSeq}
-	 </select>
+	 </select>  
 	 
 	 
 	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">

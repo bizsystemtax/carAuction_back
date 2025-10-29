@@ -376,7 +376,7 @@ public class CarSaleRegController {
 	            response.setContentType("image/" + ext);
 	            
 	            logger.info("FTP connected: {}", ftpClient.isConnected());
-//	            fileSvrName = "111.jpg"; //test
+//	            fileSvrName = "111.jpg"; //test 
 	            
 	            InputStream inputStream = ftpClient.retrieveFileStream("/remote/path/" + fileSvrName);
 	            logger.info("inputStream= {}", inputStream);

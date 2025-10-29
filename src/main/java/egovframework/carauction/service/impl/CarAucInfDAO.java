@@ -151,5 +151,5 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public  CarSaleDetailVO getFileInfo(CarSaleDetailVO carSaleDetailVO) {
 		return selectOne("carAucInfDAO.getFileInfo", carSaleDetailVO);
 	}
-	
+	 
 }
