@@ -278,12 +278,13 @@
 			 INNER JOIN CA_CAR_AUC_DTL_BID_INF CCADBI
 			    ON CCAI.AUC_REG_NO = CCADBI.AUC_REG_NO
 			 WHERE CCAI.ENTRY_DATE BETWEEN #{regStrDt} AND #{regEndDt}
-			   AND CCADBI.ENTRY_IDNO = #{entryIdno}
+			   AND CCAI.ENTRY_IDNO = #{entryIdno}
 		]]>
 		<if test="proState != null and proState != ''">
 			   AND CCAI.AUC_PROG_STAT_CD = #{proState} 
 		</if>
-		  ORDER BY RNUM ASC 
+		  GROUP BY CCAI.AUC_REG_NO 
+		  /*ORDER BY RNUM ASC*/ 
 	</select>
 	
 	<!-- 내 판매차량 입찰 상세 현황 - 저장(차량경매상세입찰정보) -->
