@@ -43,7 +43,7 @@ public class CarInfoVO {
     private Long bidPlnPrice;
 
     // 입찰건수
-    private Integer aucCarCc;
+    private Integer bidCnt;
 
     // 보관장소 구분코드
     private String locImpGb;

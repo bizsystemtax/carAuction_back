@@ -14,7 +14,7 @@
 		<result property="aucCarDrvDis" column="AUC_CAR_DRV_DIS"/>
 		<result property="carTransGb" column="CAR_TRANS_GB"/>
 		<result property="bidPlnPrice" column="BID_PLN_PRICE"/>
-		<result property="aucCarCc" column="AUC_CAR_CC"/>
+		<result property="bidCnt" column="BID_CNT"/>
 		<result property="locImpGb" column="LOC_IMP_GB"/>
 		<result property="entryDate" column="ENTRY_DATE"/>
 		<result property="bidExpDt" column="BID_EXP_DT"/>
@@ -129,7 +129,7 @@
 			       auc.AUC_CAR_DRV_DIS,
 			       car.CAR_TRANS_GB,
 			       auc.BID_PLN_PRICE,
-			       auc.AUC_CAR_CC,
+			       auc.BID_CNT,
 			       auc.LOC_IMP_GB,
 			       auc.ENTRY_DATE,
 			       DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
@@ -209,7 +209,7 @@
                auc.AUC_CAR_DRV_DIS,
                car.CAR_TRANS_GB,
                auc.BID_PLN_PRICE,
-               auc.AUC_CAR_CC,
+               auc.BID_CNT,
                auc.LOC_IMP_GB,
                auc.ENTRY_DATE,
                DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
@@ -312,7 +312,7 @@
 <!-- 입찰건수 증가 -->
 <update id="incrementBidCount" parameterType="java.util.Map">
     UPDATE CA_CAR_AUC_INF
-    SET AUC_CAR_CC = IFNULL(AUC_CAR_CC, 0) + 1
+    SET BID_CNT = IFNULL(BID_CNT, 0) + 1
         , UPDAT_DATE = NOW()
         , UPDAT_IDNO = #{updatIdno}
     WHERE AUC_REG_NO = #{aucRegNo}
