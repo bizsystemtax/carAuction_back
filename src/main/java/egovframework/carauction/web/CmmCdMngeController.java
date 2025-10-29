@@ -102,7 +102,7 @@ public class CmmCdMngeController {
 	}
 	
 	/*
-	 * 코드관리 삭제
+	 * 코드관리 삭제//
 	 */
 	@PatchMapping("")
 	public ResultVO deleteCmmCd(@RequestBody CmmCdMngeVO input) {
