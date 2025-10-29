@@ -58,7 +58,7 @@ public class CarSaleRegController {
 		
 		carSaleVO.setCodeFirst("C");
 		carSaleVO.setCodeSecond("01");
-		carSaleVO.setCodeKita5(requestParams.get("domesGb"));
+		carSaleVO.setCodeKita5(requestParams.get("locImpGb"));
 		
 		Map<String, Object> resultMap = carAucInfService.manufacturList(carSaleVO);
 		
