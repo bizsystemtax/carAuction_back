@@ -146,7 +146,10 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO) {
 		insert("carAucInfDAO.deleteCarSale", carSaleDetailVO);
 	}
-
 	
-
+	// 이미지 상세정보 조회
+	public  CarSaleDetailVO getFileInfo(CarSaleDetailVO carSaleDetailVO) {
+		return selectOne("carAucInfDAO.getFileInfo", carSaleDetailVO);
+	}
+	
 }

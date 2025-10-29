@@ -1,18 +1,26 @@
 package egovframework.carauction.web;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -309,6 +317,95 @@ public class CarSaleRegController {
 		
 		return resultVO;
 	}
+	
+	  // 2. fileSeq로 이미지 스트리밍
+		@GetMapping("/image/{aucRegNo}/{fileSeq}")
+	    public void getImage(
+	    	    @PathVariable("aucRegNo") String aucRegNo,
+	    	    @PathVariable("fileSeq") String fileSeq,
+	    	    HttpServletResponse response
+	    	) throws Exception {
+			
+	        FTPClient ftpClient = new FTPClient();
+	        
+	        CarSaleDetailVO carSaleDetailVO = new CarSaleDetailVO();
+	        
+	        carSaleDetailVO.setAucRegNo(aucRegNo);
+	        carSaleDetailVO.setFileSeq(fileSeq);
+	        
+	        logger.debug("image 조회 fileSeq"+ fileSeq);
+	        try {
+	        	
+	            Map<String, Object> fileInfo = carAucInfService.getFileInfo(carSaleDetailVO);
+	          
+	            if (fileInfo == null || fileInfo.get("result") == null) {
+	                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                return;
+	            }
+	        	
+	            CarSaleDetailVO fileDetail = (CarSaleDetailVO) fileInfo.get("result");
+	            
+	            logger.info("fileDetail = {}", fileDetail);
+	            
+	            String fileSvrName = fileDetail.getFileSvrName();
+
+	            String ftpHost = "192.168.0.46";
+	            int ftpPort = 21;
+	            String ftpUser = "bizsystem_dev";
+	            String ftpPassword = "bizsystem#99";
+	            String remoteFilePath = (String) "/remote/path/" + fileSvrName;
+	            
+	            logger.info("remoteFilePath = {}", remoteFilePath);
+
+	            ftpClient.connect(ftpHost, ftpPort);
+	            ftpClient.setControlEncoding("UTF-8");
+	            ftpClient.login(ftpUser, ftpPassword);
+	            ftpClient.enterLocalPassiveMode();
+	            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+	            
+	            // 확장자 추출
+	            String ext = "";
+	            if (fileSvrName.contains(".")) {
+	                ext = fileSvrName.substring(fileSvrName.lastIndexOf(".") + 1).toLowerCase();
+
+	                if ("jpg".equals(ext)) {
+	                    ext = "jpeg";
+	                }
+	            }
+	            
+	            response.setContentType("image/" + ext);
+	            
+	            logger.info("FTP connected: {}", ftpClient.isConnected());
+//	            fileSvrName = "111.jpg"; //test
+	            
+	            InputStream inputStream = ftpClient.retrieveFileStream("/remote/path/" + fileSvrName);
+	            logger.info("inputStream= {}", inputStream);
+	      
+	            if (inputStream == null) {
+	                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                return;
+	            }
+	            
+	            IOUtils.copy(inputStream, response.getOutputStream());
+	            response.flushBuffer();
+
+	            boolean completed = ftpClient.completePendingCommand();
+	            if (!completed) {
+	                logger.error("FTP completePendingCommand 실패");
+	            }
+	            
+	            inputStream.close();
+	            
+
+	            ftpClient.logout();
+	            ftpClient.disconnect();
+
+	        } catch (IOException e) {
+	        	   e.printStackTrace();
+	            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        }
+	    }
+		
 	
 	/**
 	 * 경매 판매차량 등록

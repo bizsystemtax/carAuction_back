@@ -55,7 +55,8 @@ public class CarSaleDetailVO implements Serializable {
 	private String attFilePath;
 	private String attFileType;
 	private String fileSeq;
-
+	private String fileSvrName;
+	
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP
 	

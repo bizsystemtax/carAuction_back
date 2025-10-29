@@ -14,7 +14,7 @@
 		<result property="aucCarDrvDis" column="AUC_CAR_DRV_DIS"/>
 		<result property="carTransGb" column="CAR_TRANS_GB"/>
 		<result property="bidPlnPrice" column="BID_PLN_PRICE"/>
-		<result property="bidCnt" column="BID_CNT"/>
+		<result property="aucCarCc" column="AUC_CAR_CC"/>
 		<result property="locImpGb" column="LOC_IMP_GB"/>
 		<result property="entryDate" column="ENTRY_DATE"/>
 		<result property="bidExpDt" column="BID_EXP_DT"/>
@@ -129,7 +129,7 @@
 			       auc.AUC_CAR_DRV_DIS,
 			       car.CAR_TRANS_GB,
 			       auc.BID_PLN_PRICE,
-			       auc.BID_CNT,
+			       auc.AUC_CAR_CC,
 			       auc.LOC_IMP_GB,
 			       auc.ENTRY_DATE,
 			       DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
@@ -209,7 +209,7 @@
                auc.AUC_CAR_DRV_DIS,
                car.CAR_TRANS_GB,
                auc.BID_PLN_PRICE,
-               auc.BID_CNT,
+               auc.AUC_CAR_CC,
                auc.LOC_IMP_GB,
                auc.ENTRY_DATE,
                DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
@@ -308,15 +308,6 @@
         , #{updatIdno}
     )
 </insert>
-
-<!-- 입찰건수 증가 -->
-<update id="incrementBidCount" parameterType="java.util.Map">
-    UPDATE CA_CAR_AUC_INF
-    SET BID_CNT = IFNULL(BID_CNT, 0) + 1
-        , UPDAT_DATE = NOW()
-        , UPDAT_IDNO = #{updatIdno}
-    WHERE AUC_REG_NO = #{aucRegNo}
-</update>
 	
 
 	<!-- *******************************************************************************************************
@@ -519,6 +510,22 @@
 	  WHERE 
             TARGET_ID = #{aucRegNo}
 	 </select>
+	 
+	 <select id="getFileInfo" parameterType="egovframework.carauction.CarSaleDetailVO" resultType="egovframework.carauction.CarSaleDetailVO">
+	 SELECT
+		    ATT_FILE_NM
+		  , ATT_FILE_SIZE
+		  , ATT_FILE_PATH
+		  , ATT_FILE_TYPE
+		  , FILE_SEQ
+		  , FILE_SVR_NAME
+	   FROM
+		    CA_ATT_FILE
+	  WHERE 
+            TARGET_ID = #{aucRegNo}
+			AND FILE_SEQ  = #{fileSeq}
+	 </select>
+	 
 	 
 	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
     UPDATE 
