@@ -2,6 +2,7 @@ package egovframework.carauction.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -344,24 +346,27 @@ public class CarSaleRegController {
 	            }
 	        	
 	            CarSaleDetailVO fileDetail = (CarSaleDetailVO) fileInfo.get("result");
-	            
 	            logger.info("fileDetail = {}", fileDetail);
 	            
 	            String fileSvrName = fileDetail.getFileSvrName();
-
+	            
 	            String ftpHost = "192.168.0.46";
 	            int ftpPort = 21;
 	            String ftpUser = "bizsystem_dev";
 	            String ftpPassword = "bizsystem#99";
-	            String remoteFilePath = (String) "/remote/path/" + fileSvrName;
-	            
-	            logger.info("remoteFilePath = {}", remoteFilePath);
+	            String remoteDir = "/remote/path";
 
 	            ftpClient.connect(ftpHost, ftpPort);
-	            ftpClient.setControlEncoding("UTF-8");
+	         // Windows FTP 서버용: CP949 사용
+	            ftpClient.setControlEncoding("CP949");
 	            ftpClient.login(ftpUser, ftpPassword);
 	            ftpClient.enterLocalPassiveMode();
 	            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+	          
+	         // 한글 파일명은 CP949 → ISO-8859-1로 변환
+	            String remoteFilePath = remoteDir + "/" + new String(fileSvrName.getBytes("CP949"), "ISO-8859-1");
+	            logger.info("remoteFilePath = {}", remoteFilePath);
+	          
 	            
 	            // 확장자 추출
 	            String ext = "";
@@ -373,36 +378,38 @@ public class CarSaleRegController {
 	                }
 	            }
 	            
-	            response.setContentType("image/" + ext);
-	            
-	            logger.info("FTP connected: {}", ftpClient.isConnected());
-//	            fileSvrName = "111.jpg"; //test 
-	            
-	            InputStream inputStream = ftpClient.retrieveFileStream("/remote/path/" + fileSvrName);
-	            logger.info("inputStream= {}", inputStream);
-	      
-	            if (inputStream == null) {
-	                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	                return;
-	            }
-	            
-	            IOUtils.copy(inputStream, response.getOutputStream());
-	            response.flushBuffer();
+	            // 스트리밍
+	            try (InputStream inputStream = ftpClient.retrieveFileStream(remoteFilePath)) {
+	                if (inputStream == null) {
+	                    int replyCode = ftpClient.getReplyCode();
+	                    String replyString = ftpClient.getReplyString();
+	                    logger.error("FTP retrieveFileStream 실패: replyCode={}, replyString={}", replyCode, replyString);
+	                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                    return;
+	                }
 
-	            boolean completed = ftpClient.completePendingCommand();
-	            if (!completed) {
-	                logger.error("FTP completePendingCommand 실패");
-	            }
-	            
-	            inputStream.close();
-	            
+	                response.setContentType("image/" + ext);
+	                IOUtils.copy(inputStream, response.getOutputStream());
+	                response.flushBuffer();
 
-	            ftpClient.logout();
-	            ftpClient.disconnect();
+	                boolean completed = ftpClient.completePendingCommand();
+	                if (!completed) {
+	                    logger.error("FTP completePendingCommand 실패");
+	                }
+	            }
 
 	        } catch (IOException e) {
-	        	   e.printStackTrace();
+	            logger.error("FTP 이미지 조회 중 오류", e);
 	            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        } finally {
+	            try {
+	                if (ftpClient.isConnected()) {
+	                    ftpClient.logout();
+	                    ftpClient.disconnect();
+	                }
+	            } catch (IOException e) {
+	                logger.warn("FTP 연결 종료 중 오류", e);
+	            }
 	        }
 	    }
 		
