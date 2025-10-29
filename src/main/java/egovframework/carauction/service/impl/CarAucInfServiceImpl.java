@@ -176,6 +176,9 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 		// 3. INSERT
 		carAucInfDAO.insertBid(bidData);
+		
+		// 4. 입찰건수 추가
+		carAucInfDAO.incrementBidCount(bidData);
 	}
 
 	/************************************************************************************************************************

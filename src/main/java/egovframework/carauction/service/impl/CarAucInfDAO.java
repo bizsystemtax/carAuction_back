@@ -73,6 +73,10 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public int insertBid(Map<String, Object> bidData) {
 		return insert("carAucInfDAO.insertBid", bidData);
 	}
+	
+	public int incrementBidCount(Map<String, Object> bidData) {
+	    return update("carAucInfDAO.incrementBidCount", bidData);
+	}
 
 	/************************************************************************************************************************
 	 * 차량 판매 정보

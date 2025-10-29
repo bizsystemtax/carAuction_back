@@ -308,6 +308,15 @@
         , #{updatIdno}
     )
 </insert>
+
+<!-- 입찰건수 증가 -->
+<update id="incrementBidCount" parameterType="java.util.Map">
+    UPDATE CA_CAR_AUC_INF
+    SET AUC_CAR_CC = IFNULL(AUC_CAR_CC, 0) + 1
+        , UPDAT_DATE = NOW()
+        , UPDAT_IDNO = #{updatIdno}
+    WHERE AUC_REG_NO = #{aucRegNo}
+</update>
 	
 
 	<!-- *******************************************************************************************************
