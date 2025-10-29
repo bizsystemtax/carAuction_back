@@ -53,14 +53,15 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
   		
   		return map;
   	}
+  	
+  	//사용자id 중복조회
+  	@Override
+  	public UserLoginVO chkUserId(String userId) throws Exception {
+		return userJoinDAO.chkUserId(userId);
+	}
 
+  	
   	//회원등록 (회원가입)
-//  	@Override
-//	public void insertUser(UserLoginVO userLoginVO) {
-//
-//  		userJoinDAO.insertUser(userLoginVO);
-//	}
-
 	@Override
 	public void insertUser(Map<String, Object> param, List<MultipartFile> files) throws Exception {
 		UserLoginVO userLoginVO = (UserLoginVO) param.get("userLoginVO");

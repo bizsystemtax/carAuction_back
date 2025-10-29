@@ -87,6 +87,27 @@ public class UserJoinController {
 	}
 	
 	/**
+	 * 사용자ID 중복조회
+	 */
+	@PostMapping(value = "/chkUserId")
+	public ResultVO chkUserId(@RequestBody Map<String, String> requestParams) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		String userId = requestParams.get("userId");
+		UserLoginVO chkUserId = userJoinService.chkUserId(userId);
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("result", chkUserId);
+		System.out.println("==========result====================" + chkUserId);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		resultVO.setResult(resultMap);
+		
+		return resultVO;
+	}
+	
+	/**
 	 * 사용자 등록
 	 */
 	@Operation(

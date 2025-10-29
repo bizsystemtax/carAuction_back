@@ -23,6 +23,11 @@ public class UserJoinDAO extends EgovAbstractMapper {
 		return selectList("userJoinDAO.bankCdList", userLoginVO);
 	}
 	
+	//사용자id 중복조회
+	public UserLoginVO chkUserId(String userId) {
+		return selectOne("userJoinDAO.chkUserId", userId);
+	}
+	
 	//회원등록 (회원가입)
 	public int insertUser(UserLoginVO userLoginVO) {
 		return insert("userJoinDAO.insertUser", userLoginVO);

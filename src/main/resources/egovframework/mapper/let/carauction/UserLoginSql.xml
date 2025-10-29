@@ -32,7 +32,9 @@
 		<result property = "entryDate"		    column = "ENTRY_DATE"/>
 		<result property = "entryIdno"		    column = "ENTRY_IDNO"/>
 		<result property = "updatDate"		    column = "UPDAT_DATE"/>
-		<result property = "updatIdno"		    column = "UPDAT_IDNO"/>		
+		<result property = "updatIdno"		    column = "UPDAT_IDNO"/>	
+		
+		<result property="userIdCnt" column="USER_ID_CNT"/>	
 	</resultMap>
 	
 	<!-- 회원구분코드 조회 -->
@@ -56,6 +58,16 @@
 		  	 AND CONCAT(CODE_FIRST, CODE_SECOND) = 'B01'
 		]]>
 	</select>
+	
+	<!-- 사용자ID 중복조회 -->
+	<select id="chkUserId" parameterType="egovframework.carauction.UserLoginVO" resultType="egovframework.carauction.UserLoginVO">
+		<![CDATA[
+			SELECT COUNT(*) AS USER_ID_CNT
+			  FROM CA_USER_INF 
+			 WHERE USER_ID = #{userId}
+		]]>
+	</select>
+	
 	
 	<insert id="insertUser" parameterType="egovframework.carauction.UserLoginVO">
 		INSERT INTO CA_USER_INF

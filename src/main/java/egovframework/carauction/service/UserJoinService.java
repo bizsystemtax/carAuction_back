@@ -20,9 +20,11 @@ public interface UserJoinService {
 	//은행코드 조회
 	public Map<String, Object> bankCdList(UserLoginVO userLoginVO) throws Exception;
 	
+	//사용자id 중복조회
+	UserLoginVO chkUserId(String userId) throws Exception;
+		
+	
 	//회원등록 (회원가입)
-	//public void insertUser(UserLoginVO userLoginVO) throws Exception;
-
 	public void insertUser(Map<String, Object> param, List<MultipartFile> files) throws Exception;
     
 }

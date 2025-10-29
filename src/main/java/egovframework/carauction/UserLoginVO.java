@@ -45,6 +45,8 @@ public class UserLoginVO implements Serializable {
 	private String     updatDate = "";			//수정일시
 	private String     updatIdno = "";			//수정자ID
 	
+	private String     userIdCnt = "";			//수정자ID
+	
 	// 필수
 	private String sessionId = "";	// 세션ID
 	private String sessionIp = "";	// 세션IP
