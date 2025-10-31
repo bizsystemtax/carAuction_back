@@ -490,6 +490,7 @@ public class CarSaleRegController {
 		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
 		
 		carAucInfService.deleteCarSale(carSaleDetailVO);
+		carAucInfService.deleteCarSaleImgInfo(carSaleDetailVO);
 
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
