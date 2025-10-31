@@ -134,8 +134,11 @@ public interface CarAucInfService {
 	// 경매 판매차량 삭제
 	public void deleteCarSale(CarSaleDetailVO carSaleDetailVO);
 	
-	//이미지 상세정보 조회 - psm
+	// 이미지 상세정보 조회 - psm
 	public  Map<String, Object> getFileInfo(CarSaleDetailVO carSaleDetailVO) throws Exception; 
+
+	// 이미지 삭제
+	public void deleteCarSaleImgInfo(CarSaleDetailVO carSaleDetailVO) throws Exception;  
 
 	
 }

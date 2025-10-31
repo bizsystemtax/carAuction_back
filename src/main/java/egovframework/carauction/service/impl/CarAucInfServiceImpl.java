@@ -329,5 +329,9 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 		map.put("result", carAucInfDAO.getFileInfo(carSaleDetailVO));
 		return map;
 	}
-	
+
+	@Override
+	public void deleteCarSaleImgInfo(CarSaleDetailVO carSaleDetailVO) throws Exception {
+		carAucInfDAO.deleteCarSaleImgInfo(carSaleDetailVO);
+	}
 }

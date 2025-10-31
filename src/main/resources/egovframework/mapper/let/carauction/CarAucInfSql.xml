@@ -537,7 +537,6 @@
 			AND FILE_SEQ  = #{fileSeq}
 	 </select>  
 	 
-	 
 	<update id="updateCarSale" parameterType="egovframework.carauction.CarSaleDetailVO">
     UPDATE 
            CA_CAR_AUC_INF 
@@ -570,4 +569,13 @@
      WHERE 
            AUC_REG_NO = #{aucRegNo}
     </update>
+    
+    <update id="deleteCarSaleImgInfo" parameterType="egovframework.carauction.CarSaleDetailVO">
+    DELETE 
+      FROM
+           CA_ATT_FILE
+     WHERE 
+           TARGET_ID = #{aucRegNo}
+    </update>
+    
 </mapper>
