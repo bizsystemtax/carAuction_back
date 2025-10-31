@@ -83,7 +83,6 @@ public class SecurityConfig {
         "/userLogin/**", 			// 로그인
         "/cmmCdMnge/**", 			// 코드관리
         "/carMnge/**", 				// 차량관리
-        "/image/**",
         // 추가 End
         
         "/v3/api-docs/**",

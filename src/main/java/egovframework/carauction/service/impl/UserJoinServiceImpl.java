@@ -1,5 +1,6 @@
 package egovframework.carauction.service.impl;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.UserLoginVO;
 import egovframework.carauction.service.CommonFileService;
 import egovframework.carauction.service.UserJoinService;
+import egovframework.let.utl.sim.service.EgovFileScrty;
 
 
 /**
@@ -67,8 +68,12 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
 		UserLoginVO userLoginVO = (UserLoginVO) param.get("userLoginVO");
 		
 		logger.info("param :::::::::::: {} ", param);
-		logger.info("files :::::::::::: {} ", files);
+		logger.info("files ::::::::::::: {} ", files);
 		
+		String enpassword = EgovFileScrty.encryptPassword(userLoginVO.getUserPw(), userLoginVO.getUserId());
+		userLoginVO.setUserPw(enpassword);
+		
+		logger.info("enpassword :::::::::::: {} ", enpassword);
 		String userId = userLoginVO.getUserId();
 		logger.info("userId :::::::::::: {} ", userId );
 		userLoginVO.setUserId(userId); 
