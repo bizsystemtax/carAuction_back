@@ -22,4 +22,10 @@ public interface CarMngeService {
 
 	// 차량관리 상세 조회
 	public Map<String, Object> getCarMnge(@Param("carMainNo") String carMainNo) throws Exception;
+
+	// 차량관리 등록
+	public Map<String, Object> insCarMnge(CarMngeVO carMngeVO) throws Exception;
+
+	// 차량관리 수정
+	public Map<String, Object> updCarMnge(CarMngeVO carMngeVO) throws Exception;
 }

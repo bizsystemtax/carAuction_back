@@ -69,7 +69,7 @@
 		FROM
 		CA_CAR_INF
 		WHERE
-		USE_YN = 'Y'
+		1 = 1
 		<if test="mkrCd != null and mkrCd != ''">
 			AND MKR_CD = #{mkrCd}
 		</if>
@@ -194,6 +194,7 @@
 		, INF.CAR_MODEL_CD
 		, INF.CAR_LEVEL_CD
 		, INF.CAR_DT_LEVEL_CD
+		, INF.CAR_DT_LEVEL_NM
 		, INF.CAR_ENG_CD
 		, INF.CAR_TRANS_GB
 		, INF.CAR_CC
@@ -204,4 +205,143 @@
 		WHERE
 		INF.CAR_MAIN_NO = #{carMainNo}
 	</select>
+	
+	<!-- 차량모델명 중복 조회 -->
+	<select id="selChkCarModelNm"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+		AND INF.CAR_MODEL_NM = #{carModelNm}
+	</select>
+	
+	<!-- 차량모델코드 MAX값 조회 -->
+	<select id="selMaxCarModelCd"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.String">
+		SELECT
+		MAX(INF.CAR_MODEL_CD)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+	</select>
+	
+	<!-- 차량등급명 중복 조회 -->
+	<select id="selChkCarLevelNm"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+		AND INF.CAR_MODEL_CD = #{carModelCd}
+		AND INF.CAR_LEVEL_NM = #{carLevelNm}
+	</select>
+	
+	<!-- 차량등급코드 MAX값 조회 -->
+	<select id="selMaxCarLevelCd"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.String">
+		SELECT
+		MAX(INF.CAR_LEVEL_CD)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+		AND INF.CAR_MODEL_CD = #{carModelCd}
+	</select>
+	
+	<!-- 차량세부등급명 중복 조회 -->
+	<select id="selChkCarDtLevelNm"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+		AND INF.CAR_MODEL_CD = #{carModelCd}
+		AND INF.CAR_LEVEL_CD = #{carLevelCd}
+		AND INF.CAR_DT_LEVEL_NM = #{carDtLevelNm}
+	</select>
+	
+	<!-- 차량세부등급코드 MAX값 조회 -->
+	<select id="selMaxCarDtLevelCd"
+		parameterType="egovframework.carauction.CarMngeVO"
+		resultType="java.lang.String">
+		SELECT
+		MAX(INF.CAR_DT_LEVEL_CD)
+		FROM
+		CA_CAR_INF INF
+		WHERE
+		INF.MKR_CD = #{mkrCd}
+		AND INF.CAR_MODEL_CD = #{carModelCd}
+		AND INF.CAR_LEVEL_CD = #{carLevelCd}
+	</select>
+
+	<!-- 차량관리 등록 -->
+	<insert id="insCarMnge"
+		parameterType="egovframework.carauction.CarMngeVO">
+		INSERT INTO
+		CA_CAR_INF (
+		CAR_MAIN_NO
+		, MKR_CD
+		, CAR_MODEL_CD
+		, CAR_MODEL_NM
+		, REP_CAR_YN
+		, CAR_LEVEL_CD
+		, CAR_LEVEL_NM
+		, CAR_DT_LEVEL_CD
+		, CAR_DT_LEVEL_NM
+		, LOC_IMP_GB
+		, CAR_ENG_CD
+		, CAR_PRICE
+		, CAR_CC
+		, CAR_TRANS_GB
+		, USE_YN
+		, ENTRY_IDNO
+		, UPDAT_IDNO)
+		VALUES (
+		#{carMainNo}
+		, #{mkrCd}
+		, #{carModelCd}
+		, #{carModelNm}
+		, #{repCarYn}
+		, #{carLevelCd}
+		, #{carLevelNm}
+		, #{carDtLevelCd}
+		, #{carDtLevelNm}
+		, #{locImpGb}
+		, #{carEngCd}
+		, #{carPrice}
+		, #{carCc}
+		, #{carTransGb}
+		, #{useYn}
+		, #{entryIdno}
+		, #{updatIdno})
+	</insert>
+	
+	<!-- 차량관리 수정 -->
+	<update id="updCarMnge"
+		parameterType="egovframework.carauction.CarMngeVO">
+		UPDATE
+		CA_CAR_INF
+		SET
+		CAR_ENG_CD = #{carEngCd}
+		, CAR_PRICE = #{carPrice}
+		, CAR_CC = #{carCc}
+		, CAR_TRANS_GB = #{carTransGb}
+		, USE_YN = #{useYn}
+		, UPDAT_IDNO = #{updatIdno}
+		WHERE
+		CAR_MAIN_NO = #{carMainNo}
+	</update>
 </mapper>
