@@ -68,7 +68,7 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
 		UserLoginVO userLoginVO = (UserLoginVO) param.get("userLoginVO");
 		
 		logger.info("param :::::::::::: {} ", param);
-		logger.info("files :::::::::::: {} ", files);
+		logger.info("files ::::::::::::: {} ", files);
 		
 		String enpassword = EgovFileScrty.encryptPassword(userLoginVO.getUserPw(), userLoginVO.getUserId());
 		userLoginVO.setUserPw(enpassword);
