@@ -100,7 +100,7 @@
 			     , CCAI.CAR_MAIN_NO /*차량관리번호*/
 			     , CCAI.CAR_NO      /*차량번호*/
 			     , CONCAT((SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCI.MKR_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C01'), ' ', CCI.CAR_MODEL_NM) AS CAR_MODEL_NM /*차량명*/
-			     , CCAI.AUC_CAR_MAKE_YR /*연식*/
+			     , IFNULL(CCAI.AUC_CAR_MAKE_YR, '-') AS AUC_CAR_MAKE_YR /*연식*/
 			     , (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCAI.CAR_ENG_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C04') AS FUEL_TYPE /*연료*/
 			     , FORMAT(CCAI.AUC_CAR_DRV_DIS, 0) AS AUC_CAR_DRV_DIS /*주행거리*/
 			     , CCAI.CAR_TRANS_GB     /*변속기 구분*/
@@ -119,7 +119,7 @@
 				   ELSE ''
 				    END AS AUC_PROG_STAT_NM /*진행상태명*/
 			     , CONCAT(FORMAT(CCAI.SBID_PRICE, 0), '원') AS SBID_PRICE /*낙찰금액*/
-			     , CCAI.SBID_DATE  /*낙찰일*/
+			     , IFNULL(DATE_FORMAT(CCAI.SBID_DATE, '%Y-%m-%d'), '-') AS SBID_DATE  /*낙찰일*/
 			     , CCAI.ENTRY_IDNO /*낙찰 회원사명*/
 			     , CCAI.AUC_PROG_YN /*진행상태 여부*/
 			     , (SELECT USER_NM
@@ -254,7 +254,7 @@
 			     , CCAI.CAR_MAIN_NO /*차량관리번호*/
 			     , CCAI.CAR_NO      /*차량번호*/
 			     , CONCAT((SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCI.MKR_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C01'), ' ', CCI.CAR_MODEL_NM) AS CAR_MODEL_NM /*차량명*/
-			     , CCAI.AUC_CAR_MAKE_YR /*연식*/
+			     , IFNULL(CCAI.AUC_CAR_MAKE_YR, '-') AS AUC_CAR_MAKE_YR /*연식*/
 			     , (SELECT CODE_HNAME FROM CA_CMM_CD WHERE CODE_NO = CCAI.CAR_ENG_CD AND CONCAT(CODE_FIRST, CODE_SECOND) = 'C04') AS FUEL_TYPE /*연료*/
 			     , FORMAT(CCAI.AUC_CAR_DRV_DIS, 0) AS AUC_CAR_DRV_DIS /*주행거리*/
 			     , CCAI.CAR_TRANS_GB     /*변속기 구분*/
