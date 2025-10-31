@@ -225,8 +225,6 @@ public class CarSaleRegController {
 			HttpServletRequest request
 			)throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		System.out.println("==============================" + carSaleDetailVO.toString());
 
 		logger.info("carSaleDetailVO >>>>>>>>> {}", carSaleDetailVO);
 		
@@ -415,7 +413,7 @@ public class CarSaleRegController {
 		
 	
 	/**
-	 * 경매 판매차량 등록
+	 * 경매 판매차량 수정
 	 */
 	@Operation(
 			summary = "판매차량 수정",
@@ -428,14 +426,13 @@ public class CarSaleRegController {
 			@ApiResponse(responseCode = "900", description = "입력값 무결성 오류")
 	})
 	@PostMapping(value ="/updateCarSale")
-	public ResultVO updateCarSale(@RequestBody CarSaleDetailVO carSaleDetailVO,
+	public ResultVO updateCarSale(
+		@ModelAttribute CarSaleDetailVO carSaleDetailVO,
 		BindingResult bindingResult,
 		HttpServletRequest request)
 		throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		System.out.println("==============================" + carSaleDetailVO.toString());
-
 		logger.info("carSaleDetailVO >>>>>>>>>", carSaleDetailVO);
 		
 		// 입찰유효일(마감일)
@@ -465,7 +462,7 @@ public class CarSaleRegController {
 	}
 	
 	/**
-	 * 경매 판매차량 등록
+	 * 경매 판매차량 삭제
 	 */
 	@Operation(
 			summary = "판매차량 삭제",
