@@ -1,6 +1,7 @@
 package egovframework.carauction.web;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -41,18 +42,19 @@ public class CmmCdMngeController {
 	/*
 	 * 코드관리 조회
 	 */
-	@GetMapping("/{code}")
-	public ResultVO getCmmCd(@PathVariable("code") String code,
+	@GetMapping(value = {"/{code}", ""})
+	public ResultVO getCmmCd(@PathVariable(required = false) String code,
             @RequestParam(value = "name", required = false) String codeName)
             throws Exception {
 		
 		ResultVO resultVO = new ResultVO();
 		CmmCdMngeVO input = new CmmCdMngeVO();
 		
-		logger.info("getCmmCd 컨트롤러 ▶▶▶▶▶▶ {}", code);
 		
-		input.setCodeFirst(code.substring(0, 1));
-		input.setCodeSecond(code.substring(1,3));
+		if(code != null) {
+			input.setCodeFirst(code.substring(0, 1));
+			input.setCodeSecond(code.substring(1,3));
+		}
 		input.setCodeHname(codeName);
 		
 		/*

@@ -30,9 +30,15 @@ select
 from
 	ca_cmm_cd
 where 1=1
-and CODE_FIRST = #{codeFirst}
-and CODE_SECOND =  #{codeSecond}
-AND CODE_HNAME  LIKE CONCAT('%', #{codeHname}, '%')
+<if test="codeFirst != null and codeFirst != ''">
+	and CODE_FIRST = #{codeFirst}
+</if>
+<if test="codeSecond != null and codeSecond != ''">
+	and CODE_SECOND =  #{codeSecond}
+</if>
+<if test="codeHname != null and codeHname != ''">
+	AND CODE_HNAME  LIKE CONCAT('%', #{codeHname}, '%')
+</if>
 ;
 </select>
 <select id="findCmmCdByCodeNo" parameterType="egovframework.carauction.CmmCdMngeVO" resultType="egovframework.carauction.CmmCdMngeVO">
