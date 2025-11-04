@@ -61,16 +61,31 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 	public Map<String, Object> faileBidUpdate(MyPageVO myPageVO) throws Exception {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-	
-		int cnt = myPageDAO.faileBidUpdate(myPageVO);
 		
-		logger.info("cnt ▶▶▶▶▶▶ {}", cnt);
+		//경매등록순번 확인
+		int regSeqCnt = myPageDAO.selectRegSeq(myPageVO);
 		
-		if(cnt > 0) {
-			myPageDAO.failecaCarAucInfUpdate(myPageVO);  
+		if(regSeqCnt > 0) {
+			logger.info("regSeqCnt ▶▶▶▶▶▶ {}", regSeqCnt);
+			int cnt = myPageDAO.faileBidUpdate(myPageVO);
+			
+			logger.info("cnt ▶▶▶▶▶▶ {}", cnt);
+			
+			if(cnt > 0) {
+				myPageDAO.failecaCarAucInfUpdate(myPageVO);  
+			}
+			
+			logger.info("map ▶▶▶▶▶▶ {}", map);
+			
+			map.put("result", "success"); // 성공 시
+		}else {
+			map.put("result", "fail");
+	        map.put("message", "해당 경매 등록 정보가 존재하지 않습니다.");
 		}
+	
+		//int cnt = myPageDAO.faileBidUpdate(myPageVO);
 		
-		logger.info("map ▶▶▶▶▶▶ {}", map);
+		
 		
 		return map;
 		

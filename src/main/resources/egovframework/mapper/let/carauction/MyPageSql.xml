@@ -180,6 +180,15 @@
 		]]>
 	</select>
 	
+	<!-- 경매등록순번 확인 -->
+	<select id="selectRegSeq" parameterType="egovframework.carauction.MyPageVO" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(*)
+			  FROM CA_CAR_AUC_DTL_BID_INF
+			 WHERE AUC_REG_NO = #{aucRegNo}   
+		]]>
+	</select>
+	
 	<!-- 유찰 -->
 	<update id="faileBidUpdate"  parameterType="egovframework.carauction.MyPageVO">
 		UPDATE CA_CAR_AUC_DTL_BID_INF
