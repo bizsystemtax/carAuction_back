@@ -537,7 +537,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>egovframework.EgovBootApplication</mainClass>
-					<layout>WAR</layout>
+					<!--20251104 WAR에서 JAR 변경<layout>WAR</layout>-->
+					<layout>JAR</layout>
 				</configuration>
 				<executions>
 					<execution>
