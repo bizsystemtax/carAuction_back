@@ -80,7 +80,7 @@ public class MyPageServiceImpl extends EgovAbstractServiceImpl implements MyPage
 			map.put("result", "success"); // 성공 시
 		}else {
 			map.put("result", "fail");
-	        map.put("message", "해당 경매 등록 정보가 존재하지 않습니다.");
+	        map.put("message", "해당 경매등록번호가 존재하지 않습니다.");
 		}
 	
 		//int cnt = myPageDAO.faileBidUpdate(myPageVO);
