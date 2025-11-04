@@ -71,4 +71,9 @@ public class MyPageDAO extends EgovAbstractMapper {
 		update("myPageDAO.depositPaymentUpdate", bidVO);
 		
 	}
+
+	//경매등록순번 확인
+	public int selectRegSeq(MyPageVO myPageVO) {
+		return selectOne("myPageDAO.selectRegSeq", myPageVO);
+	}
 }
