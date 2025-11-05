@@ -23,6 +23,7 @@
 		<result property = "contCellno"		    column = "CONT_CELLNO"/>
 		<result property = "contEmailAddr"		column = "CONT_EMAIL_ADDR"/>
 		<result property = "compAddr"		    column = "COMP_ADDR"/>
+		<result property = "compAddrDtl"	    column = "COMP_ADDR_DTL"/>
 		<result property = "compTelno"		    column = "COMP_TELNO"/>
 		<result property = "compFaxno"		    column = "COMP_FAXNO"/>
 		<result property = "compHmpgAddr"		column = "COMP_HMPG_ADDR"/>
@@ -80,6 +81,7 @@
 			CONT_CELLNO,		/*담당자휴대전화번호*/
 			CONT_EMAIL_ADDR,	/*담당자메일주소*/
 			COMP_ADDR ,			/*회사주소*/
+			COMP_ADDR_DTL ,		/*회사주소상세*/
 			COMP_TELNO ,		/*회사전화번호*/
 			COMP_FAXNO ,		/*회사팩스번호*/
 			COMP_HMPG_ADDR ,	/*회사홈페이지주소*/
@@ -101,6 +103,7 @@
 			, #{contCellno}
 			, #{contEmailAddr}
 			, #{compAddr}
+			, #{compAddrDtl}
 			, #{compTelno}
 			, #{compFaxno}
 			, #{compHmpgAddr}
