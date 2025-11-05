@@ -341,11 +341,13 @@
 			<version>1.2</version>
 			<exclusions>
 				<exclusion>
-					<!--<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>-->
+					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
-      				<artifactId>slf4j-simple</artifactId>
 				</exclusion>
+				<exclusion>
+			      	<groupId>org.slf4j</groupId>
+			      	<artifactId>slf4j-simple</artifactId>
+			    </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
