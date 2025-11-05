@@ -133,7 +133,10 @@
 			       auc.LOC_IMP_GB,
 			       auc.ENTRY_DATE,
 			       DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
-			       auc.ENTRY_IDNO
+			        (SELECT USER_NM
+          FROM CA_USER_INF
+         WHERE USER_ID = auc.ENTRY_IDNO
+       ) AS ENTRY_IDNO 
 			FROM CA_CAR_AUC_INF auc
 			INNER JOIN CA_CAR_INF car ON auc.CAR_MAIN_NO = car.CAR_MAIN_NO
             AND auc.AUC_PROG_YN = 'Y'
