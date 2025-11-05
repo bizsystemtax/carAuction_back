@@ -4,7 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.egovframe.template</groupId>
 	<artifactId>simpleHomePage</artifactId>
-	<packaging>war</packaging>
+	<!--<packaging>war</packaging>-->
+	<packaging>jar</packaging>
 	<version>1.0.0</version>
 	<name>egovframework</name>
 	<url>example.egovframework.com</url>
@@ -536,7 +537,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>egovframework.EgovBootApplication</mainClass>
-					<layout>WAR</layout>
+					<!--20251104 WAR에서 JAR 변경<layout>WAR</layout>-->
+					<layout>JAR</layout>
 				</configuration>
 				<executions>
 					<execution>
