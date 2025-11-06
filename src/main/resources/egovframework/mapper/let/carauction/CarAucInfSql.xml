@@ -181,7 +181,7 @@
 			AND auc.ENTRY_DATE &gt;= #{startDate}
 		</if>
 		<if test="endDate != null and endDate != ''">
-			AND auc.ENTRY_DATE &lt;= #{endDate}
+			AND auc.ENTRY_DATE &lt;= CONCAT(#{endDate}, ' 23:59:59')
 		</if>
 
 		<!-- 주행거리 조건 -->
