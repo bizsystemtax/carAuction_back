@@ -34,6 +34,7 @@ public class UserLoginVO implements Serializable {
 	private String     contCellno = "";			//담당자 휴대전화번호
 	private String     contEmailAddr = "";		//담당자 이메일 주소
 	private String     compAddr = "";			//회사주소
+	private String     compAddrDtl = "";		//회사주소상세
 	private String     compTelno = "";			//회사전화번호
 	private String     compFaxno = "";			//회사팩스번호
 	private String     compHmpgAddr = "";		//회사홈페이지주소
