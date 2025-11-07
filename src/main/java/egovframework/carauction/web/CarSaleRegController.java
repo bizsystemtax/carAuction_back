@@ -281,13 +281,20 @@ public class CarSaleRegController {
 		// 경매번호
 		carSaleVO.setAucRegNo(requestParams.get("aucRegNo"));
 		
+		//Map<String, Object> resultMap = carAucInfService.getCarSaleDetail(carSaleVO);
+		
 		Map<String, Object> resultMap = carAucInfService.getCarSaleDetail(carSaleVO);
+		Map<String, Object> resultMap2 = carAucInfService.getCarSaleImgDetail(carSaleVO);
+		Map<String, Object> totalResult = new HashMap<>();
+		totalResult.put("carDetail", resultMap);
+		totalResult.put("carImages", resultMap2);
 		
 		logger.info("resultMap > " + resultMap);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-		resultVO.setResult(resultMap);
+		//resultVO.setResult(resultMap);
+		resultVO.setResult(totalResult);
 		
 		return resultVO;
 	}
