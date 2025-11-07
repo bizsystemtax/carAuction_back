@@ -123,7 +123,7 @@
 			           ' ',
 			           car.CAR_MODEL_NM
 			       ) AS CAR_MODEL_NM,
-			       car.CAR_LEVEL_NM,
+			       auc.AUC_CAR_CMNT AS CAR_LEVEL_NM,
 			       auc.AUC_CAR_MAKE_YR,
 			       (SELECT CODE_HNAME FROM CA_CMM_CD WHERE code_no = car.CAR_ENG_CD AND CONCAT(CODE_FIRST, code_second) = 'C04') AS FUEL_TYPE,
 			       auc.AUC_CAR_DRV_DIS,
