@@ -112,7 +112,7 @@
 		]]>
 	</select>
 
-	<!-- 차량 조회 쿼리 -->
+	<!-- 차량 조회 쿼리  -->
 	<select id="findCarsWithConditions" parameterType="egovframework.carauction.CarSearchCriteriaVO" resultMap="CarInfoVO">
 		<![CDATA[
 			SELECT ROW_NUMBER() OVER (ORDER BY auc.ENTRY_DATE DESC) AS RNUM,
