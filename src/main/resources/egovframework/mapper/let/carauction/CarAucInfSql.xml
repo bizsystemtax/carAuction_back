@@ -564,6 +564,7 @@
          , BID_EXP_DT = #{bidExpDt}
          , EOM_YN = #{eomYn}
          , EOM_PRICE = #{eomPrice}
+         , UPDAT_DATE = CURRENT_TIMESTAMP
          , UPDAT_IDNO = #{updatIdno}
      WHERE 
            AUC_REG_NO = #{aucRegNo}

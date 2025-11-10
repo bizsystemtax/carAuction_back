@@ -18,6 +18,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -220,6 +221,7 @@ public class CarSaleRegController {
 			//BindingResult bindingResult,
 			//HttpServletRequest request
 			@ModelAttribute CarSaleDetailVO carSaleDetailVO,
+			@AuthenticationPrincipal LoginVO user,
 			@RequestParam(value = "files", required = false) List<MultipartFile> files,
 			BindingResult bindingResult,
 			HttpServletRequest request
@@ -237,20 +239,9 @@ public class CarSaleRegController {
 		// 경매진행상태코드
 		carSaleDetailVO.setAucProgStatCd("0010");
 		
-		// 등록자, 수정자
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
-		carSaleDetailVO.setEntryIdno(loginVO.getId()); //등록자
-		
-//		List<FileVO> result = null;
-//		String atchFileId = "";
+		carSaleDetailVO.setUpdatIdno(carSaleDetailVO.getSessionId()); //수정자
+		carSaleDetailVO.setEntryIdno(carSaleDetailVO.getSessionId()); //등록자
 
-//		final Map<String, MultipartFile> files = multiRequest.getFileMap();
-//		if (!files.isEmpty()) {
-//			result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
-//			atchFileId = fileMngService.insertFileInfs(result);
-//		}
-		
 		logger.info("여기까지 들어옴");
 		logger.info("files ▶▶▶▶▶▶▶▶▶▶ {}", files);
 		logger.info("carSaleDetailVO ▶▶▶▶▶▶▶▶▶▶ {}", carSaleDetailVO);
@@ -449,8 +440,10 @@ public class CarSaleRegController {
 		carSaleDetailVO.setBidExpDt(bidExpDt);
 		
 		// 수정자
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+//		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+//		carSaleDetailVO.setUpdatIdno(loginVO.getId()); //수정자
+		
+		carSaleDetailVO.setUpdatIdno(carSaleDetailVO.getSessionId()); //수정자
 		
 //		List<FileVO> result = null;
 //		String atchFileId = "";
