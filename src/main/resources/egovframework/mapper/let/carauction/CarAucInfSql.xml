@@ -136,7 +136,11 @@
 			        (SELECT USER_NM
           FROM CA_USER_INF
          WHERE USER_ID = auc.ENTRY_IDNO
-       ) AS ENTRY_IDNO 
+       ) AS ENTRY_IDNO,
+       CASE 
+           WHEN auc.ENTRY_IDNO = #{loginUserId} THEN 'Y'
+           ELSE 'N'
+       END AS IS_MY_VEHICLE
 			FROM CA_CAR_AUC_INF auc
 			INNER JOIN CA_CAR_INF car ON auc.CAR_MAIN_NO = car.CAR_MAIN_NO
             AND auc.AUC_PROG_YN = 'Y'

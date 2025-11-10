@@ -74,4 +74,7 @@ public class CarInfoVO {
     
     // 입찰보증금율
     private BigDecimal bidSdepRt;
+    
+    // 본인 등록 차량 여부
+    private String isMyVehicle; 
 }

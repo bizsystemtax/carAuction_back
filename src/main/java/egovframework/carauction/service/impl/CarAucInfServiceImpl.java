@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,8 @@ import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CarAucInfService;
 import egovframework.carauction.service.CommonFileService;
 import egovframework.carauction.web.NoticeController;
- 
+import egovframework.com.cmm.LoginVO;
+
 /**
  * 차량 경매 정보 서비스 구현 클래스
  */
@@ -41,6 +43,12 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 	@Override
 	public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {
+		
+		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		if (loginVO != null) {
+			criteria.setLoginUserId(loginVO.getId());
+		}
+		
 		// 검색 조건 전처리
 		processSearchCriteria(criteria);
 		return carAucInfDAO.findCarsWithConditions(criteria);
