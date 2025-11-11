@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.egovframe.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import org.slf4j.Logger;
@@ -17,11 +18,11 @@ import egovframework.carauction.CarInfoVO;
 import egovframework.carauction.CarSaleDetailVO;
 import egovframework.carauction.CarSaleVO;
 import egovframework.carauction.CarSearchCriteriaVO;
-import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CarAucInfService;
 import egovframework.carauction.service.CommonFileService;
-import egovframework.carauction.web.NoticeController;
 import egovframework.com.cmm.LoginVO;
+import egovframework.com.cmm.exception.BizException;
+import egovframework.com.cmm.exception.ErrorCode;
 
 /**
  * 차량 경매 정보 서비스 구현 클래스
@@ -44,10 +45,20 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	@Override
 	public List<CarInfoVO> findCarsWithConditions(CarSearchCriteriaVO criteria) throws Exception {
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		if (loginVO != null) {
-			criteria.setLoginUserId(loginVO.getId());
-		}
+	    /**
+	     * 사용자 로그인(세션) 확인
+	     */
+	    LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+	    String userId = null;
+	    
+	    if (loginVO != null && !StringUtils.defaultString(loginVO.getId()).isEmpty()) {
+	        userId = loginVO.getId();
+	        logger.info("로그인 사용자: {} (IP: {})", userId, loginVO.getIp());
+	        criteria.setLoginUserId(userId);
+	    } else {
+	        // 로그인 안 되어 있으면 에러 처리
+	        throw new BizException(ErrorCode.ERR301); // 세션 만료
+	    }
 		
 		// 검색 조건 전처리
 		processSearchCriteria(criteria);
@@ -160,6 +171,16 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	
 	@Override
 	public int checkUserBidHistory(String aucRegNo, String userId) throws Exception {
+		
+	    /**
+	     * 사용자 로그인(세션) 확인
+	     */
+	    LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+	    
+	    if (loginVO == null || StringUtils.defaultString(loginVO.getId()).isEmpty()) {
+	        throw new BizException(ErrorCode.ERR301); // 세션 만료
+	    }
+	    
 	    Map<String, String> params = new HashMap<>();
 	    params.put("aucRegNo", aucRegNo);
 	    params.put("userId", userId);
@@ -174,6 +195,16 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 	@Override
 	public void insertBid(Map<String, Object> bidData) throws Exception {
+		
+	    /**
+	     * 사용자 로그인(세션) 확인
+	     */
+	    LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+	    
+	    if (loginVO == null || StringUtils.defaultString(loginVO.getId()).isEmpty()) {
+	        throw new BizException(ErrorCode.ERR301); // 세션 만료
+	    }
+		
 		String aucRegNo = (String) bidData.get("aucRegNo");
 
 		// 1. 다음 순번 조회
@@ -181,11 +212,14 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 		// 2. Map에 순번 추가
 		bidData.put("aucRegSeq", nextSeq);
+		
+	    // 3. 사용자 정보 추가
+	    bidData.put("userId", loginVO.getId());
 
-		// 3. INSERT
+		// 4. INSERT
 		carAucInfDAO.insertBid(bidData);
 		
-		// 4. 입찰건수 추가
+		// 5. 입찰건수 추가
 		carAucInfDAO.incrementBidCount(bidData);
 	}
 

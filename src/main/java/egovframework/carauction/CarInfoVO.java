@@ -12,69 +12,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CarInfoVO {
 
-    // 순번
-    private Integer rowNum;
-
-    // 차량번호 (경매등록번호)
-    private String aucRegNo;
     
-    //차량번호
-    private String carNo; 
+	private Integer rowNum;                 // 순번
+	private String aucRegNo;                // 차량번호 (경매등록번호)
+	private String carNo;                   // 차량번호
+	private String carModelNm;              // 차량명 (제조사명 + 모델명)
+	private String carLevelNm;              // 옵션내용 (세부사양)
+	private String aucCarMakeYr;            // 연식
+	private String fuelType;                // 연료 (휘발유, 디젤 등)
+	private Long aucCarDrvDis;              // 주행거리 (km)
+	private String carTransGb;              // 변속기 (A:자동, M:수동)
+	private Long bidPlnPrice;               // 예정가 (원)
+	private Integer bidCnt;                 // 입찰건수
+	private String locImpGb;                // 보관장소 구분코드
+	private String entryDate;               // 입찰등록일
+	private String bidExpDt;                // 입찰마감일
+	private String entryIdno;               // 등록 회원사명
+	private String brHname;                 // 브랜드명
+	private String modelName;               // 모델명
+	private String subModelName;            // 세부모델명
+	private String fuelTypeName;            // 연료타입명
+	private String registrationCompanyName; // 등록회원사명
+	private BigDecimal bidSdepRt;           // 입찰보증금율
+	private String isMyVehicle;             // 본인 등록 차량 여부
+	private String contNm;                  // 담당자명
+	private String contEmailAddr;           // 담당자 이메일
 
-    // 차량명 (제조사명 + 모델명)
-    private String carModelNm;
-
-    // 옵션내용 (세부사양)
-    private String carLevelNm;
-
-    // 연식
-    private String aucCarMakeYr;
-
-    // 연료 (휘발유, 디젤 등)
-    private String fuelType;
-
-    // 주행거리 (km)
-    private Long aucCarDrvDis;
-
-    // 변속기 (A:자동, M:수동)
-    private String carTransGb;
-
-    // 예정가 (원)
-    private Long bidPlnPrice;
-
-    // 입찰건수
-    private Integer bidCnt;
-
-    // 보관장소 구분코드
-    private String locImpGb;
-
-    // 입찰등록일
-    private String entryDate;
-
-    // 입찰마감일
-    private String bidExpDt;
-
-    // 등록 회원사명
-    private String entryIdno;
-
-    // 브랜드명
-    private String brHname;
-
-    // 모델명
-    private String modelName;
-
-    // 세부모델명
-    private String subModelName;
-
-    // 연료타입명
-    private String fuelTypeName;
-
-    // 등록회원사명
-    private String registrationCompanyName;
     
-    // 입찰보증금율
-    private BigDecimal bidSdepRt;
     
-    // 본인 등록 차량 여부
-    private String isMyVehicle; 
 }
