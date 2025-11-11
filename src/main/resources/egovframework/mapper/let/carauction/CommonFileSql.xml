@@ -57,7 +57,7 @@
 		SELECT ATT_FILE_ID
 		     , TARGET_TYPE
 		     , TARGET_ID
-		     , ATT_FILE_NM
+		     , ATT_FILE_NM   
 		     , ATT_FILE_SIZE
 		     , ATT_FILE_PATH
 		     , ATT_FILE_TYPE

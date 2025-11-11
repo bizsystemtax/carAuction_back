@@ -106,7 +106,7 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
                 logger.info("이미 존재하는 파일 건너뜀: {}", originalFilename);
                 continue;
             }
-            
+                
             //파일 크기 제한
             if (file.getSize() > maxFileSize) {
                 logger.info("업로드 파일 크기 초과 {} ", file.getSize(), maxFileSize);

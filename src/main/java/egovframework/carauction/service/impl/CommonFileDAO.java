@@ -20,7 +20,7 @@ public class CommonFileDAO extends EgovAbstractMapper {
 	public AttachFileVO selectFileInfo(AttachFileVO attachFileVO) {
 		
 		return selectOne("commonFileDAO.selectFileInfo", attachFileVO);
-	}
+	}   
 
 	//실제 DB데이터 삭제
 	public int deleteFile(AttachFileVO attachFileVO) {
