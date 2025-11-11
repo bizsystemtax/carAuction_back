@@ -178,6 +178,8 @@ public class CarBidRegController {
 	    logger.info("bidPlnPrice 값 확인: {}", bidPlnPrice);
 	    // 입찰 보증금 계산 (예정가의 10%)
 	    Integer bidSdepPrice = (int) Math.floor(bidPlnPrice * 0.1);
+	    String contCellNo = (String) requestParams.get("contCellNo");           
+	    String contEmailAddr = (String) requestParams.get("contEmailAddr");     
 	    
 	    /**
 	     * 입찰 데이터 설정
@@ -189,6 +191,8 @@ public class CarBidRegController {
 	    bidData.put("bankName", bankName);
 	    bidData.put("accountNumber", accountNumber);
 	    bidData.put("bidSdepPrice", bidSdepPrice);
+	    bidData.put("contCellNo", contCellNo);                  
+	    bidData.put("contEmailAddr", contEmailAddr);            
 	    
 	    // 로그인 사용자 정보
 	    bidData.put("entryIdno", userId);

@@ -35,7 +35,7 @@ public class CarInfoVO {
 	private String registrationCompanyName; // 등록회원사명
 	private BigDecimal bidSdepRt;           // 입찰보증금율
 	private String isMyVehicle;             // 본인 등록 차량 여부
-	private String contNm;                  // 담당자명
+	private String contCellNo;              // 담당자 번호
 	private String contEmailAddr;           // 담당자 이메일
 
     

@@ -222,7 +222,7 @@
                DATE_FORMAT(STR_TO_DATE(auc.BID_EXP_DT, '%Y%m%d'), '%Y-%m-%d') AS BID_EXP_DT,
                auc.ENTRY_IDNO,
                auc.BID_SDEP_RT,
-               cui.CONT_NM ,
+               cui.CONT_CELLNO ,
                cui.CONT_EMAIL_ADDR 
         FROM CA_CAR_AUC_INF auc
         LEFT JOIN CA_CAR_INF car ON auc.CAR_MAIN_NO = car.CAR_MAIN_NO
@@ -295,8 +295,8 @@
         , AUC_PROG_STAT_CD
         , SBID_YN
         , POM_PAY_YN
-        , CONT_NM              
-        , CONT_EMAIL_ADDR
+        , BIDMN_CELLNO              
+        , BIDMN_EMAIL_ADDR
         , ENTRY_DATE
         , ENTRY_IDNO
         , UPDAT_DATE
@@ -314,7 +314,7 @@
         , '0010'
         , 'N'
         , 'N'
-        , #{contNm}            
+        , #{contCellNo}            
         , #{contEmailAddr}  
         , NOW()
         , #{entryIdno}
