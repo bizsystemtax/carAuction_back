@@ -295,6 +295,8 @@
         , AUC_PROG_STAT_CD
         , SBID_YN
         , POM_PAY_YN
+        , CONT_NM              
+        , CONT_EMAIL_ADDR
         , ENTRY_DATE
         , ENTRY_IDNO
         , UPDAT_DATE
@@ -312,6 +314,8 @@
         , '0010'
         , 'N'
         , 'N'
+        , #{contNm}            
+        , #{contEmailAddr}  
         , NOW()
         , #{entryIdno}
         , NOW()
