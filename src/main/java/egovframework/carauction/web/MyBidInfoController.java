@@ -65,15 +65,19 @@ public class MyBidInfoController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "");	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "");	//등록종료일자
 		String proState = requestParams.get("codeNo");						//진행상태
 		
+		String userId = requestParams.get("userId");					
+		
+		logger.info("userId ▶▶▶▶▶▶ {}", userId);
+		
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
-		myPageVO.setEntryIdno(loginVO.getId());
+		myPageVO.setEntryIdno(userId);
 		
 		myPageVO.setProState(proState); //진행상태
 		

@@ -54,10 +54,11 @@ public class MySaleCarBidDtlController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
 		String aucRegNo = requestParams.get("aucRegNo");	//경매등록번호
-		myPageVO.setEntryIdno(loginVO.getId());
+		//myPageVO.setEntryIdno(loginVO.getId());
+		
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
@@ -86,7 +87,9 @@ public class MySaleCarBidDtlController {
 		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
 		String aucRegNo = (String) requestParams.get("aucRegNo"); //경매등록번호
-
+		String userId = requestParams.get("userId");		
+		logger.info("userId ▶▶▶▶▶▶ {}", userId);
+		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
 		myPageVO.setUpdatIdno(loginVO.getId());				//수정자
@@ -149,6 +152,7 @@ public class MySaleCarBidDtlController {
 			BindingResult bindingResult,
 			HttpServletRequest request,
 			@RequestBody MyPageVO requestBody
+			//@RequestBody Map<String, String> requestParams
 			) throws Exception {
 		
 		ResultVO resultVO = new ResultVO();
@@ -156,8 +160,9 @@ public class MySaleCarBidDtlController {
 		List<MyPageSelectedVO> selected = requestBody.getSelected();
 	    List<MyPageUnSeledctedVO> unselected = requestBody.getUnselected();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//String userId = requestParams.get("userId");		
+		//logger.info("userId ▶▶▶▶▶▶ {}", userId);
 		//입찰 현황에서 선택한 값
 		for (int i = 0; i < selected.size(); i++) {
 			MyPageSelectedVO item = selected.get(i);
@@ -170,7 +175,8 @@ public class MySaleCarBidDtlController {
 			bidVO.setDepmnNm(item.getDepmnNm());  		 	//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
 			bidVO.setPomPayYn(item.getPomPayYn());  		 //대금납부완납여부
-			bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
+			//bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
+			bidVO.setUpdatIdno(item.getUserId()); 			 		 //수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			
 			myPageService.myBidInfoSelectedUpdate(bidVO);
@@ -188,7 +194,8 @@ public class MySaleCarBidDtlController {
 			bidVO.setDepmnNm(item.getDepmnNm());  			//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
 			bidVO.setPomPayYn(item.getPomPayYn());  		//대금납부완납여부
-			bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
+			//bidVO.setUpdatIdno(loginVO.getId()); 			//수정자ID
+			bidVO.setUpdatIdno(item.getUserId()); 			//수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			
 			myPageService.myBidInfoUnSelectedUpdate(bidVO);
@@ -208,14 +215,18 @@ public class MySaleCarBidDtlController {
 			BindingResult bindingResult,
 			HttpServletRequest request,
 			@RequestBody MyPageVO requestBody
+			//@RequestBody Map<String, String> requestParams
 			) throws Exception {
 		
 		ResultVO resultVO = new ResultVO();
 		
 		List<MyPageSelectedVO> selected = requestBody.getSelected();
+		logger.info("selected ▶▶▶▶▶▶ {}", selected);
 	    //List<MyPageUnSeledctedVO> unselected = requestBody.getUnselected();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//String userId = (String) selected.get(7).getUserId(); 
+		//logger.info("userId ▶▶▶▶▶▶ {}", userId);
 		
 		//입찰 현황에서 선택한 값
 		for (int i = 0; i < selected.size(); i++) {
@@ -229,7 +240,8 @@ public class MySaleCarBidDtlController {
 			bidVO.setDepmnNm(item.getDepmnNm());  		 	//낙찰자명
 			bidVO.setAucProgStatCd(item.getAucProgStatCd()); //진행상태
 			bidVO.setPomPayYn(item.getPomPayYn());  		 //대금납부완납여부
-			bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
+			//bidVO.setUpdatIdno(loginVO.getId()); 			 //수정자ID
+			bidVO.setUpdatIdno(item.getUserId()); 			 //수정자ID
 			bidVO.setFlag(item.getFlag());                   //구분
 			//bidVO.setSdepPayYn(item.getSdepPayYn());         //보증금수납여부
 			

@@ -122,10 +122,7 @@
 			     , IFNULL(DATE_FORMAT(CCAI.SBID_DATE, '%Y-%m-%d'), '-') AS SBID_DATE  /*낙찰일*/
 			     , CCAI.ENTRY_IDNO /*낙찰 회원사명*/
 			     , CCAI.AUC_PROG_YN /*진행상태 여부*/
-			     , (SELECT USER_NM
-			          FROM CA_USER_INF
-			         WHERE USER_ID = #{entryIdno}
-			       ) AS ENTRY_IDNO_NM
+			     , IFNULL(CCAI.SBIDMN_NM, '-') AS ENTRY_IDNO_NM
 			  FROM CA_CAR_AUC_INF CCAI 
 			 INNER JOIN CA_CAR_INF CCI 
 			    ON CCAI.CAR_MAIN_NO = CCI.CAR_MAIN_NO 
@@ -234,7 +231,7 @@
 			     , BIDMN_EMAIL_ADDR /*담당자 이메일*/
 			     , SDEP_PAY_YN /*보증금완납여부*/
 			     , CASE WHEN SDEP_PAY_YN = 'Y' THEN '완납'
-			            ELSE '미 완납' 
+			            ELSE '미납' 
 			        END AS SDEP_PAY_NM /*보증금완납여부명*/
 			  FROM CA_CAR_AUC_DTL_BID_INF
 			 WHERE AUC_REG_NO = #{aucRegNo} 

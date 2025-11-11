@@ -101,7 +101,7 @@ public class MyPageVO implements Serializable {
 	private String 	   flag = "";
 	private String 	   sdepPayYn = "";							//보증금완납여부
 	private String 	   sdepPayNm = "";							//보증금완납여부명
-	
+	private String userId;
 	//private String 	   sbidAucSeq = "";							//낙찰경매순서
 	
 	private List<MyPageSelectedVO> selected;

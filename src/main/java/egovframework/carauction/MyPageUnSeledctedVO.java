@@ -22,6 +22,7 @@ public class MyPageUnSeledctedVO implements Serializable {
     private String bidmnNm;	
     private String sbidAucSeq;
     private String sdepPayYn;
+    private String userId;
 	
 	
 	public String toString() {

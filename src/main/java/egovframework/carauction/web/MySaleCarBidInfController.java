@@ -65,16 +65,20 @@ public class MySaleCarBidInfController {
 		MyPageVO myPageVO = new MyPageVO();
 		ResultVO resultVO = new ResultVO();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();  
 		
 		String regStrDt = requestParams.get("fromDt").replaceAll("-", "") + "000000";	//등록시작일자
 		String regEndDt = requestParams.get("toDt").replaceAll("-", "") + "235959";	//등록종료일자
 		String proState = requestParams.get("codeNo");					//진행상태
-			
+		
+		String userId = requestParams.get("userId");					
+		
+		logger.info("userId ▶▶▶▶▶▶ {}", userId);
+		
 		myPageVO.setRegStrDt(regStrDt);	//등록시작일자
 		myPageVO.setRegEndDt(regEndDt); //등록종료일자
 		myPageVO.setProState(proState); //진행상태
-		myPageVO.setEntryIdno(loginVO.getId());
+		myPageVO.setEntryIdno(userId);
 		
 		Map<String, Object> resultMap = myPageService.myPageList(myPageVO);
 		
