@@ -106,7 +106,8 @@ public class NoticeController {
 	public ResultVO insNotice(
 			@RequestParam(value = "noticeTit", required = false) String noticeTit,
 	        @RequestParam(value = "noticeCtnt", required = false) String noticeCtnt,
-			@RequestPart(value = "files", required = false) List<MultipartFile> files,
+			//@RequestPart(value = "files", required = false) List<MultipartFile> files,
+	        @RequestParam(value = "files", required = false) List<MultipartFile> files,
 		    @AuthenticationPrincipal LoginVO user
 			) throws Exception{
 		
@@ -145,7 +146,8 @@ public class NoticeController {
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResultVO updNotice(
 			@RequestParam Map<String, String> params,
-	        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+	        //@RequestPart(value = "files", required = false) List<MultipartFile> files,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files,
 	        @AuthenticationPrincipal LoginVO user) throws Exception {
 		
 		logger.info("noticeTit !!!!!!!!!!!!!!!!!!!!!!!!!!! {}", params.get("noticeTit"));

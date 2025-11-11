@@ -1,5 +1,6 @@
 package egovframework.carauction.service.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
@@ -24,6 +25,10 @@ public class CommonFileDAO extends EgovAbstractMapper {
 	//실제 DB데이터 삭제
 	public int deleteFile(AttachFileVO attachFileVO) {
 		return delete("commonFileDAO.deleteFile", attachFileVO);
+	}
+
+	public List<AttachFileVO> selectFilesByTarget(String targetType, String targetId) {
+		return selectList("commonFileDAO.selectFilesByTarget", Map.of("targetType", targetType, "targetId", targetId));
 	}
 
 }

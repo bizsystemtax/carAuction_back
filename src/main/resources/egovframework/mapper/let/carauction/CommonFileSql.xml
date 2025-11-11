@@ -73,4 +73,12 @@
 		 WHERE ATT_FILE_ID = #{attFileId}
 	</delete>
 	
+	
+	<select id="selectFilesByTarget" parameterType="map" resultType="egovframework.carauction.AttachFileVO">
+	    SELECT ATT_FILE_ID
+	         , ATT_FILE_NM
+	    FROM CA_ATT_FILE
+	    WHERE TARGET_TYPE = #{targetType}
+	      AND TARGET_ID = #{targetId}
+	</select>
 </mapper>

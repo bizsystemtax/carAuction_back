@@ -13,7 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -52,9 +54,14 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 	//파일 등록
 	@Override                             
 	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) throws Exception {
+				
+		logger.info("▶ saveFiles 시작: targetType={}, targetId={}, files={}, paramMap={}", targetType, targetId, files, paramMap);
 		
-		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-		logger.error("Start :::::::: {} ", targetId);
+		//파일 없으면 바로 종료
+		if (files == null || files.isEmpty()) {
+            return; 
+        }
+		
 		String entryIdno = null;
 		String updatIdno = null;
 		
@@ -70,12 +77,7 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
 	    logger.error("entryIdno :::::::: {} ", entryIdno);
 	    logger.error("updatIdno :::::::: {} ", updatIdno);
-		
-		//파일 없으면 바로 종료
-		if (files == null || files.isEmpty()) {
-            return; 
-        }
-		
+	    
 		String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
         Path targetFolder = Paths.get(baseUploadDir, targetType, today);
 
@@ -87,11 +89,23 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             logger.error("디렉토리 생성 실패: {}", targetFolder.toString(), e);
             throw new RuntimeException("업로드 디렉토리 생성 중 오류 발생", e);
         }
+        
+        // 기존 파일 조회
+        List<AttachFileVO> existingFiles = commonFileDAO.selectFilesByTarget(targetType, targetId);
+        Set<String> existingFileNames = existingFiles.stream()
+                .map(AttachFileVO::getAttFileNm)
+                .collect(Collectors.toSet());
 
         int fileSeq = 1; // 파일 순번 시작
 
         for (MultipartFile file : files) {
             if (file.isEmpty()) continue;
+            
+            String originalFilename = file.getOriginalFilename();
+            if (existingFileNames.contains(originalFilename)) {
+                logger.info("이미 존재하는 파일 건너뜀: {}", originalFilename);
+                continue;
+            }
             
             //파일 크기 제한
             if (file.getSize() > maxFileSize) {
@@ -99,7 +113,6 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
                 throw new IllegalArgumentException("업로드 가능한 파일 크기는 최대 " + (maxFileSize / (1024 * 1024)) + "MB입니다.");
             }
 
-            String originalFilename = file.getOriginalFilename();
             String ext = "";
             int dotIndex = originalFilename.lastIndexOf(".");
             if (dotIndex > -1) {
@@ -140,7 +153,8 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             fileParam.put("updatIdno", updatIdno);        				// 수정자
             fileParam.put("fileSeq", fileSeq);                          // 파일 순번
             fileParam.put("fileSvrName", finalFileName);                // UUID+확장자 파일명
-
+            
+            
             commonFileDAO.insertFile(fileParam);
 
             fileSeq++; // 순번 증가
