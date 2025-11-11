@@ -108,6 +108,15 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             noticeVO.setNoticeId(noticeId);
             noticeVO.setAttFileYn("Y");
             noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
+        }else {
+        	
+        	Integer noticeId = (Integer) paramMap.get("noticeId");
+            if (noticeId == null) {
+            	throw new Exception("공지사항 ID가 존재하지 않습니다.");
+            }
+            noticeVO.setNoticeId(noticeId);
+            noticeVO.setAttFileYn("N");
+            noticeDAO.updAttFileYn(noticeVO);	// 첨부파일YN update
         }
 		
 		return result;
