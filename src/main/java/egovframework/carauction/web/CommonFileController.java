@@ -2,6 +2,7 @@ package egovframework.carauction.web;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -39,10 +40,30 @@ public class CommonFileController {
 	@PostMapping("/fileDelete")
     public ResultVO deleteFileInf(
     		HttpServletRequest request, 
-    		@RequestBody AttachFileVO attachFileVO
+    		//@RequestBody AttachFileVO attachFileVO
+    		@RequestBody List<AttachFileVO> attachFileList
     		) throws Exception {
     	ResultVO resultVO = new ResultVO();
+    	
+    	logger.info("attachFileList  :::::::::::::: {}", attachFileList);
+    	
+    	
+    	try {
+    		for (AttachFileVO attachFileVO : attachFileList) {
+    			commonFileService.deleteFile(attachFileVO);    			
+    		}
+    		resultVO.setResultCode(200);
+			resultVO.setResultMessage("삭제 성공");
+    	}catch (FileNotFoundException e) {
+    		resultVO.setResultCode(404);
+			resultVO.setResultMessage("파일이 존재하지 않습니다.");
+		}catch (Exception e) {
+			resultVO.setResultCode(500);
+			resultVO.setResultMessage("파일 삭제 실패");
+		}
+    	
 		
+    	/*
     	String atchFileId = attachFileVO.getAttFileId().replaceAll(" ", "+");
     	
     	logger.info("request      :::::::::::::: {}", request);
@@ -60,7 +81,7 @@ public class CommonFileController {
 			resultVO.setResultCode(500);
 			resultVO.setResultMessage("파일 삭제 실패");
 		}
-		
+		*/
 		return resultVO;
 	}
 }
