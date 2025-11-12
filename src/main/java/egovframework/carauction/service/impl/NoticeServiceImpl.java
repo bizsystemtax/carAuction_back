@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +16,12 @@ import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CommonFileService;
 import egovframework.carauction.service.NoticeService;
+import egovframework.carauction.web.MySaleCarBidInfController;
 
 @Service("noticeService")
 public class NoticeServiceImpl extends EgovAbstractServiceImpl implements NoticeService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(NoticeServiceImpl.class);
 	
 	@Resource(name = "noticeDAO")
 	private NoticeDAO noticeDAO;
@@ -69,6 +74,9 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		
 		NoticeVO noticeVO = new NoticeVO(); 
 		
+		String userId = (String) paramMap.get("entryIdno");
+		logger.info("userId ▶▶▶▶▶▶▶▶▶▶ {} ", userId);
+		
 		//20251016 로직 추가
 		if (result > 0 && files != null && !files.isEmpty()) {
 			Integer noticeId = (Integer) paramMap.get("noticeId");
@@ -77,7 +85,7 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             }
             String noticeIdStr = noticeId.toString();
 
-            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
+            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap, userId);
             
             noticeVO.setNoticeId(noticeId);
             noticeVO.setAttFileYn("Y");
@@ -96,6 +104,9 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		
 		NoticeVO noticeVO = new NoticeVO(); 
 		
+		String userId = (String) paramMap.get("updatIdno");
+		logger.info("userId ▶▶▶▶▶▶▶▶▶▶ {} ", userId);
+		
 		if (result > 0 && files != null && !files.isEmpty()) {
             Integer noticeId = (Integer) paramMap.get("noticeId");
             if (noticeId == null) {
@@ -103,7 +114,7 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
             }
             String noticeIdStr = noticeId.toString();
 
-            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap);
+            commonFileService.saveFiles("notice", noticeIdStr, files, paramMap, userId);
             
             noticeVO.setNoticeId(noticeId);
             noticeVO.setAttFileYn("Y");

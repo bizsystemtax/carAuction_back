@@ -56,8 +56,11 @@ public class MySaleCarBidDtlController {
 		
 		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
+		
 		String aucRegNo = requestParams.get("aucRegNo");	//경매등록번호
-		//myPageVO.setEntryIdno(loginVO.getId());
+		String userId = requestParams.get("userId");
+		logger.info("userId ▶▶▶▶▶▶ {}", userId);
+		myPageVO.setEntryIdno(userId);
 		
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
@@ -84,15 +87,15 @@ public class MySaleCarBidDtlController {
 		
 		ResultVO resultVO = new ResultVO();
 		
-		LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 		
 		String aucRegNo = (String) requestParams.get("aucRegNo"); //경매등록번호
 		String userId = requestParams.get("userId");		
-		logger.info("userId ▶▶▶▶▶▶ {}", userId);
+		logger.info("userId1111111 ▶▶▶▶▶▶ {}", userId);
 		
 		myPageVO.setAucRegNo(aucRegNo); //경매등록번호
 		
-		myPageVO.setUpdatIdno(loginVO.getId());				//수정자
+		myPageVO.setUpdatIdno(userId);				//수정자
 
 		Map<String, Object> resultMap = myPageService.faileBidUpdate(myPageVO);
 		

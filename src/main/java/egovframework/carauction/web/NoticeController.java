@@ -107,6 +107,8 @@ public class NoticeController {
 			@RequestParam(value = "noticeTit", required = false) String noticeTit,
 	        @RequestParam(value = "noticeCtnt", required = false) String noticeCtnt,
 			//@RequestPart(value = "files", required = false) List<MultipartFile> files,
+	        @RequestParam(value = "entryIdno", required = false) String entryIdno, //2025112 추가
+	        @RequestParam(value = "updatIdno", required = false) String updatIdno, //2025112 추가
 	        @RequestParam(value = "files", required = false) List<MultipartFile> files,
 		    @AuthenticationPrincipal LoginVO user
 			) throws Exception{
@@ -119,8 +121,10 @@ public class NoticeController {
 		Map<String, Object> param = new HashMap<>();		
 		param.put("noticeTit", noticeTit);		//공지사항 제목
 		param.put("noticeCtnt", noticeCtnt); 	//공지사항 내용
-		param.put("entryIdno", user.getId());   //등록자ID
-		param.put("updatIdno", user.getId());   //수정자ID
+		//param.put("entryIdno", user.getId());   //등록자ID
+		param.put("entryIdno", entryIdno);   //등록자ID
+		param.put("updatIdno", updatIdno);   //등록자ID
+		//param.put("updatIdno", user.getId());   //수정자ID
 		
 		int result = noticeService.insNotice(param, files);
 		
@@ -147,6 +151,8 @@ public class NoticeController {
 	public ResultVO updNotice(
 			@RequestParam Map<String, String> params,
 	        //@RequestPart(value = "files", required = false) List<MultipartFile> files,
+			@RequestParam(value = "entryIdno", required = false) String entryIdno, //2025112 추가
+			@RequestParam(value = "updatIdno", required = false) String updatIdno, //2025112 추가
 			@RequestParam(value = "files", required = false) List<MultipartFile> files,
 	        @AuthenticationPrincipal LoginVO user) throws Exception {
 		
@@ -160,10 +166,10 @@ public class NoticeController {
 		param.put("noticeTit", params.get("noticeTit"));		//공지사항 제목
 		param.put("noticeCtnt", params.get("noticeCtnt")); 	//공지사항 내용
 		param.put("noticeId", Integer.parseInt((String) params.get("noticeId"))); 	//공지사항 내용
-		param.put("entryIdno", user.getId());   //등록자ID
-		param.put("updatIdno", user.getId());   //수정자ID
-		
-		param.put("updatIdno", user.getId());
+		//param.put("entryIdno", user.getId());   //등록자ID
+		param.put("entryIdno", entryIdno);   //등록자ID
+		//param.put("updatIdno", user.getId());   //수정자ID
+		param.put("updatIdno", updatIdno);		//수정자ID
 		
 		int result = noticeService.updNotice(param, files);
 		

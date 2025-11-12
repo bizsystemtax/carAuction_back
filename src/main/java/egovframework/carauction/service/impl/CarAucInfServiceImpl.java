@@ -309,6 +309,10 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 		param.put("aucRegNo", aucRegNo);
 		logger.info("carSaleDetailVO :::::::::::: {} ", carSaleDetailVO);
 		
+		String userId = carSaleDetailVO.getSessionId();
+		logger.info("userId55555555555555555 :::::::::::: {} ", userId);
+				
+		
 		int result = carAucInfDAO.insertCarSale(carSaleDetailVO);
 		
 		//로직 추가
@@ -318,7 +322,7 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 			String aucRegNoId = (String)param.get("aucRegNo");
                 
                 logger.info("aucRegNoId :::::::::::: {} ", aucRegNoId);
-                commonFileService.saveFiles("auc", aucRegNoId, files, param);
+                commonFileService.saveFiles("auc", aucRegNoId, files, param, userId);
             //} catch (NumberFormatException e) {
              //   logger.error("aucRegNo 형식이 올바르지 않습니다: {}", aucRegNo, e);
               //  throw new Exception("경매등록번호 형식 오류", e);

@@ -53,9 +53,10 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 
 	//파일 등록
 	@Override                             
-	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) throws Exception {
+	//public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap) throws Exception {
+	public void saveFiles(String targetType, String targetId, List<MultipartFile> files, Map<String, Object> paramMap, String userId) throws Exception {
 				
-		logger.info("▶ saveFiles 시작: targetType={}, targetId={}, files={}, paramMap={}", targetType, targetId, files, paramMap);
+		logger.info("▶ saveFiles 시작: targetType={}, targetId={}, files={}, paramMap={}, userId={}", targetType, targetId, files, paramMap, userId);
 		
 		//파일 없으면 바로 종료
 		if (files == null || files.isEmpty()) {
@@ -70,9 +71,12 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
 			entryIdno = targetId;
 			updatIdno = targetId;
 		} else {
-			LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-			entryIdno = loginVO.getId();
-	        updatIdno = loginVO.getId();
+//			LoginVO loginVO = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+//			entryIdno = loginVO.getId();
+//	        updatIdno = loginVO.getId();
+	        
+	        entryIdno = userId;
+	        updatIdno = userId;
 		}
 
 	    logger.error("entryIdno :::::::: {} ", entryIdno);

@@ -74,7 +74,11 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
 		userLoginVO.setUserPw(enpassword);
 		
 		logger.info("enpassword :::::::::::: {} ", enpassword);
+		String targetId = userLoginVO.getUserId();
 		String userId = userLoginVO.getUserId();
+		
+		
+		logger.info("targetId :::::::::::: {} ", targetId );
 		logger.info("userId :::::::::::: {} ", userId );
 		userLoginVO.setUserId(userId); 
 		
@@ -85,7 +89,7 @@ public class UserJoinServiceImpl extends EgovAbstractServiceImpl implements User
 			logger.info("일단 여기 들어와야 합니다.");
 			
 			param.put("userId", userId); 
-			commonFileService.saveFiles("user", userId, files, param);
+			commonFileService.saveFiles("user", targetId, files, param, userId);
                
         }
 		
