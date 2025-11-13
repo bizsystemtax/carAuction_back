@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import egovframework.carauction.AttachFileVO;
 import egovframework.carauction.NoticeVO;
 import egovframework.carauction.service.CommonFileService;
-import egovframework.com.cmm.LoginVO;
-import egovframework.com.cmm.util.EgovUserDetailsHelper;
+//import egovframework.com.cmm.LoginVO;
+//import egovframework.com.cmm.util.EgovUserDetailsHelper;
 
 @Transactional
 @Service("commonFileService")
@@ -124,13 +124,14 @@ public class CommonFileServiceImpl extends EgovAbstractServiceImpl implements Co
             }
             
             // 현재 시간 추가
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            //String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
             // UUID 추가
             String uuid = UUID.randomUUID().toString();
 
             // 최종 파일명 (확장자 포함)
-            String finalFileName = originalFilename.replace(ext, "") + "_" + timestamp + "_" + uuid + ext;
+            //String finalFileName = originalFilename.replace(ext, "") + "_" + timestamp + "_" + uuid + ext;
+            String finalFileName = originalFilename.replace(ext, "") + "_" + uuid + ext;
             // → "판매차량 입찰 현황_20251016_130733_xxxx-xxxx.xlsx"
             
             
