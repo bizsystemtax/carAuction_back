@@ -149,7 +149,6 @@ public class CarBidRegController {
 	        userIp = user.getIp();
 	        logger.info("로그인 사용자: {} (IP: {})", userId, userIp);
 	    } else {
-	        // 로그인 안 되어 있으면 에러 처리
 	        throw new BizException(ErrorCode.ERR300, "로그인이 필요합니다.");
 	    }
 	    
@@ -175,11 +174,9 @@ public class CarBidRegController {
 	    String bankName = (String) requestParams.get("bankName");
 	    String accountNumber = (String) requestParams.get("accountNumber");
 	    Integer bidPlnPrice = (Integer) requestParams.get("bidPlnPrice");
+	    
 	    logger.info("bidPlnPrice 값 확인: {}", bidPlnPrice);
-	    // 입찰 보증금 계산 (예정가의 10%)
 	    Integer bidSdepPrice = (int) Math.floor(bidPlnPrice * 0.1);
-	    String contCellNo = (String) requestParams.get("contCellNo");           
-	    String contEmailAddr = (String) requestParams.get("contEmailAddr");     
 	    
 	    /**
 	     * 입찰 데이터 설정
@@ -191,8 +188,7 @@ public class CarBidRegController {
 	    bidData.put("bankName", bankName);
 	    bidData.put("accountNumber", accountNumber);
 	    bidData.put("bidSdepPrice", bidSdepPrice);
-	    bidData.put("contCellNo", contCellNo);                  
-	    bidData.put("contEmailAddr", contEmailAddr);            
+	    // ★★★ contCellNo, contEmailAddr 제거 - Service에서 처리 ★★★
 	    
 	    // 로그인 사용자 정보
 	    bidData.put("entryIdno", userId);

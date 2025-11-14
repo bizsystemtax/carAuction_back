@@ -195,7 +195,7 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 
 	@Override
 	public void insertBid(Map<String, Object> bidData) throws Exception {
-		
+	    
 	    /**
 	     * 사용자 로그인(세션) 확인
 	     */
@@ -204,23 +204,38 @@ public class CarAucInfServiceImpl extends EgovAbstractServiceImpl implements Car
 	    if (loginVO == null || StringUtils.defaultString(loginVO.getId()).isEmpty()) {
 	        throw new BizException(ErrorCode.ERR301); // 세션 만료
 	    }
-		
-		String aucRegNo = (String) bidData.get("aucRegNo");
-
-		// 1. 다음 순번 조회
-		String nextSeq = getNextAucRegSeq(aucRegNo);
-
-		// 2. Map에 순번 추가
-		bidData.put("aucRegSeq", nextSeq);
-		
-	    // 3. 사용자 정보 추가
-	    bidData.put("userId", loginVO.getId());
-
-		// 4. INSERT
-		carAucInfDAO.insertBid(bidData);
-		
-		// 5. 입찰건수 추가
-		carAucInfDAO.incrementBidCount(bidData);
+	    
+	    String userId = loginVO.getId();
+	    String aucRegNo = (String) bidData.get("aucRegNo");
+	    
+	    // ★★★ 1. 로그인한 사용자의 연락처/이메일 조회 ★★★
+	    Map<String, String> userInfo = carAucInfDAO.findUserInfo(userId);
+	    
+	    if (userInfo != null) {
+	        // 차량 등록자의 정보가 아닌 입찰자(로그인 사용자)의 정보로 덮어쓰기
+	        bidData.put("contCellNo", userInfo.get("contCellNo"));
+	        bidData.put("contEmailAddr", userInfo.get("contEmailAddr"));
+	    }
+	    
+	    // 2. 다음 순번 조회
+	    String nextSeq = getNextAucRegSeq(aucRegNo);
+	    
+	    // 3. Map에 순번 추가
+	    bidData.put("aucRegSeq", nextSeq);
+	    
+	    // 4. 사용자 정보 추가
+	    bidData.put("userId", userId);
+	    
+	    // 5. INSERT
+	    carAucInfDAO.insertBid(bidData);
+	    
+	    // 6. 입찰건수 증가
+	    carAucInfDAO.incrementBidCount(bidData);
+	}
+	
+	@Override
+	public Map<String, String> getUserInfo(String userId) throws Exception {
+	    return carAucInfDAO.findUserInfo(userId);
 	}
 
 	/************************************************************************************************************************

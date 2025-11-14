@@ -332,6 +332,16 @@
         , UPDAT_IDNO = #{updatIdno}
     WHERE AUC_REG_NO = #{aucRegNo}
 </update>
+
+<select id="findUserInfo" parameterType="String" resultType="hashmap">
+    <![CDATA[
+        SELECT 
+            CONT_CELLNO as contCellNo,
+            CONT_EMAIL_ADDR as contEmailAddr
+        FROM CA_USER_INF
+        WHERE USER_ID = #{userId}
+    ]]>
+</select>
 	
 
 	<!-- *******************************************************************************************************

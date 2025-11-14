@@ -77,6 +77,10 @@ public class CarAucInfDAO extends EgovAbstractMapper {
 	public int incrementBidCount(Map<String, Object> bidData) {
 	    return update("carAucInfDAO.incrementBidCount", bidData);
 	}
+	
+	  public Map<String, String> findUserInfo(String userId) throws Exception {
+	        return selectOne("carAucInfDAO.findUserInfo", userId);
+	    }
 
 	/************************************************************************************************************************
 	 * 차량 판매 정보

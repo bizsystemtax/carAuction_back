@@ -59,6 +59,9 @@ public interface CarAucInfService {
 
     // 입찰 등록
 	void insertBid(Map<String, Object> bidData) throws Exception;
+	
+	// 사용자조회
+	Map<String, String> getUserInfo(String userId) throws Exception;
 
 	/************************************************************************************************************************
 	 * 차량 판매 정보
