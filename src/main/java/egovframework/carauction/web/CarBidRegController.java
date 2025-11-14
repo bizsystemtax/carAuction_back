@@ -188,7 +188,6 @@ public class CarBidRegController {
 	    bidData.put("bankName", bankName);
 	    bidData.put("accountNumber", accountNumber);
 	    bidData.put("bidSdepPrice", bidSdepPrice);
-	    // ★★★ contCellNo, contEmailAddr 제거 - Service에서 처리 ★★★
 	    
 	    // 로그인 사용자 정보
 	    bidData.put("entryIdno", userId);
